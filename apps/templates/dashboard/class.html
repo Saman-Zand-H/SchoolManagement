@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %} 
+
+{% load static %} 
+{% load customtags %} 
+
+{% block title %} Classes {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %} 
+
+{% block content %}
+
+<div class="container-fluid mt-6">
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow">
+                <div class="card-header bg-transparent">
+                    <h3 class="mb-0">Classes</h3>
+                </div>
+                <div class="table-responsive">
+                    <div>
+                        <table class="table align-items-center table-dark">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">
+                                        Class ID
+                                    </th>
+                                    <th scope="col">
+                                        Students Count
+                                    </th>
+                                    <th scope="col">
+                                        Students
+                                    </th>
+                                    <th scope="col">
+                                        Average Grade
+                                    </th>
+                                    <th scope="col">
+                                        Class Performance
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                {% for class in classes %}
+                                <tr>
+                                    <th scope="row" class="name">
+                                        <div class="media align-items-center">
+                                            <h1 class="text-neutral mr-4">{{ class.class_id }}</h1>
+                                            <div class="media-body">
+                                                <span class="mb-0 text-sm">Math</span>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td class="budget">
+                                        {{ class.students.count }}
+                                    </td>
+                                    <td>
+                                        <div class="avatar-group">
+                                            {% for i in '012'|make_list %}
+                                                {% with student=class.students.all|getbyindex:forloop.counter %}
+                                                    <a href="#" class="avatar avatar-sm" data-toggle="tooltip" data-original-title="{{ student.user.name }}">
+                                                        <img alt="" src="asdf" class="rounded-circle">
+                                                    </a>
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td class="status">
+                                        <span class="badge badge-dot mr-4">
+                                            <i class="bg-{{ class.get_average_grade_percent|set_average_grade_color }}"></i> 
+                                            {{ class.get_average_grade }}
+                                        </span>
+                                    </td>
+                                    <td class="completion">
+                                        <div class="d-flex align-items-center">
+                                            <span class="mr-2">{{ class.get_average_grade_percent }}%</span>
+                                            <div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-{{ class.get_average_grade_percent|set_average_grade_color }}" role="progressbar" 
+                                                      aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ class.get_average_grade_percent }}%;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+
+<script src="/static/assets/vendor/clipboard/dist/clipboard.min.js"></script>
+
+{% endblock javascripts %}
