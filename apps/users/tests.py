@@ -6,11 +6,11 @@ from mainapp.models import Student, Teacher
 
 class UserModelTests(TestCase):
     def setUp(self):
-        self.user_std = get_user_model().objects.create_user("test", "test@tset.com", 
-                                                         "test user", "123456789s", "S")
-        self.user_tch = get_user_model().objects.create_user("test_tch", "test@tshkjhet.com", 
-                                                         "test teacher", "123456789s", "T")
-    
+        self.user_std = get_user_model().objects.create_user(
+            "test", "test@tset.com", "test user", "123456789s", "S")
+        self.user_tch = get_user_model().objects.create_user(
+            "test_tch", "test@tshkjhet.com", "test teacher", "123456789s", "T")
+
     def test_user_custom_attrs(self):
         self.assertEqual(self.user_std.name, "test user")
         self.assertEqual(self.user_std.user_id, "test")

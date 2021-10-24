@@ -1,12 +1,16 @@
-FROM python:latest
+FROM python:3.9.7-alpine
 
 ENV PYTHONDONTWRITEBYTECODE = 1
 ENV PYTHONUNBUFFERED = 1
 
-WORKDIR /Sample-Projects/
+WORKDIR /usr/src/app
 
-COPY requirements.txt /Sample-Projects/
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libffi-dev
 
+RUN pip install -U pip
+RUN pip install -U setuptools
+COPY requirements.txt /usr/src/app
 RUN pip install -r requirements.txt
 
-COPY . /Sample-Projects/
+COPY . /usr/src/app

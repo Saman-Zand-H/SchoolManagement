@@ -23,12 +23,19 @@
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
 
-                {% if msg %}
-                  <p>{{ msg }}</p>
+                {% if form.errors or form.non_field_errors %}
+            	    {% for field in form %}
+            	        {% for error in field.errors %}
+            	          <p class="text-danger">- {{ field }}: {{ error }}</p>
+            	        {% endfor %}
+            	    {% endfor %}
+            	    {% for error in form.non_field_errors %}
+            	        <p class="text-danger">- {{ error }}</p>
+            	    {% endfor %}
                 {% else %}
-                  <p>
-                    Add your credentials
-                  </p>
+                    <p>
+                        Add your credentials
+                    </p>
                 {% endif %}  
 
               </div>
@@ -38,6 +45,7 @@
                 {% csrf_token %}
 
                 <div class="form-group mb-3">
+                {{ form.login.label }}
                   <div class="input-group input-group-alternative">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
@@ -46,6 +54,7 @@
                   </div>
                 </div>
                 <div class="form-group">
+                  {{ form.password.label }}
                   <div class="input-group input-group-alternative">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>

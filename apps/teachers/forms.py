@@ -14,20 +14,19 @@ class FilterExamsForm(forms.Form):
     dateSince = forms.DateField(required=False)
     dateTill = forms.DateField(required=False)
     subjectFilter = forms.IntegerField(required=False)
-    classFilter = forms.IntsubjectFilter = forms.IntegerField(required=False)
+    classFilter = forms.IntegerField(required=False)
 
 
 class SetGradeForm(forms.ModelForm):
     class Meta:
         model = Grade
-        fields = ["grade", "subject", "student", "exam"]
+        fields = ["grade", "student", "exam"]
 
         widgets = {
             "grade": forms.NumberInput(attrs={
                 "class": "form-control w-50",
             }),
-            "subject": forms.HiddenInput(),
-            "subject": forms.HiddenInput(),
+            "student": forms.HiddenInput(),
             "exam": forms.HiddenInput(),
         }
 
@@ -35,8 +34,8 @@ class SetGradeForm(forms.ModelForm):
         init = super().__init__(**kwargs)
         self.fields["student"].required = False
         self.fields["exam"].required = False
-        self.fields["subject"].required = False
         return init
+
 
 class SetUserBiographyForm(forms.Form):
     about = forms.CharField(required=False)

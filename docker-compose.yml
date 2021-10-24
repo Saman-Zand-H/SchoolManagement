@@ -5,13 +5,13 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/Sample-Projects/
+      - .:/usr/src/app/
     ports:
       - 8000:8000
     depends_on:
       - db
   db:
-    image: postgres:13
+    image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:

@@ -1,6 +1,9 @@
 from django import template
+from django.db.models import Q, Count
 
-from datetime import datetime
+from datetime import date, timedelta
+
+from mainapp.models import Student, Exam
 
 
 register = template.Library()
@@ -15,11 +18,15 @@ def getbyindex(item, index:int):
 
 @register.filter
 def return_student(queryset, pk):
-    return queryset.get(pk=pk).user.user_id
+    return queryset.get(pk=pk).user.name
 
 @register.filter
 def return_student_pk(queryset, pk):
     return getbyindex(queryset, pk).pk
+
+@register.filter
+def getuserbyindex(queryset, pk):
+    return getbyindex(queryset, pk).user.name()
 
 @register.filter
 def integerify(obj, index):
@@ -33,3 +40,22 @@ def set_average_grade_color(percent):
         return "warning"
     else:
         return "success"
+
+@register.filter
+def get_students_class_header(queryset):
+    return queryset.student_class.all()[:3]
+
+@register.filter
+def get_last_week_exams_difference(teacher):
+    today = date.today()
+    week_timedelta = timedelta(weeks=1)
+    exams = Exam.objects.filter(Q(teacher=teacher) & Q(timestamp__gt=today-week_timedelta))
+    return exams.count() or 0
+
+@register.filter
+def get_teacher_students_count(class_queryset):
+    return Student.objects.filter(student_class__in=class_queryset).count()
+
+@register.filter
+def dir_s(obj):
+    return dir(obj) 

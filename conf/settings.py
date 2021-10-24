@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'mainapp',
     'teachers',
     'students',
+    'supports',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +64,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'conf.urls'
@@ -160,11 +168,20 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
+# Phonenumber_field configurations
+PHONENUMBER_DEFAULT_REGION = "IR"
+PHONE_NUMBER_DEFAULT_FORMAT = "NATIONAL"
+
 # Allauth Configurations
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
+ACCOUNT_ADAPTER = "users.forms.CustomSignUpAdapter"
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_FORMS = {
     'login': 'users.forms.CustomLoginForm',
-    'signup': 'users.forms.CustomSignupForm',
+    'signup': 'users.forms.BaseSignupForm',
 }
 ACCOUNT_SESSION_REMEMBER = True
-LOGIN_REDIRECT_URL = "teachers:dashboard"
+LOGIN_REDIRECT_URL = "home:home"
+ACCOUNT_SIGNUP_REDIRECT_URL = "support:create-school"

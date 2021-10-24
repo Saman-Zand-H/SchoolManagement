@@ -1,0 +1,231 @@
+{% extends 'layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load customtags %}
+
+{% block title %} {{ student.user.name|title }} {% endblock title %}
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Students</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{% url 'support:home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'support:students' %}">Students</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ student.user.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <!-- Modals Buttons -->
+                    <button type="button" data-toggle="modal" data-target="#createClass" class="btn btn-sm btn-neutral">
+                        <i class="fas fa-plus"></i> New
+                    </button>
+                    <!-- Add Grades Modal -->
+                    <div class="modal text-left fade" id="createClass" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Create A New Teacher</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="">* these fields are required</div>
+                                    <div class="mt-2">
+                                        {% if form.errors %}
+                                        <hr>
+                                        <h3>Invalid Inputs:</h3><br>
+                                        {% for field in form %}
+                                        {% for error in field.errors %}
+                                        <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                        {% endfor %}
+                                        {% endfor %}
+                                        <hr>
+                                        {% endif %}
+                                        {% if form.non_field_errors %}
+                                        {% for error in field.non_field_errors %}
+                                        <p class="text-danger">- {{ error }}</p>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <form id="createClassForm" method="POST">
+                                        {% csrf_token %}
+
+                                        <div class="my-4">
+                                            {{ form.username.label }}*
+                                            {{ form.username }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.first_name.label }}*
+                                            {{ form.first_name }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.last_name.label }}*
+                                            {{ form.last_name }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.password1.label }}*
+                                            {{ form.password1 }}
+                                            <small>
+                                                <ul class="text-black-50">
+                                                    <li>Your password can’t be too similar to your other personal
+                                                        information.</li>
+                                                    <li>Your password must contain at least 8 characters.</li>
+                                                    <li>Your password can’t be a commonly used password.</li>
+                                                    <li>Your password can’t be entirely numeric.</li>
+                                                </ul>
+                                            </small>
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.password2.label }}*
+                                            {{ form.password2 }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.phone_number.label }}*
+                                            {{ form.phone_number }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.email.label }}
+                                            {{ form.email }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.picture.label }}
+                                            {{ form.picture }}
+                                            <small>
+                                                <ul class="text-black-50">
+                                                    <li>The size of your file can't exceed 3MB.</li>
+                                                    <li>Supported extensions are .jpg and .png.</li>
+                                                </ul>
+                                            </small>
+                                        </div>
+                                        <hr>
+                                        <div class="my-4">
+                                            {{ form.student_class.label }}*
+                                            {{ form.student_class }}
+                                        </div>
+                                        <input name="user_type" value="S" type="hidden">
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="$('#createClassForm').submit()">Create</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+		<div class="col mx-auto"><br>
+			<div class="alert alert-default" role="alert">
+				<h2 class="text-white">Current Spec</h2>
+
+                <div class="my-4">
+                    Name: <strong>{{ student.user.name|title }}</strong>
+                </div>
+                <div class="my-4">
+                    ID: <strong>{{ student.user.user_id }}</strong>
+                </div>
+                <div class="my-4">
+                    Phonenumber: <strong>{{ student.user.phone_number }}</strong>
+                </div>
+                <div class="my-4">
+                    Class: <strong>{{ student.student_class }}</strong>
+                </div>
+			</div>
+		</div>
+    </div>
+    <div class="row">
+		<div class="col mx-auto"><br>
+			<div class="alert alert-default" role="alert">
+                <h2 class="text-white">Change Spec</h2>
+                {% if phonenumber_form.errors %}
+                    <hr>
+                    <h3 class="text-white">Invalid Inputs:</h3><br>
+                    {% for field in phonenumber_form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-white" role="alert">
+                                <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+                {% if student_spec_form.errors %}
+                    <hr>
+                    <h3 class="text-white">Invalid Inputs:</h3><br>
+                    {% for field in student_spec_form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-white" role="alert">
+                                <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+                {% if student_spec_form.non_field_errors %}
+                    <hr>
+                    <h3 class="text-white">Invalid Inputs:</h3><br>
+                    {% for error in student_spec_form.non_field_errors %}
+                        <div class="alert alert-white" role="alert">
+                                <p class="text-danger">- {{ error }}</p>
+                            </div>
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+                {% if phonenumber_form.non_field_errors %}
+                    <hr>
+                    <h3 class="text-white">Invalid Inputs:</h3><br>
+                    {% for error in student_spec_form.non_field_errors %}
+                        <div class="alert alert-white" role="alert">
+                                <p class="text-danger">- {{ error }}</p>
+                            </div>
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+				<form method="POST">
+					{% csrf_token %}
+                        <div class="my-4">
+                            {{ phonenumber_form.label }}
+                            {{ phonenumber_form }}
+                        </div>
+                        <div class="my-4">
+                            {{ student_spec_form.student_class.label }}
+                            {{ student_spec_form.student_class }}
+                        </div>
+					<button type="submit" class="btn btn-danger ml-4">Save Changes</button>
+				</form>
+			</div>
+		</div>
+    </div>
+    {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %} {% endblock javascripts %}

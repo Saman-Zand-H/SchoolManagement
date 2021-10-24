@@ -1,27 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard/blob/master/LICENSE.md)
-
-* Coded by www.creative-tim.com
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-
-
-//
-// Layout
-//
-
 'use strict';
 
 var Layout = (function() {
@@ -413,14 +389,14 @@ var Charts = (function() {
             // Update tooltips
             $chart.options.tooltips.callbacks.label = function(item, data) {
                 var label = data.datasets[item.datasetIndex].label || '';
-                var yLabel = item.yLabel;
+                var yLabel = item.yLabel + suffix;
                 var content = '';
 
                 if (data.datasets.length > 1) {
                     content += '<span class="popover-body-label mr-auto">' + label + '</span>';
                 }
 
-                content += '<span class="popover-body-value">' + prefix + yLabel + suffix + '</span>';
+                content += `${ label }: ${ yLabel }`;
                 return content;
             }
 
@@ -901,14 +877,14 @@ var SalesChart = (function() {
                     callbacks: {
                         label: function(item, data) {
                             var label = data.datasets[item.datasetIndex].label || '';
-                            var yLabel = item.yLabel;
+                            var yLabel = item.yLabel + suffix;
                             var content = '';
 
                             if (data.datasets.length > 1) {
-                                content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+                                content += "<span class='popover-body-label mr-auto'>" + label + '</span>';
                             }
 
-                            content += '<span class="popover-body-value">$' + yLabel + 'k</span>';
+                            content += content += `${label}: ${yLabel}`;
                             return content;
                         }
                     }

@@ -1,0 +1,7 @@
+
+<label for="#subject">Subject</label>
+<select class="form-control my-1" id="subject" name="subject">
+    {% for subject in subjects %}
+        <option value="{{ subject.pk }}">{{ subject.name }}</option>
+    {% endfor %}
+</select>
