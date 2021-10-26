@@ -24,7 +24,7 @@
             </div>
             <!-- Card stats -->
             <div class="row">
-                <div class="col-xl-3 col-md-6">
+                <div class="col-xl-4 col-md-12">
                     <div class="card card-stats">
                         <!-- Card body -->
                         <div class="card-body" style="height: 7.7rem;">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6" >
+                <div class="col-xl-4 col-md-12" >
                     <div class="card card-stats">
                         <!-- Card body -->
                         <div class="card-body" style="height: 7.7rem;">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6" >
+                <div class="col-xl-4 col-md-12" >
                     <div class="card card-stats">
                         <!-- Card body -->
                         <div class="card-body" style="height: 7.7rem;">
@@ -72,24 +72,6 @@
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
                                         <i class="fas fa-book"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6" >
-                    <div class="card card-stats">
-                        <!-- Card body -->
-                        <div class="card-body" style="height: 7.7rem;">
-                            <div class="row">
-                                <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0" style="font-size:.71rem;">performance</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ teacher.get_average_performance_six_months }}%</span>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                                        <i class="fas fa-chart-bar"></i>
                                     </div>
                                 </div>
                             </div>
@@ -114,18 +96,17 @@
                         </div>
                         <div class="col">
                             <ul class="nav nav-pills justify-content-end">
-                                {% if classes.exists %}
+                                {% if classes.count > 0 %}
                                     {% for class in classes %}
-                                        <li 
-                                            class="nav-item mr-2 mr-md-0" 
+                                        <li class="nav-item mr-2 mr-md-0" 
                                             data-toggle="chart" 
                                             data-target="#chart-sales-dark" 
                                             data-prefix="" 
                                             data-suffix="%" 
                                             data-update='{"data":{
-                                                "datasets":[{"data":{{ class.get_performance_percent_eight_months }}, 
-                                                "label": "Average Performance"}], 
-                                                "labels":[{{ eigt_months_chart_labels|join:", " }}]}}'>
+                                                "datasets":[{"data":{{ class.get_performance_percent_eight_months }}
+                                                    , "label": "Average Performance"}]
+                                                , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
                                             <a href="#" class="nav-link py-2 px-3" data-toggle="tab" id="initialChart">
                                                 <span class="d-none d-block">{{ class.class_id }}</span>
                                                 <span class="d-md-none"></span>
@@ -133,16 +114,15 @@
                                         </li>
                                     {% endfor %}
                                 {% else %}
-                                    <li 
-                                        class="nav-item mr-2 mr-md-0" 
+                                    <li class="nav-item mr-2 mr-md-0" 
                                         data-toggle="chart" 
                                         data-target="#chart-sales-dark" 
                                         data-prefix="" 
                                         data-suffix="%" 
                                         data-update='{"data":{
-                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0, 0, 0], 
-                                            "label": "Average Performance"}], 
-                                            "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
+                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0, 0, 0]
+                                                , "label": "Average Performance"}]
+                                            , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
                                         <a href="#" class="nav-link py-2 px-3" data-toggle="tab" id="initialChart">
                                             <span class="d-none d-block">No Class</span>
                                             <span class="d-md-none"></span>
@@ -170,24 +150,32 @@
                             <h6 class="text-uppercase text-muted ls-1 mb-1">Overview</h6>
                             <h5 class="h3 mb-0">Total Performance</h5>
                             <ul class="nav nav-pills justify-content-end d-none">
-                                {% if classes.exists %}
-                                    <li 
-                                        class="nav-item mr-2 mr-md-0 half-year-chart" data-toggle="chart" data-target="#chart-bars" 
-                                        data-update='{"data":
-                                            {"datasets":[{"data":{{ teacher.get_performance_percent_six_months }}, 
-                                            "label": "Average Grade"}], 
-                                            "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
-                                        data-prefix="" data-suffix="%">
+                                {% if classes.count > 0 %}
+                                    <li class="nav-item mr-2 mr-md-0 half-year-chart" 
+                                    data-toggle="chart" 
+                                    data-target="#chart-bars" 
+                                    data-update='{"data":{
+                                        "datasets":[{"data":{{ teacher.get_performance_percent_six_months }}
+                                            , "label": "Average Grade"}]
+                                        , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
+                                    data-update='{"data":{
+                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0]
+                                                , "label": "Average Grade"}]
+                                            , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
+                                    data-prefix="" 
+                                    data-suffix="%">
                                         <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab" id="initialBar"></a>
                                     </li>
                                 {% else %}
-                                    <li 
-                                        class="nav-item mr-2 mr-md-0 half-year-chart" data-toggle="chart" data-target="#chart-bars" 
+                                    <li class="nav-item mr-2 mr-md-0 half-year-chart" 
+                                        data-toggle="chart" 
+                                        data-target="#chart-bars" 
                                         data-update='{"data":{
-                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0], 
-                                            "label": "Average Grade"}], 
-                                            "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
-                                        data-prefix="" data-suffix="%">
+                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0]
+                                                , "label": "Average Grade"}]
+                                            , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
+                                        data-prefix="" 
+                                        data-suffix="%">
                                         <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab" id="initialBar"></a>
                                     </li>
                                 {% endif %}
@@ -204,6 +192,7 @@
             </div>
         </div>
     </div>
+    <!-- THE FOLLOWING DIV WILL BE USED IN THE NEXT UPDATE -->
     {% comment %} <div class="row">
         <div class="col-xl-8">
             <div class="card">

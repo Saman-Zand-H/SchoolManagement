@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, DetailView, ListView
+from django.views.generic import View, DetailView
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.db.models import Q
@@ -10,33 +10,27 @@ from django.forms import modelformset_factory
 from datetime import date
 from typing import List
 
-from mainapp.models import (Class,
-                            Teacher,
-                            Exam,
-                            Grade,
-                            Subject,
-                            Student)
-from .forms import (ExamForm,
-                    FilterExamsForm,
-                    SetGradeForm,
+from mainapp.models import (Class, Teacher, Exam, Grade, Subject, Student)
+from .forms import (ExamForm, FilterExamsForm, SetGradeForm,
                     SetUserBiographyForm)
-from mainapp.helpers import (loop_through_month_number, 
-                             filter_by_timestamp, 
+from mainapp.helpers import (loop_through_month_number, filter_by_timestamp,
                              get_month_from_number)
+from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 
-def get_charts_labels_ready(eight_months_initial: int = 4, six_months_initial: int = 3) -> List:
-    # Evaluate the performance, beginning from 3 and 4 months ago
-    left_chart_time = date.today().month - eight_months_initial
-    right_chart_time = date.today().month - six_months_initial
+def get_charts_labels_ready() -> List:
+    """
+    Evaluates and formats labels so that they are feasible to be used by the charts.
+    """
+    eight_months_chart_time = date.today().month - 4
+    six_months_chart_time = date.today().month - 3
 
     # Make a list that consists of the month numbers
     eight_months_chart_month_numbers = [
-        loop_through_month_number(left_chart_time + i)[0]
-        for i in range(0, 8)
+        loop_through_month_number(eight_months_chart_time + i)[1] for i in range(0, 8)
     ]
     six_months_chart_month_numbers = [
-        loop_through_month_number(right_chart_time + i)[0]
+        loop_through_month_number(six_months_chart_time + i)[1]
         for i in range(0, 6)
     ]
 
@@ -51,10 +45,14 @@ def get_charts_labels_ready(eight_months_initial: int = 4, six_months_initial: i
     ]
     return [eight_months_chart_month_names, six_months_chart_month_names]
 
-class DashboardView(LoginRequiredMixin, View):
+
+class DashboardView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
+
     def get(self, *args, **kwargs):
         teacher = Teacher.objects.get(user=self.request.user)
-        class_instances = Class.objects.filter(subjects__teacher=teacher)
+        class_instances = Class.objects.filter(
+            subjects__teacher=teacher).distinct()
 
         context = {
             "eight_months_chart_labels": get_charts_labels_ready()[0],
@@ -66,24 +64,27 @@ class DashboardView(LoginRequiredMixin, View):
 dashboardview = DashboardView.as_view()
 
 
-class ClassesView(LoginRequiredMixin, View):
+class ClassesView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
+
     def get(self, request, *args, **kwargs):
-        classes = Class.objects.filter(subjects__teacher__user=request.user)
+        classes = Class.objects.filter(
+            subjects__teacher__user=request.user).distinct()
         context = {
             "classes": classes,
         }
         return render(self.request, "dashboard/teachers/class.html", context)
-
-
 classesview = ClassesView.as_view()
 
 
-class ExamsListView(LoginRequiredMixin, View):
+class ExamsListView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
+
     def get(self, *args, **kwargs):
         current_teacher = Teacher.objects.get(user=self.request.user)
         exams = current_teacher.exam_teacher.all().order_by("timestamp")
-        classes = Class.objects.filter(subjects__teacher=current_teacher)
-
+        classes = Class.objects.filter(
+            subjects__teacher=current_teacher).distinct()
         context = {
             "classes": classes,
             "exams": exams,
@@ -97,52 +98,47 @@ class ExamsListView(LoginRequiredMixin, View):
             subject = form.cleaned_data.get("subjectFilter")
             exam_class = form.cleaned_data.get("classFilter")
 
-            time_range_filter = filter_by_timestamp(exams_since, exams_till) or ~Q(pk__in=[])
-            subject_filter = Q(subject=subject) if subject is not None else ~Q(pk__in=[])
-            class_filter = Q(exam_class=exam_class) if exam_class is not None else ~Q(pk__in=[])
+            time_range_filter = filter_by_timestamp(
+                exams_since, exams_till) or ~Q(pk__in=[])
+            subject_filter = Q(
+                subject=subject) if subject is not None else ~Q(pk__in=[])
+            class_filter = Q(
+                exam_class=exam_class) if exam_class is not None else ~Q(
+                    pk__in=[])
 
-            queryset = exams.filter(time_range_filter & subject_filter & class_filter).order_by("timestamp")
+            queryset = exams.filter(time_range_filter & subject_filter
+                                    & class_filter).order_by("timestamp")
             context["exams"] = queryset
         else:
             messages.error(self.request, "Provided inputs are invalid.")
         return render(self.request, "dashboard/teachers/exams.html", context)
-    
+
     def post(self, *args, **kwargs):
         form = ExamForm(self.request.POST)
 
         if form.is_valid():
-            subject = form.cleaned_data.get("subject")
-            exam_class = form.cleaned_data.get("exam_class")
-
-            full_score_cleaned = form.cleaned_data.get("full_score")
-            if full_score_cleaned is not None:
-                full_score = full_score_cleaned
-            else:
-                full_score = 20.0
+            cleaned_subject = form.cleaned_data.get("subject")
+            cleaned_exam_class = form.cleaned_data.get("exam_class")
+            cleaned_full_score = form.cleaned_data.get("full_score")
             timestamp = form.cleaned_data.get("timestamp")
 
-            subject_instance = Subject.objects.get(pk=subject)
-            class_instance = Class.objects.get(pk=exam_class)
+            full_score = cleaned_full_score or 20.0
+            chosen_subject_instance = Subject.objects.get(pk=cleaned_subject)
+            chosen_class_instance = Class.objects.get(pk=cleaned_exam_class)
+            teacher = Teacher.objects.get(user=self.request.user)
 
-            teacher = Teacher.objects.filter(user=self.request.user)
-
-            if teacher.exists():
-                exam_instance = Exam.objects.create(
-                    subject=subject_instance,
-                    exam_class=class_instance,
-                    full_score=full_score,
-                    timestamp=timestamp,
-                    teacher=teacher[0],
-                )
-                messages.success(self.request, "Exam created successfully")
-                return redirect("teachers:exams")
-            else:
-                messages.warning(self.request,
-                                 "Only teachers can create exams")
-                return redirect("teachers:home")
+            Exam.objects.create(subject=chosen_subject_instance,
+                                exam_class=chosen_class_instance,
+                                full_score=full_score,
+                                timestamp=timestamp,
+                                teacher=teacher)
+            messages.success(self.request, "Exam created successfully")
+            return redirect("teachers:exams")
 examslistview = ExamsListView.as_view()
 
 
+@login_required
+@permission_required("mainapp.teacher")
 def ajax_create_exam(request):
     class_pk = request.GET.get("ajax_exam_class")
     if class_pk is not None:
@@ -152,9 +148,12 @@ def ajax_create_exam(request):
     else:
         subjects = Subject.objects.none()
     context = {"subjects": subjects}
-    return render(request, "dashboard/teachers/ajax-pages/exams-form.html", context)
+    return render(request, "dashboard/teachers/ajax-pages/exams-form.html",
+                  context)
 
 
+@login_required
+@permission_required("mainapp.teacher")
 def ajax_filter_exam(request):
     class_pk = request.GET.get("classFilter")
     if class_pk is not None:
@@ -167,37 +166,27 @@ def ajax_filter_exam(request):
                   context)
 
 
-class DeleteExamView(LoginRequiredMixin, PermissionRequiredMixin, View):
-    permission_required = "mainapp.teacher_permission"
+class DeleteExamView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
 
     def get(self, *args, **kwargs):
         pk = kwargs["pk"]
-
         exam = Exam.objects.get(pk=pk)
         grades = Grade.objects.filter(exam=exam)
-
         grades.delete()
         exam.delete()
-
-        messages.success(self.request, "Exam deleted successfully")
+        messages.success(self.request, "Exam is deleted successfully.")
         return redirect("teachers:exams")
-
-
 deleteexamview = DeleteExamView.as_view()
 
 
-class SetGradesView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
-    permission_required = "mainapp.teacher_permission"
+class SetGradesView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
 
-    model = Exam
-    template_name = "dashboard/teachers/grades.html"
-    context_object_name = "exam"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        exam = context["exam"]
-        context["grades"] = exam.grade_exam.all().order_by("student")
-        if exam.grade_exam.all():
+    def get(self, *args, **kwargs):
+        exam = Exam.objects.get(pk=kwargs["pk"])
+        grades = exam.grade_exam.all().order_by("student")
+        if exam.grade_exam.count() > 0:
             GradeFormset = modelformset_factory(
                 Grade,
                 form=SetGradeForm,
@@ -209,18 +198,18 @@ class SetGradesView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
                 extra=exam.exam_class.student_class.count(),
                 max_num=exam.exam_class.student_class.count(),
             )
-        context["formset"] = GradeFormset(queryset=exam.grade_exam.all())
-        return context
+        formset = GradeFormset(queryset=exam.grade_exam.all())
+        context = {"exam": exam, "grades": grades, "formset": formset}
+        return render(self.request, "dashboard/teachers/grades.html", context)
 
-    def post(self, request, **kwargs):
+    def post(self, *args, **kwargs):
         pk = kwargs["pk"]
         exam = Exam.objects.get(pk=pk)
         GradeFormset = modelformset_factory(
             Grade,
             form=SetGradeForm,
             max_num=exam.exam_class.student_class.count())
-        formset = GradeFormset(request.POST)
-
+        formset = GradeFormset(self.request.POST)
         if formset.is_valid():
             try:
                 formset.save()
@@ -230,38 +219,43 @@ class SetGradesView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
                 messages.error(self.request,
                                "Grades cannot exceed the full score")
                 return redirect("teachers:exams-detail", pk=exam.pk)
-
-
 setgradesview = SetGradesView.as_view()
 
 
-class ProfileView(LoginRequiredMixin, View):
+class ProfileView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
+
     def get(self, args, **kwargs):
         teacher = Teacher.objects.get(user=self.request.user)
-        context = {
-            "teacher": teacher,
-        }
-        return render(self.request, "dashboard/teachers/profile.html", context)
+        return render(self.request, "dashboard/teachers/profile.html",
+                      {"teacher": teacher})
 
     def post(self, *args, **kwargs):
         form = SetUserBiographyForm(self.request.POST)
-
         if form.is_valid():
             about = form.cleaned_data.get("about")
-
             user = get_user_model().objects.get(pk=self.request.user.pk)
             user.about = about
             user.save()
-
             messages.success(self.request, "About Me updated successfully")
             return redirect("teachers:profile")
-
-
 profileview = ProfileView.as_view()
 
 
-class StudentsView(View):
+class StudentsView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.teacher"
+
     def get(self, *args, **kwargs):
-        students = Student.objects.filter(student_class__subjects__teacher__user=self.request.user)
-        return render(self.request, "dashboard/teachers/students.html", {"students": students})
+        students = Student.objects.filter(
+            student_class__subjects__teacher__user=self.request.user).distinct(
+            )
+        return render(self.request, "dashboard/teachers/students.html",
+                      {"students": students})
 students_view = StudentsView.as_view()
+
+
+class StudentsDetailView(PermissionAndLoginRequiredMixin, DetailView):
+    permission_required = "mainapp.teacher"
+    template_name = "dashboard/teachers/students_detail.html"
+    model = Student
+students_detailview = StudentsDetailView.as_view()

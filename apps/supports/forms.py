@@ -72,7 +72,6 @@ class EditClassForm(forms.ModelForm):
         return class_id
 
 
-
 class CreateClassForm(EditClassForm):
     class Meta:
         model = Class
@@ -148,6 +147,7 @@ class StudentsClassForm(forms.ModelForm):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         if self.request is not None:
-            self.fields["student_class"].queryset = Class.objects.filter(school__support=self.request.user)
+            self.fields["student_class"].queryset = Class.objects.filter(
+                school__support=self.request.user)
         else:
             self.fields["student_class"].queryset = Class.objects.none()

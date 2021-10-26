@@ -13,6 +13,9 @@ urlpatterns = [
     path("exams/<int:pk>/", views.setgradesview, name="exams-detail"),
     path("exams/<int:pk>/del/", views.deleteexamview, name="del-exam"),
     path("students/", views.students_view, name="students"),
+    path("students/<int:pk>",
+         views.students_detailview,
+         name="students-detail"),
     path("classes/", views.classesview, name="class"),
     path("profile/", views.ProfileView.as_view(), name="profile"),
 ]

@@ -36,7 +36,7 @@
                     {% for student in students %}
                     <div class="col-lg-3 col-md-6">
                         <div class="card border-0 bg-gradient-gray-dark">
-                            <a href="{{ student.get_absolute_url }}" class="text-light">
+                            <a href="{{ student.get_absolute_url_teachers }}" class="text-light">
                                 <div class="card-body">
                                     <div class="card-title">
                                         {{ student.user.name|title }}

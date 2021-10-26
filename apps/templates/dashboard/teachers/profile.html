@@ -31,7 +31,11 @@
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-                                <img src="{{ user.picture.url }}" class="rounded-circle">
+                                {% if user.picture %}
+                                    <img alt="Profile Picture" class="rounded-circle" src="{{ user.picture.url }}">
+                                {% else %}
+                                    <img alt="Profile Picture" class="rounded-circle" src="../../../media/empty-profile.jpg">
+                                {% endif %}
                             </a>
                         </div>
                     </div>

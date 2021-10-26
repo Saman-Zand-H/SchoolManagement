@@ -1,23 +1,20 @@
-from django.views.generic import View, TemplateView
+from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from collections import deque
 
-from .forms import (CreateSchoolForm,
-                    CreateClassForm,
-                    ChangePhonenumber,
-                    ChangeTeacherDetails, 
-                    EditClassForm,
-                    SelectClassesForm,
-                    CreateSubjectForm, StudentsClassForm)
+from .forms import (CreateSchoolForm, CreateClassForm, ChangePhonenumber,
+                    ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
+                    StudentsClassForm)
+from mainapp.models import (School, Class, Teacher, Subject, Student)
 from users.forms import SupportTeacherSignupForm, SupportStudentSignupForm
-from mainapp.models import School, Class, Teacher, Subject, Student
+from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 
-class CreateSchoolView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.user_type == "SS"
+class CreateSchoolView(PermissionAndLoginRequiredMixin, View):
+    permission_required = 'school.support'
 
     def get(self, *args, **kwargs):
         form = CreateSchoolForm()
@@ -38,11 +35,25 @@ class CreateSchoolView(LoginRequiredMixin, UserPassesTestMixin, View):
 createschool_view = CreateSchoolView.as_view()
 
 
-class HomeView(TemplateView):
-    template_name = "dashboard/support/index.html"
+class HomeView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
+    def get(self, *args, **kwargs):
+        school = School.objects.get(support=self.request.user)
+        context = {
+            "school": school,
+            "classes": school.class_school.all()[:4],
+            "teachers": school.teacher_school.all()[:4],
+        }
+        return render(self.request, "dashboard/support/index.html", context)
 
 
-class ClassesView(LoginRequiredMixin, View):
+home_view = HomeView.as_view()
+
+
+class ClassesView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
     def get(self, *args, **kwargs):
         school = School.objects.get(support=self.request.user)
         classes = Class.objects.filter(school=school)
@@ -64,10 +75,14 @@ class ClassesView(LoginRequiredMixin, View):
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support/classes.html",
                           context)
+
+
 classes_view = ClassesView.as_view()
 
 
-class ClassesDetailView(View):
+class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
     def get(self, *args, **kwargs):
         class_instance = Class.objects.get(pk=kwargs.get("pk"))
         form = EditClassForm(instance=class_instance, request=self.request)
@@ -75,30 +90,34 @@ class ClassesDetailView(View):
             "class": class_instance,
             "form": form,
         }
-        return render(self.request, "dashboard/support/classes_detail.html", context)
+        return render(self.request, "dashboard/support/classes_detail.html",
+                      context)
 
     def post(self, *args, **kwargs):
         class_instance = Class.objects.get(pk=kwargs.get("pk"))
         form = EditClassForm(instance=class_instance,
-                             request=self.request, data=self.request.POST)
+                             request=self.request,
+                             data=self.request.POST)
         if form.is_valid():
             chosen_subjects = form.cleaned_data.get("subjects")
             print(chosen_subjects)
-            class_instance.subjects.remove(*class_instance.subjects.exclude(pk__in=chosen_subjects))
+            class_instance.subjects.remove(*class_instance.subjects.exclude(
+                pk__in=chosen_subjects))
             form.save()
             messages.success(self.request, "Class created successfully")
             return redirect("support:classes-detail", pk=kwargs.get("pk"))
         else:
             context = {"form": form, "class": class_instance}
             messages.error(self.request, "Provided inputs are invalid.")
-            return render(self.request, "dashboard/support/classes_detail.html",
-                          context)
+            return render(self.request,
+                          "dashboard/support/classes_detail.html", context)
+
+
 classes_detailview = ClassesDetailView.as_view()
 
 
-class TeachersView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.user_type == "SS"
+class TeachersView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
 
     def get(self, *args, **kwargs):
         school = School.objects.get(support=self.request.user)
@@ -128,9 +147,8 @@ class TeachersView(LoginRequiredMixin, UserPassesTestMixin, View):
 teachers_view = TeachersView.as_view()
 
 
-class TeachersDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.user_type == "SS"
+class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
 
     def get(self, *args, **kwargs):
         teacher = Teacher.objects.get(pk=kwargs.get("pk"))
@@ -170,22 +188,21 @@ class TeachersDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
 teachers_detailview = TeachersDetailView.as_view()
 
 
-class SubjectsView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.user_type == "SS"
+class SubjectsView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
 
     def get(self, *args, **kwargs):
         context = {
             "subjects":
-            Subject.objects.filter(
-                teacher__school__support=self.request.user),
+            Subject.objects.filter(teacher__school__support=self.request.user),
             "form":
             CreateSubjectForm(request=self.request),
         }
         return render(self.request, "dashboard/support/subjects.html", context)
 
     def post(self, *args, **kwargs):
-        subject_form = CreateSubjectForm(request=self.request, data=self.request.POST)
+        subject_form = CreateSubjectForm(request=self.request,
+                                         data=self.request.POST)
         if subject_form.is_valid():
             subject_form.save()
             messages.success(self.request, "Subject created successfully.")
@@ -201,23 +218,33 @@ class SubjectsView(LoginRequiredMixin, UserPassesTestMixin, View):
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support/subjects.html",
                           context)
+
+
 subjects_view = SubjectsView.as_view()
 
 
-class SubjectsDetailView(LoginRequiredMixin, View):
+class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
     def get(self, *args, **kwargs):
         subject = Subject.objects.get(pk=kwargs["pk"])
         context = {
             "classes": subject.class_subjects.all(),
             "subject": subject,
         }
-        return render(self.request, "dashboard/support/subjects_detail.html", context)
+        return render(self.request, "dashboard/support/subjects_detail.html",
+                      context)
+
+
 subjects_detailview = SubjectsDetailView.as_view()
 
 
-class StudentsView(LoginRequiredMixin, View):
+class StudentsView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
     def get(self, *args, **kwargs):
-        students = Student.objects.filter(student_class__school__support=self.request.user)
+        students = Student.objects.filter(
+            student_class__school__support=self.request.user)
         context = {
             "form": SupportStudentSignupForm(request=self.request),
             "students": students,
@@ -244,23 +271,34 @@ class StudentsView(LoginRequiredMixin, View):
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support/students.html",
                           context)
+
+
 students_view = StudentsView.as_view()
 
 
-class StudentsDetailView(LoginRequiredMixin, View):
+class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
     def get(self, *args, **kwargs):
         current_student = Student.objects.get(pk=kwargs.get("pk"))
         context = {
-            "student_spec_form": StudentsClassForm(instance=current_student, request=self.request),
-            "phonenumber_form": ChangePhonenumber(instance=current_student.user),
-            "student": current_student,
+            "student_spec_form":
+            StudentsClassForm(instance=current_student, request=self.request),
+            "phonenumber_form":
+            ChangePhonenumber(instance=current_student.user),
+            "student":
+            current_student,
         }
-        return render(self.request, "dashboard/support/students_detail.html", context)
+        return render(self.request, "dashboard/support/students_detail.html",
+                      context)
 
     def post(self, *args, **kwargs):
         current_student = Student.objects.get(pk=kwargs.get("pk"))
-        student_spec_form = StudentsClassForm(instance=current_student, request=self.request, data=self.request.POST)
-        phonenumber_form = ChangePhonenumber(instance=current_student.user, data=self.request.POST)
+        student_spec_form = StudentsClassForm(instance=current_student,
+                                              request=self.request,
+                                              data=self.request.POST)
+        phonenumber_form = ChangePhonenumber(instance=current_student.user,
+                                             data=self.request.POST)
         if phonenumber_form.is_valid() and student_spec_form.is_valid():
             deque(
                 map(lambda forms: forms.save(),
@@ -273,5 +311,8 @@ class StudentsDetailView(LoginRequiredMixin, View):
                 "phonenumber_form": phonenumber_form,
                 "student": current_student,
             }
-        return render(self.request, "dashboard/support/students_detail.html", context)
+        return render(self.request, "dashboard/support/students_detail.html",
+                      context)
+
+
 students_detailview = StudentsDetailView.as_view()

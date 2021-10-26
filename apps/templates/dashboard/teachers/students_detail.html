@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% load customtags %}
 
-{% block title %} Students {% endblock title %}
+{% block title %} {{ student.user.name|title }} {% endblock title %}
 
 {% block content %}
 
@@ -18,7 +18,8 @@
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
                             </li>
                             <li class="breadcrumb-item"><a href="{% url 'support:home' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Students</li>
+                            <li class="breadcrumb-item"><a href="{% url 'support:students' %}">Students</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ student.user.name }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -42,19 +43,19 @@
                                     <div class="">* these fields are required</div>
                                     <div class="mt-2">
                                         {% if form.errors %}
-                                            <hr>
-                                            <h3>Invalid Inputs:</h3><br>
-                                            {% for field in form %}
-                                                {% for error in field.errors %}
-                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
-                                                {% endfor %}
-                                            {% endfor %}
-                                            <hr>
+                                        <hr>
+                                        <h3>Invalid Inputs:</h3><br>
+                                        {% for field in form %}
+                                        {% for error in field.errors %}
+                                        <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                        {% endfor %}
+                                        {% endfor %}
+                                        <hr>
                                         {% endif %}
                                         {% if form.non_field_errors %}
-                                            {% for error in field.non_field_errors %}
-                                                <p class="text-danger">- {{ error }}</p>
-                                            {% endfor %}
+                                        {% for error in field.non_field_errors %}
+                                        <p class="text-danger">- {{ error }}</p>
+                                        {% endfor %}
                                         {% endif %}
                                     </div>
                                     <form id="createClassForm" method="POST">
@@ -139,42 +140,26 @@
 <!-- Page content -->
 <div class="container-fluid mt--6">
     <div class="row">
-        <div class="col">
-            <div class="row">
-                {% if students.count > 0 %}
-                    {% for student in students %}
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card border-0 bg-gradient-gray-dark">
-                                <a href="{{ student.get_absolute_url_supports }}" class="text-light">
-                                    <div class="card-body">
-                                        <div class="card-title">
-                                            {{ student.user.name|title }}
-                                        </div>
-                                        <p class="card-text">
-                                            ID: {{ student.user.user_id }}<br>
-                                            Class: {{ student.student_class }}
-                                        </p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12">
-                        <div class="card border-0 bg-gradient-gray-dark text-center">
-                            <div class="card-body">
-                                <div class="card-title">
-                                    <strong class="text-white">No student found.</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+        <div class="col mx-auto"><br>
+            <div class="alert alert-default" role="alert">
+                <h2 class="text-white">Current Spec</h2>
+
+                <div class="my-4">
+                    Name: <strong>{{ student.user.name|title }}</strong>
+                </div>
+                <div class="my-4">
+                    ID: <strong>{{ student.user.user_id }}</strong>
+                </div>
+                <div class="my-4">
+                    Phonenumber: <strong>{{ student.user.phone_number }}</strong>
+                </div>
+                <div class="my-4">
+                    Class: <strong>{{ student.student_class }}</strong>
+                </div>
             </div>
         </div>
     </div>
     {% include "includes/footer.html" %}
-
 </div>
 
 {% endblock content %}

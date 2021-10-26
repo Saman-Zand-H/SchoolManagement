@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED = 1
 WORKDIR /usr/src/app
 
 RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libffi-dev
+    && apk add build-base postgresql-dev alpine-sdk gcc python3-dev musl-dev jpeg-dev zlib-dev libffi-dev
 
 RUN pip install -U pip
 RUN pip install -U setuptools

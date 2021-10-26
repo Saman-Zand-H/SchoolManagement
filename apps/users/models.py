@@ -1,8 +1,5 @@
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin,
-)
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.utils import timezone
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
@@ -23,7 +20,7 @@ def validate_file_extension(file, is_superuser: bool):
     import os
 
     ext = os.path.splitext(file.name)[1]
-    valid_exts = ["jpg", "png"]
+    valid_exts = [".jpg", ".png"]
     if not ext.lower() in valid_exts:
         if not is_superuser:
             logger.error(f"Unsupported file detected by: {file.name}.")
@@ -75,7 +72,8 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         return self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, False, False)
+                                 user_type, picture, False, False,
+                                 **extra_fields)
 
     def create_staff(
         self,
@@ -88,7 +86,8 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         return self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, False, True)
+                                 user_type, picture, False, True,
+                                 **extra_fields)
 
     def create_superuser(
         self,
@@ -101,7 +100,8 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         user = self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, True, True)
+                                 user_type, picture, True, True,
+                                 **extra_fields)
         user.save(using=self._db)
         return user
 
@@ -134,10 +134,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.first_name + " " + self.last_name
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         if self.picture:
             validate_file_extension(self.picture, self.is_superuser)
             validate_file_size(self.picture, self.is_superuser)
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.user_id

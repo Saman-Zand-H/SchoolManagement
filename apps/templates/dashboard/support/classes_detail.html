@@ -116,14 +116,13 @@
                     {% for subject in class.subjects.all %}
                         <div class="col-lg-3 col-md-6">
                             <div class="card border-0 bg-gradient-gray-dark">
-                            {% comment %} make this link work {% endcomment %}
                                 <a href="{{ teacher.get_absolute_url }}" class="text-light">
                                     <div class="card-body">
                                         <div class="card-title">
                                             {{ subject.name|title }}
                                         </div>
                                         <p class="card-text">
-                                            Teacher: <br>{{ subject.teacher.user.name|title }}<br>
+                                            Teacher: <br><strong>{{ subject.teacher.user.name|title }}</strong><br>
                                         </p>
                                     </div>
                                 </a>
@@ -158,44 +157,32 @@
                                 <th></th>
                                 <th>Name</th>
                                 <th>Picture</th>
-                                <th>Performance</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody class="list">
-                            {% for student in class.students.all %}
+                            {% for student in class.student_class.all %}
                                 <tr>    
+                                    <td>{{ forloop.counter }}</td>
                                     <th scope="row" class="name">
                                         <div class="media align-items-center">
-                                            <h1 class="text-dark mr-4"><a href="{{ class.get_absolute_url }}">{{ class.class_id }}</a></h1>
+                                            <h1 class="text-dark mr-4"><a href="{{ student.get_absolute_url_supports }}">{{ student.user.name|title }}</a></h1>
                                             <div class="media-body">
                                                 <span class="mb-0 text-sm"></span>
                                             </div>
                                         </div>
                                     </th>
-                                    <td class="budget">
-                                        {{ class.student_class.count }}
-                                    </td>
                                     <td>
                                         <div class="avatar-group">
-                                            <img alt="profile picture" src="{{ student.user.picture.url }}" class="rounded-circle">
-                                        </div>
-                                    </td>
-                                    <td class="status">
-                                        <span class="badge badge-dot mr-4">
-                                            <i class="bg-{{ student.get_average_grade_percent|set_average_grade_color }}"></i> 
-                                            {{ student.get_average_grade_percent }}%
-                                        </span>
-                                    </td>
-                                    <td class="completion">
-                                        <div class="d-flex align-items-center">
-                                            <span class="mr-2">{{ student.get_average_grade_percent }}%</span>
-                                            <div>
-                                                <div class="progress">
-                                                    <div class="progress-bar bg-{{ student.get_average_grade_percent|set_average_grade_color }}" role="progressbar" 
-                                                    aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{ student.get_average_grade_percent }}%;"></div>
-                                                </div>
-                                            </div>
+                                            {% if class.student_class.all.exists %}
+                                            {% for student in class|get_students_class_header %}
+                                            <a href="{{ student.get_absolute_url_supports }}" class="avatar avatar-sm" data-toggle="tooltip"
+                                                data-original-title="{{ student.user.name }}">
+                                                <img alt="profile picture" src="{{ student.user.picture.url }}" class="rounded-circle">
+                                            </a>
+                                            {% endfor %}
+                                            {% else %}
+                                            <h3>No student in this class</h3>
+                                            {% endif %}
                                         </div>
                                     </td>
                                 </tr>

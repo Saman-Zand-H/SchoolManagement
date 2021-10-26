@@ -14,20 +14,21 @@ def filter_by_timestamp(since, till):
         return None
 
 
-def loop_through_month_number(month_number):
+def loop_through_month_number(month: int):
     """
     Takes care of negative numbers and numbers greater than 12 by updating the year
     """
     year = date.today().year
 
-    if month_number >= 13:
-        return [(month_number % 13) + 1, year + 1]
-    elif month_number < 0:
-        return [(month_number % 13), year - 1]
-    elif month_number == 0:
-        return [month_number + 1, year]
-    else:
-        return [month_number, year]
+    if month >= 13:
+        month = (month % 13) + 1
+        year += 1
+    elif month < 0:
+        month %= 13
+        year -= 1
+    elif month == 0:
+        month += 1
+    return (year, month)
 
 
 def get_month_from_number(number):
