@@ -47,6 +47,27 @@
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
+                                <div class="mt-2 mx-auto">
+                                    {% if formset.errors %}
+                                        <hr>
+                                        <h3>Invalid Inputs:</h3><br>
+                                        {% for form in formset %}
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        <hr>
+                                    {% endif %}
+                                    {% if formset.non_field_errors %}
+                                        {% for form in formset %}
+                                            {% for error in form.non_field_errors %}
+                                                <p class="text-danger">- {{ error }}</p>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                                 <div class="table-responsive">
                                     <table class="table table-dark">
                                         <thead>
@@ -152,8 +173,13 @@
                                     </td>
                                     <td>
                                         <div class="avatar-group">
-                                            <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="{{ grade.student.user.name }}">
-                                                <img alt="Image placeholder" src="">
+                                            <a href="{{ grade.student.get_absolute_url_teachers }}" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="{{ grade.student.user.name }}">
+                                                <img alt="Image placeholder" 
+                                                     {% if student.user.picture is not None %} 
+                                                         src="{{ grade.student.user.picture.url }}" 
+                                                     {% else %} 
+                                                     src="../../../../media/empty-profile.jpg"
+                                                     {% endif %}>
                                             </a>
                                         </div>
                                     </td>
@@ -183,4 +209,4 @@
 {% endblock content %}
 
 <!-- Specific JS goes HERE -->
-{% block javascripts %} {% endblock javascripts %}
+{% block javascripts %}  {% endblock javascripts %}

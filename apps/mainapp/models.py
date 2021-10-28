@@ -46,8 +46,8 @@ class Teacher(models.Model):
     school = models.ForeignKey("School",
                                on_delete=models.CASCADE,
                                related_name="teacher_school")
-    degree = models.CharField(max_length=100)
-    university = models.CharField(max_length=100)
+    degree = models.CharField(max_length=100, blank=True)
+    university = models.CharField(max_length=100, blank=True)
 
     class Meta:
         permissions = (("teacher", "has teachers' permissions"), )
@@ -103,8 +103,7 @@ class Student(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name="student_class",
-        blank=True,
-    )
+        blank=True)
 
     def __str__(self):
         return self.user.user_id

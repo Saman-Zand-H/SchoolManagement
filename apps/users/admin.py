@@ -18,6 +18,7 @@ class CustomAdmin(UserAdmin):
                     "last_name",
                     "phone_number",
                     "picture",
+                    "about",
                 )
             },
         ),
@@ -44,6 +45,7 @@ class CustomAdmin(UserAdmin):
                 "picture",
                 "password1",
                 "password2",
+                "about",
             ),
             "classes":
             "wide",

@@ -174,14 +174,14 @@
                                     <td>
                                         <div class="avatar-group">
                                             {% if class.student_class.all.exists %}
-                                            {% for student in class|get_students_class_header %}
-                                            <a href="{{ student.get_absolute_url_supports }}" class="avatar avatar-sm" data-toggle="tooltip"
-                                                data-original-title="{{ student.user.name }}">
-                                                <img alt="profile picture" src="{{ student.user.picture.url }}" class="rounded-circle">
-                                            </a>
-                                            {% endfor %}
+                                                {% for student in class|get_students_class_header %}
+                                                <a href="{{ student.get_absolute_url_supports }}" class="avatar avatar-sm" data-toggle="tooltip"
+                                                    data-original-title="{{ student.user.name }}">
+                                                    <img alt="profile picture" src="{{ student.user.picture.url }}" class="rounded-circle">
+                                                </a>
+                                                {% endfor %}
                                             {% else %}
-                                            <h3>No student in this class</h3>
+                                                <h3>No student in this class</h3>
                                             {% endif %}
                                         </div>
                                     </td>

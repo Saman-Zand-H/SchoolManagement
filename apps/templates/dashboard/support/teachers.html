@@ -50,7 +50,7 @@
                                             <hr>
                                         {% endif %}
                                         {% if form.non_field_errors %}
-                                            {% for error in field.non_field_errors %}
+                                            {% for error in form.non_field_errors %}
                                                 <p class="text-danger">- {{ error }}</p>
                                             {% endfor %}
                                         {% endif %}

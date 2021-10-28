@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, get_user
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.db.models import Q
@@ -73,7 +73,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
         context = {
             "classes": classes,
         }
-        return render(self.request, "dashboard/teachers/class.html", context)
+        return render(self.request, "dashboard/teachers/classes.html", context)
 classesview = ClassesView.as_view()
 
 
@@ -132,7 +132,7 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
                                 full_score=full_score,
                                 timestamp=timestamp,
                                 teacher=teacher)
-            messages.success(self.request, "Exam created successfully")
+            messages.success(self.request, "Exam created successfully.")
             return redirect("teachers:exams")
 examslistview = ExamsListView.as_view()
 
@@ -213,12 +213,16 @@ class SetGradesView(PermissionAndLoginRequiredMixin, View):
         if formset.is_valid():
             try:
                 formset.save()
-                messages.success(self.request, "Grades submitted successfully")
+                messages.success(self.request, "Grades submitted successfully.")
                 return redirect("teachers:exams-detail", pk=exam.pk)
             except ValidationError:
-                messages.error(self.request,
-                               "Grades cannot exceed the full score")
+                messages.error(self.request, "Grades cannot exceed the full score.")
                 return redirect("teachers:exams-detail", pk=exam.pk)
+        else:
+            grades = exam.grade_exam.all().order_by("student")
+            context = {"exam": exam, "grades": grades, "formset": formset}
+            messages.error(self.request, "Provided inputs are invalid.")
+            return render(self.request, "dashboard/teachers/grades.html", context)
 setgradesview = SetGradesView.as_view()
 
 
@@ -234,10 +238,13 @@ class ProfileView(PermissionAndLoginRequiredMixin, View):
         form = SetUserBiographyForm(self.request.POST)
         if form.is_valid():
             about = form.cleaned_data.get("about")
-            user = get_user_model().objects.get(pk=self.request.user.pk)
+            user = get_user(self.request)
             user.about = about
             user.save()
-            messages.success(self.request, "About Me updated successfully")
+            messages.success(self.request, "User bio updated successfully.")
+            return redirect("teachers:profile")
+        else:
+            messages.error(self.request, "Provided inputs are invalid.")
             return redirect("teachers:profile")
 profileview = ProfileView.as_view()
 

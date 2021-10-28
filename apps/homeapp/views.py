@@ -13,6 +13,4 @@ class HomePageView(TemplateView):
             context["school"] = School.objects.filter(
                 support=self.request.user)
         return context
-
-
 homepageview = HomePageView.as_view()

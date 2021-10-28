@@ -134,10 +134,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.first_name + " " + self.last_name
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         if self.picture:
             validate_file_extension(self.picture, self.is_superuser)
             validate_file_size(self.picture, self.is_superuser)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.user_id
