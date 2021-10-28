@@ -134,6 +134,9 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
                                 teacher=teacher)
             messages.success(self.request, "Exam created successfully.")
             return redirect("teachers:exams")
+        else:
+            messages.error(self.request, "Provided inputs are invalid.")
+            return render(self.request, "dashboard/teachers/exams.html", {"form": form})
 examslistview = ExamsListView.as_view()
 
 

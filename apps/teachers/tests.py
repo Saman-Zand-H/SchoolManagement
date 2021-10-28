@@ -174,7 +174,7 @@ def test_exams_list_page_is_proccessed_as_expected(client, teacher_1):
     assertTemplateUsed(response, "dashboard/teachers/exams.html")
 
 
-def test_create_exam(client, teacher_1, class_1, subject_1):
+def test_create_exam_successful(client, teacher_1, class_1, subject_1):
     client.force_login(teacher_1.user)
 
     assert Exam.objects.count() == 0
@@ -200,7 +200,28 @@ def test_create_exam(client, teacher_1, class_1, subject_1):
     assert created_exam.subject == subject_1
 
 
-def test_set_exam_grades(client, teacher_1, class_1, subject_1, student_1):
+def test_create_exam_unsuccessful(client, teacher_1):
+    client.force_login(teacher_1.user)
+
+    assert Exam.objects.count() == 0
+    url = reverse("teachers:exams")
+    data = {
+        "subject": "lakjlkdjf",
+        "exam_class": 255252525251,
+        "teacher": 554565852,
+        "full_score": 20.0,
+        "timestamp": "03/031919",
+    }
+    response = client.post(url, data)
+    messages = [*get_messages(response.wsgi_request)]
+
+    assert Exam.objects.count() == 0
+    assert response.status_code == 200
+    assertTemplateUsed(response, "dashboard/teachers/exams.html")
+    assert str(messages[-1]) == "Provided inputs are invalid."
+
+
+def test_set_exam_grades_successful(client, teacher_1, class_1, subject_1, student_1):
     client.force_login(teacher_1.user)
 
     exams_url = reverse("teachers:exams")
@@ -242,6 +263,61 @@ def test_set_exam_grades(client, teacher_1, class_1, subject_1, student_1):
     assert grade.exam == exam
     assert grade.student == student_1
     assert grade.grade == 0.0
+
+
+def test_set_exam_grades_unsuccessful(client, teacher_1, class_1, subject_1, student_1):
+    client.force_login(teacher_1.user)
+
+    exams_url = reverse("teachers:exams")
+    data = {
+        "subject": class_1.pk,
+        "exam_class": subject_1.pk,
+        "teacher": teacher_1,
+        "full_score": 20.0,
+        "timestamp": "04/03/2020",
+    }
+    client.post(exams_url, data)
+    exam = Exam.objects.last()
+    
+    url = reverse("teachers:exams-detail", kwargs={"pk": exam.pk})
+    assert url == "/teachers/exams/3/"
+    assert resolve(url).func.__name__ == SetGradesView.__name__
+    response = client.get(url)
+    assert response.status_code == 200
+    assertTemplateUsed(response, "dashboard/teachers/grades.html")
+
+    assert exam.grade_exam.count() == 0
+    data = {"form-TOTAL_FORMS": 1,
+            "form-INITIAL_FORMS": 0,
+            "form-MIN_NUM_FORMS": 0,
+            "form-MAX_NUM_FORMS": 1,
+            "form-0-id": '',
+            "form-0-grade": 21.0,       # Invalid input
+            "form-0-student": student_1.pk,
+            "form-0-exam": exam.pk}
+    response = client.post(url, data)
+    messages = [*get_messages(response.wsgi_request)]
+
+    assert str(messages[-1]) == "Grades cannot exceed the full score."
+    assert response.status_code == 302
+    assertRedirects(response, url)
+    assert exam.grade_exam.count() == 0
+
+    data = {"form-TOTAL_FORMS": 1,
+            "form-INITIAL_FORMS": 0,
+            "form-MIN_NUM_FORMS": 0,
+            "form-MAX_NUM_FORMS": 1,
+            "form-0-id": '',
+            "form-0-grade": 20.0,
+            "form-0-student": "jlakjsldfm,asn",         # Invalid input
+            "form-0-exam": 25754789878}         # Invalid input
+    response = client.post(url, data)
+    messages = [*get_messages(response.wsgi_request)]
+
+    assert str(messages[-1]) == "Provided inputs are invalid."
+    assert response.status_code == 200
+    assertTemplateUsed(response, "dashboard/teachers/grades.html")
+    assert exam.grade_exam.count() == 0
 
 
 def test_delete_exam(client, teacher_1, class_1, subject_1, student_1):

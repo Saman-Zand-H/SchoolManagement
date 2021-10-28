@@ -45,6 +45,23 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
+                                    <div class="mt-2 mx-auto">
+                                        {% if form.errors %}
+                                            <hr>
+                                            <h3>Invalid Inputs:</h3><br>
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                                {% endfor %}
+                                            {% endfor %}
+                                            <hr>
+                                        {% endif %}
+                                        {% if form.non_field_errors %}
+                                            {% for error in form.non_field_errors %}
+                                                <p class="text-danger">- {{ error }}</p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
                                     <form 
                                         id="addExamForm" 
                                         method="POST" 
