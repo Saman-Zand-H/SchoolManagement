@@ -21,9 +21,14 @@
               <div class="text-center mb-4">
                 <h3 class="display-3">ACCESS DENIED</h3>
               </div><br>
+              {% if user.user_type == "SS" and not user.school_support %}
+                <div class="text-center mb-4">
+                  You must <a href="{% url 'support:create-school' %}">register your school</a>.
+                </div>
+              {% endif %}
 
               <div class="text-center mb-4">
-                <a href="{% url 'home:home' %}">Click here to get back to home page.</a>
+                Click here to <a href="{% url 'home:home' %}">get back to home page</a>.
               </div>
 
             </div>

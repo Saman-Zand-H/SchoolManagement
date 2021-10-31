@@ -9,13 +9,10 @@ class CreateSchoolForm(forms.ModelForm):
         model = School
         fields = ["name", "support"]
         widgets = {
-            "name":
-            forms.TextInput(
+            "name": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "the name of your school",
-                }),
-        }
+                    "placeholder": "the name of your school"})}
 
     def clean_name(self):
         name = self.cleaned_data.get("name")
@@ -28,11 +25,6 @@ class CreateSchoolForm(forms.ModelForm):
         init = super().__init__(*args, **kwargs)
         self.fields["support"] = forms.IntegerField(required=False)
         return init
-
-    def save(self, request, *args, **kwargs):
-        save = super().save(request, *args, **kwargs)
-        save.support = request.user
-        return save
 
 
 class EditClassForm(forms.ModelForm):

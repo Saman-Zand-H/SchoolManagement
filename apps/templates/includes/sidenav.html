@@ -54,7 +54,7 @@
                                 <span class="nav-link-text">Exams</span>
                             </a>
                         </li>
-                    {% else %}
+                    {% elif user.user_type == "SS" and user.school_support %}
                         <li class="nav-item">
                             <a class="nav-link {% if 'index' in segment %} active {% endif %}" href="{% url 'support:home' %}">
                                 <i class="fas fa-tachometer-alt text-primary"></i>

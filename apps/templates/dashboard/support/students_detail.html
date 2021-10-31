@@ -25,108 +25,29 @@
                 </div>
                 <div class="col-lg-6 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" data-toggle="modal" data-target="#createClass" class="btn btn-sm btn-neutral">
-                        <i class="fas fa-plus"></i> New
+                    <button type="button" data-toggle="modal" data-target="#deleteExam"
+                        class="btn btn-sm btn-danger text-white border-danger">
+                        <i class="fas fa-trash-alt"></i>
+                        Delete
                     </button>
                     <!-- Add Grades Modal -->
-                    <div class="modal text-left fade" id="createClass" tabindex="-1" role="dialog"
-                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal text-left fade" id="deleteExam" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create A New Teacher</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">Delete Exam</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="">* these fields are required</div>
-                                    <div class="mt-2">
-                                        {% if form.errors %}
-                                        <hr>
-                                        <h3>Invalid Inputs:</h3><br>
-                                        {% for field in form %}
-                                        {% for error in field.errors %}
-                                        <p class="text-danger">- {{ field.label }}: {{ error }}</p>
-                                        {% endfor %}
-                                        {% endfor %}
-                                        <hr>
-                                        {% endif %}
-                                        {% if form.non_field_errors %}
-                                        {% for error in field.non_field_errors %}
-                                        <p class="text-danger">- {{ error }}</p>
-                                        {% endfor %}
-                                        {% endif %}
-                                    </div>
-                                    <form id="createClassForm" method="POST">
-                                        {% csrf_token %}
-
-                                        <div class="my-4">
-                                            {{ form.username.label }}*
-                                            {{ form.username }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.first_name.label }}*
-                                            {{ form.first_name }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.last_name.label }}*
-                                            {{ form.last_name }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.password1.label }}*
-                                            {{ form.password1 }}
-                                            <small>
-                                                <ul class="text-black-50">
-                                                    <li>Your password can’t be too similar to your other personal
-                                                        information.</li>
-                                                    <li>Your password must contain at least 8 characters.</li>
-                                                    <li>Your password can’t be a commonly used password.</li>
-                                                    <li>Your password can’t be entirely numeric.</li>
-                                                </ul>
-                                            </small>
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.password2.label }}*
-                                            {{ form.password2 }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.phone_number.label }}*
-                                            {{ form.phone_number }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.email.label }}
-                                            {{ form.email }}
-                                        </div>
-
-                                        <div class="my-4">
-                                            {{ form.picture.label }}
-                                            {{ form.picture }}
-                                            <small>
-                                                <ul class="text-black-50">
-                                                    <li>The size of your file can't exceed 3MB.</li>
-                                                    <li>Supported extensions are .jpg and .png.</li>
-                                                </ul>
-                                            </small>
-                                        </div>
-                                        <hr>
-                                        <div class="my-4">
-                                            {{ form.student_class.label }}*
-                                            {{ form.student_class }}
-                                        </div>
-                                        <input name="user_type" value="S" type="hidden">
-                                    </form>
+                                <div class="model-body text-center">
+                                    Are You sure you want to delete this teacher PERMANENTLY?
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary"
-                                        onclick="$('#createClassForm').submit()">Create</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                    <a type="button" class="btn btn-danger text-white"
+                                        href="{% url 'support:students-del' student.user.pk %}">Yes</a>
                                 </div>
                             </div>
                         </div>

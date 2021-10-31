@@ -21,7 +21,7 @@ def validate_file_extension(file):
 
 
 def validate_file_size(file):
-    if file.size > 3 * 1024 * 1024:
+    if file.size > 3 * 1024 ** 2:
         raise forms.ValidationError("Maximum file size is 3MB.",
                                     code="invalid_filesize")
 
@@ -32,30 +32,25 @@ class BaseSignupForm(SignupForm):
         min_length=2,
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": "enter your first name",
-        }),
-    )
+            "placeholder": "enter your first name"}))
     last_name = forms.CharField(
         max_length=254,
         min_length=2,
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": "enter your last name",
-        }),
-    )
+            "placeholder": "enter your last name",}))
     user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES, required=False)
     picture = forms.ImageField(
-        widget=forms.FileInput(attrs={
-            "class": "form-control",
-        }),
         required=False,
         label="Avatar Picture",
-    )
+        validators=[validate_file_extension, validate_file_size],
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control",
+        }))
     phone_number = PhoneNumberField(widget=forms.TextInput(
         attrs={
             "class": "form-control",
-            "placeholder": "like 09xxxxxxxx"
-        }))
+            "placeholder": "like 09xxxxxxxx"}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,13 +93,6 @@ class BaseSignupForm(SignupForm):
             raise forms.ValidationError("Passwords should not be different.",
                                         code="invalid_confirm_password")
         return self.cleaned_data["password2"]
-
-    def clean_picture(self, *args, **kwargs):
-        picture = self.cleaned_data.get("picture")
-        if picture is not None:
-            validate_file_extension(picture)
-            validate_file_size(picture)
-        return picture
 
     def save(self, request):
         user = super().save(request)
@@ -150,21 +138,6 @@ class CustomLoginForm(LoginForm):
             }),
         )
         return user
-
-
-class SupportTeacherSignupForm(BaseSignupForm):
-    classes = forms.ModelMultipleChoiceField(
-        queryset=Class.objects.all(),
-        to_field_name="id",
-        widget=forms.CheckboxSelectMultiple(),
-    )
-
-    def __init__(self, *args, **kwargs):
-        request = kwargs.pop("request", None)
-        super().__init__(*args, **kwargs)
-        if request is not None:
-            self.fields["classes"].queryset = Class.objects.filter(
-                school__support=request.user)
 
 
 class SupportStudentSignupForm(BaseSignupForm):

@@ -5,8 +5,8 @@ from django.contrib.messages import get_messages
 import pytest
 from pytest_django.asserts import (assertTemplateNotUsed, 
                                    assertTemplateUsed, 
-                                   assertTemplateNotUsed, 
                                    assertRedirects)
+from datetime import date
 
 from .views import (DashboardView, 
                     ExamsListView, 
@@ -25,7 +25,7 @@ from mainapp.models import (Teacher,
                             Grade)
 
 
-################## Factories ##################
+################## Fixture Factories ##################
 @pytest.fixture
 def school_factory(db):
     def create_support(
@@ -41,8 +41,7 @@ def school_factory(db):
             last_name=last_name,
             phone_number=phone_number,
             password=password,
-            user_type="T",
-        )
+            user_type="T")
         school = School.objects.create(name=school_name, support=user)
         return school
     return create_support
@@ -106,6 +105,20 @@ def subject_factory(db):
     return create_subject
 
 
+@pytest.fixture
+def exam_factory(db):
+    def create_exam(subject,
+                    teacher,
+                    exam_class,
+                    timestamp=date(2021, 2, 2)):
+        exam = Exam.objects.create(subject=subject,
+                                    teacher=teacher,
+                                    exam_class=exam_class,
+                                    timestamp=timestamp)
+        return exam
+    return create_exam
+
+
 ################## Fixtures ##################
 @pytest.fixture
 def school_1(db, school_factory):
@@ -134,6 +147,11 @@ def class_1(db, class_factory, school_1, subject_1):
     return class_instance
 
 
+@pytest.fixture
+def exam_1(db, exam_factory, subject_1, teacher_1, class_1):
+    return exam_factory(subject_1, teacher_1, class_1)
+
+
 ################## Test Access ##################
 def test_teachers_homepage_is_proccessed_as_expected():
     url = reverse("teachers:home")
@@ -146,7 +164,6 @@ def test_authenticated_support_access_is_forbidden(client, school_1):
     url = reverse("teachers:home")
     assert get_user(client).is_authenticated == True, "login is not working"
     response = client.get(url)
-    assertTemplateNotUsed(response, "dashboard/teachers/index.html", "This template is used")
     assert response.status_code == 403, "permissions are not working correctly"
     assertTemplateUsed(response, "errors/403.html", "This template is not used")
 
@@ -179,13 +196,13 @@ def test_create_exam_successful(client, teacher_1, class_1, subject_1):
 
     assert Exam.objects.count() == 0
     url = reverse("teachers:exams")
-    data = {
-        "subject": class_1.pk,
-        "exam_class": subject_1.pk,
-        "teacher": teacher_1,
-        "full_score": 20.0,
-        "timestamp": "03/03/2020",
-    }
+    assert url == "/teachers/exams/"
+    assert resolve(url).func.__name__ == ExamsListView.__name__
+    data = {"subject": class_1.pk,
+            "exam_class": subject_1.pk,
+            "teacher": teacher_1,
+            "full_score": 20.0,
+            "timestamp": "03/03/2020"}
     response = client.post(url, data)
     messages = [*get_messages(response.wsgi_request)]
     created_exam = Exam.objects.last()
@@ -236,7 +253,7 @@ def test_set_exam_grades_successful(client, teacher_1, class_1, subject_1, stude
     exam = Exam.objects.last()
     
     url = reverse("teachers:exams-detail", kwargs={"pk": exam.pk})
-    assert url == "/teachers/exams/2/"
+    assert url == exam.get_absolute_url()
     assert resolve(url).func.__name__ == SetGradesView.__name__
     response = client.get(url)
     assert response.status_code == 200
@@ -280,8 +297,6 @@ def test_set_exam_grades_unsuccessful(client, teacher_1, class_1, subject_1, stu
     exam = Exam.objects.last()
     
     url = reverse("teachers:exams-detail", kwargs={"pk": exam.pk})
-    assert url == "/teachers/exams/3/"
-    assert resolve(url).func.__name__ == SetGradesView.__name__
     response = client.get(url)
     assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/teachers/grades.html")
@@ -320,24 +335,11 @@ def test_set_exam_grades_unsuccessful(client, teacher_1, class_1, subject_1, stu
     assert exam.grade_exam.count() == 0
 
 
-def test_delete_exam(client, teacher_1, class_1, subject_1, student_1):
+def test_delete_exam(client, teacher_1, student_1, exam_1):
     client.force_login(teacher_1.user)
 
-    assert Exam.objects.count() == 0
-    exams_url = reverse("teachers:exams")
-    data = {
-        "subject": class_1.pk,
-        "exam_class": subject_1.pk,
-        "teacher": teacher_1,
-        "full_score": 20.0,
-        "timestamp": "04/03/2020",
-    }
-    client.post(exams_url, data)
-    assert Exam.objects.count() == 1
-    exam = Exam.objects.last()
-
     assert Grade.objects.count() == 0
-    url = reverse("teachers:exams-detail", kwargs={"pk": exam.pk})
+    url = reverse("teachers:exams-detail", kwargs={"pk": exam_1.pk})
     data = {"form-TOTAL_FORMS": 1,
             "form-INITIAL_FORMS": 0,
             "form-MIN_NUM_FORMS": 0,
@@ -345,17 +347,19 @@ def test_delete_exam(client, teacher_1, class_1, subject_1, student_1):
             "form-0-id": '',
             "form-0-grade": 0.0,
             "form-0-student": student_1.pk,
-            "form-0-exam": exam.pk}
+            "form-0-exam": exam_1.pk}
     client.post(url, data)
     assert Grade.objects.count() == 1
 
-    url = reverse("teachers:del-exam", kwargs={"pk": exam.pk})
+    url = reverse("teachers:del-exam", kwargs={"pk": exam_1.pk})
+    assert url == f"/teachers/exams/{exam_1.pk}/del/"
+    assert resolve(url).func.__name__ == DeleteExamView.__name__
+
     response = client.get(url)
     messages = [*get_messages(response.wsgi_request)]
 
     assert response.status_code == 302
-    assertRedirects(response, exams_url)
-    assert resolve(url).func.__name__ == DeleteExamView.__name__
+    assertRedirects(response, reverse("teachers:exams"))
     assert str(messages[-1]) == "Exam is deleted successfully."
 
     assert Exam.objects.count() == 0
@@ -366,10 +370,11 @@ def test_classes_page(client, teacher_1):
     client.force_login(teacher_1.user)
 
     url = reverse("teachers:classes")
-    response = client.get(url)
-
-    assert response.status_code == 200
+    assert url == "/teachers/classes/"
     assert resolve(url).func.__name__ == ClassesView.__name__
+
+    response = client.get(url)
+    assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/teachers/classes.html")
 
 
@@ -377,10 +382,11 @@ def test_students_page(client, teacher_1, student_1):
     client.force_login(teacher_1.user)
 
     url = reverse("teachers:students")
-    response = client.get(url)
-
-    assert response.status_code == 200
+    assert url == "/teachers/students/"
     assert resolve(url).func.__name__ == StudentsView.__name__
+
+    response = client.get(url)
+    assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/teachers/students.html")
 
     url = reverse("teachers:students-detail", kwargs={"pk": student_1.pk})
@@ -395,10 +401,11 @@ def test_profile_page(client, teacher_1):
     client.force_login(teacher_1.user)
 
     url = reverse("teachers:profile")
-    response = client.get(url)
-
-    assert response.status_code == 200
+    assert url == "/teachers/profile/"
     assert resolve(url).func.__name__ == ProfileView.__name__
+
+    response = client.get(url)
+    assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/teachers/profile.html")
 
     assert get_user(client).about == ""

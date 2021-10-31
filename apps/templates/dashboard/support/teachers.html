@@ -55,7 +55,7 @@
                                             {% endfor %}
                                         {% endif %}
                                     </div>
-                                    <form id="createClassForm" method="POST">
+                                    <form id="createClassForm" method="POST" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         
                                         <div class="my-4">

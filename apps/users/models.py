@@ -3,6 +3,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.utils import timezone
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core.exceptions import ValidationError
 
 import logging
 
@@ -16,20 +17,20 @@ USER_TYPE_CHOICES = (
 )
 
 
-def validate_file_extension(file, is_superuser: bool):
+def validate_file_extension(file):
     import os
 
     ext = os.path.splitext(file.name)[1]
     valid_exts = [".jpg", ".png"]
     if not ext.lower() in valid_exts:
-        if not is_superuser:
-            logger.error(f"Unsupported file detected by: {file.name}.")
+        logger.error(f"Unsupported file detected for: {file.name}.")
+        raise ValidationError("Invalid file extension.")
 
 
-def validate_file_size(file, is_superuser):
+def validate_file_size(file):
     if file.size > 3 * 1024 * 1024:
-        if not is_superuser:
-            logger.error(f"Maximum image file size exceeded by: {file.name}")
+        logger.error(f"Maximum image file size exceeded for: {file.name}")
+        raise ValidationError("Unacceptable file size.")
 
 
 class CustomManager(BaseUserManager):
@@ -112,9 +113,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=254)
     phone_number = PhoneNumberField(blank=True, null=True)
     user_type = models.CharField(max_length=3, choices=USER_TYPE_CHOICES)
-    picture = models.ImageField(blank=True,
-                                upload_to="media",
-                                default="empty-profile.jpg")
+    picture = models.FileField(blank=True,
+                               upload_to="media",
+                               default="empty-profile.jpg",
+                               validators=[validate_file_extension, validate_file_size])
     about = models.TextField(blank=True, default="")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -131,13 +133,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"/users/{self.pk}/"
 
     def name(self):
-        return self.first_name + " " + self.last_name
-
-    def save(self, *args, **kwargs):
-        if self.picture:
-            validate_file_extension(self.picture, self.is_superuser)
-            validate_file_size(self.picture, self.is_superuser)
-        super().save(*args, **kwargs)
+        return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
         return self.user_id

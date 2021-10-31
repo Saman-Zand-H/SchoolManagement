@@ -1,20 +1,21 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import get_user_model
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 from collections import deque
 
 from .forms import (CreateSchoolForm, CreateClassForm, ChangePhonenumber,
                     ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
                     StudentsClassForm)
 from mainapp.models import (School, Class, Teacher, Subject, Student)
-from users.forms import SupportTeacherSignupForm, SupportStudentSignupForm
+from users.forms import BaseSignupForm, SupportStudentSignupForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 
-class CreateSchoolView(PermissionAndLoginRequiredMixin, View):
-    permission_required = 'school.support'
+class CreateSchoolView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self, *args, **kwargs):
+        return self.request.user.user_type == "SS"
 
     def get(self, *args, **kwargs):
         form = CreateSchoolForm()
@@ -24,14 +25,15 @@ class CreateSchoolView(PermissionAndLoginRequiredMixin, View):
     def post(self, *args, **kwargs):
         form = CreateSchoolForm(self.request.POST)
         if form.is_valid():
+            uncommited_form = form.save(commit=False)
+            uncommited_form.support = self.request.user
             form.save()
-            messages.success(self.request, "You registered successfully")
+            messages.success(self.request, "You registered successfully.")
             return redirect("home:home")
         else:
+            messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "account/register_school.html",
                           {"form": form})
-
-
 createschool_view = CreateSchoolView.as_view()
 
 
@@ -67,7 +69,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
         if form.is_valid():
             form.instance.school = school
             form.save()
-            messages.success(self.request, "Class created successfully")
+            messages.success(self.request, "Class created successfully.")
             return redirect("support:classes")
         else:
             classes = Class.objects.filter(school=school)
@@ -75,8 +77,6 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support/classes.html",
                           context)
-
-
 classes_view = ClassesView.as_view()
 
 
@@ -100,20 +100,28 @@ class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
                              data=self.request.POST)
         if form.is_valid():
             chosen_subjects = form.cleaned_data.get("subjects")
-            print(chosen_subjects)
             class_instance.subjects.remove(*class_instance.subjects.exclude(
                 pk__in=chosen_subjects))
             form.save()
-            messages.success(self.request, "Class created successfully")
+            messages.success(self.request, "Class created successfully.")
             return redirect("support:classes-detail", pk=kwargs.get("pk"))
         else:
             context = {"form": form, "class": class_instance}
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request,
                           "dashboard/support/classes_detail.html", context)
-
-
 classes_detailview = ClassesDetailView.as_view()
+
+
+class DeleteClass(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
+    def get(self, *args, **kwargs):
+        chosen_class = Class.objects.get(pk=kwargs.get("pk"))
+        chosen_class.delete()
+        messages.success(self.request, "Class was deleted successfully.")
+        return redirect("support:classes")
+deleteclass_view = DeleteClass.as_view()
 
 
 class TeachersView(PermissionAndLoginRequiredMixin, View):
@@ -122,18 +130,17 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         school = School.objects.get(support=self.request.user)
         teachers = Teacher.objects.filter(school=school)
-        form = SupportTeacherSignupForm(request=self.request)
+        form = BaseSignupForm()
         context = {"teachers": teachers, "form": form}
         return render(self.request, "dashboard/support/teachers.html", context)
 
     def post(self, *args, **kwargs):
-        form = SupportTeacherSignupForm(self.request.POST,
-                                        request=self.request)
+        form = BaseSignupForm(self.request.POST, self.request.FILES)
         if form.is_valid():
             school = School.objects.get(support=self.request.user)
             user = form.save(self.request)
             Teacher.objects.create(user=user, school=school)
-            messages.success(self.request, "Teacher created successfully")
+            messages.success(self.request, "Teacher created successfully.")
             return redirect("support:teachers")
         else:
             school = School.objects.get(support=self.request.user)
@@ -181,10 +188,8 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
         else:
             messages.error(
                 self.request,
-                "Invalid input detected. Empty inputs are not allowed.")
+                "Invalid input detected. Consider that empty inputs are not allowed.")
             return redirect("support:teachers-detail", pk=kwargs.get("pk"))
-
-
 teachers_detailview = TeachersDetailView.as_view()
 
 
@@ -218,8 +223,6 @@ class SubjectsView(PermissionAndLoginRequiredMixin, View):
             messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support/subjects.html",
                           context)
-
-
 subjects_view = SubjectsView.as_view()
 
 
@@ -234,9 +237,18 @@ class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
         }
         return render(self.request, "dashboard/support/subjects_detail.html",
                       context)
-
-
 subjects_detailview = SubjectsDetailView.as_view()
+
+
+class DeleteSubject(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
+    def get(self, *args, **kwargs):
+        subject = Subject.objects.get(pk=kwargs.get("pk"))
+        subject.delete()
+        messages.success(self.request, "Subject deleted successfully.")
+        return redirect("support:subjects")
+deletesubject_view = DeleteSubject.as_view()
 
 
 class StudentsView(PermissionAndLoginRequiredMixin, View):
@@ -252,14 +264,13 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
         return render(self.request, "dashboard/support/students.html", context)
 
     def post(self, *args, **kwargs):
-        form = SupportStudentSignupForm(self.request.POST,
-                                        request=self.request)
+        form = SupportStudentSignupForm(self.request.POST, self.request.FILES)
         if form.is_valid():
             chosen_class_id = form.cleaned_data.get("student_class").id
             chosen_class = Class.objects.get(pk=chosen_class_id)
             user = form.save(self.request)
             Student.objects.create(user=user, student_class=chosen_class)
-            messages.success(self.request, "Student created successfully")
+            messages.success(self.request, "Student created successfully.")
             return redirect("support:students")
         else:
             students = Student.objects.filter(
@@ -313,6 +324,28 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
             }
         return render(self.request, "dashboard/support/students_detail.html",
                       context)
-
-
 students_detailview = StudentsDetailView.as_view()
+
+
+class BaseDeleteUser(PermissionAndLoginRequiredMixin, View):
+    permission_required = "mainapp.support"
+
+    def get(self, *args, **kwargs):
+        user = get_user_model().objects.get(pk=kwargs.get("pk"))
+        user.delete()
+
+
+class DeleteTeacher(BaseDeleteUser):
+    def get(self, *args, **kwargs):
+        super().get(*args, **kwargs)
+        messages.success(self.request, "Teacher deleted successfully.")
+        return redirect("support:teachers")
+deleteteacher_view = DeleteTeacher.as_view()
+
+
+class DeleteStudent(BaseDeleteUser):
+    def get(self, *args, **kwargs):
+        super().get(*args, **kwargs)
+        messages.success(self.request, "Student deleted successfully.")
+        return redirect("support:students")
+deletestudent_view = DeleteStudent.as_view()

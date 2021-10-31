@@ -3,12 +3,10 @@ from django.db.models import Avg, Q
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
 from datetime import date
 from statistics import mean
-from typing import List
 from decimal import Decimal
 from functools import partial
 from operator import is_not
@@ -23,7 +21,7 @@ class School(models.Model):
         get_user_model(),
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="school_support",
         limit_choices_to={"user_type": "SS"},
     )
