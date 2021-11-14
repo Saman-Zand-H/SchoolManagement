@@ -11,10 +11,11 @@ urlpatterns = [
 
     # User Management 
     path('accounts/', include("allauth.urls")),
+    path('users/', include("users.urls")),
 
     # Local Apps
-    path("teachers/", include("teachers.urls", namespace="teachers")),
-    path("support/", include("supports.urls", namespace="support")),
+    path("teacher/", include("teachers.urls", namespace="teachers")),
+    path("support/", include("supports.urls", namespace="supports")),
     path("", include("homeapp.urls", namespace="home")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,6 +1,8 @@
-<label for="#subjectFilter">Subject</label>
+{% load i18n %}
+
+<label for="#subjectFilter">{% trans 'Subject' %}</label>
 <select class="form-control my-1" id="subjectFilter" name="subjectFilter">
-    <option value="">All</option>
+    <option value="">{% trans 'All' %}</option>
     {% for subject in subjects %}
         <option value="{{ subject.pk }}">{{ subject.name }}</option>
     {% endfor %}

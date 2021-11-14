@@ -2,8 +2,9 @@
 
 {% load crispy_forms_tags %} 
 {% load customtags %} 
+{% load i18n %} 
 
-{% block title %} Grades {% endblock title %} 
+{% block title %} {% trans 'Grades' %} {% endblock title %} 
 
 {% block content %}
 
@@ -12,13 +13,13 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">Grades</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Grades' %}</h6>
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'teachers:exams' %}">Exams</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Grades</li>
+                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'teachers:exams' %}">{% trans 'Exams' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Grades' %}</li>
                         </ol>
                     </nav>
                 </div>
@@ -27,22 +28,22 @@
                     <button type="button" data-toggle="modal" data-target="#addGrades" class="btn btn-sm btn-neutral">
                         {% if exam.grade_exam.all %}
                             <i class="fas fa-pen"></i>
-                            Edit
+                            {% trans 'Edit' %}
                         {% else %}
                             <i class="fas fa-plus"></i>
-                            New
+                            {% trans 'New' %}
                         {% endif %}
                     </button>
                     <button type="button" data-toggle="modal" data-target="#deleteExam" class="btn btn-sm btn-danger text-white border-danger">
                        <i class="fas fa-trash-alt"></i>
-                       Delete
+                       {% trans 'Delete' %}
                     </button>
                     <!-- Add Grades Modal -->
                     <div class="modal text-left fade" id="addGrades" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Add Grades</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Add Grades' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
@@ -58,23 +59,21 @@
                                                 {% endfor %}
                                             {% endfor %}
                                         {% endfor %}
-                                        <hr>
-                                    {% endif %}
-                                    {% if formset.non_field_errors %}
                                         {% for form in formset %}
                                             {% for error in form.non_field_errors %}
                                                 <p class="text-danger">- {{ error }}</p>
                                             {% endfor %}
                                         {% endfor %}
+                                        <hr>
                                     {% endif %}
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-dark">
                                         <thead>
                                             <tr>
-                                                <td>ID</td>
-                                                <td>Name</td>
-                                                <td>Grade</td>
+                                                <td>{% trans 'ID' %}</td>
+                                                <td>{% trans 'Name' %}</td>
+                                                <td>{% trans 'Grade' %}</td>
                                             </tr>
                                         </thead>
                                         <form method="POST" action="{{ exam.get_absolute_url }}" id="submitGrades">
@@ -82,27 +81,27 @@
                                             {% csrf_token %}
                                             <tbody>
                                                 {% for form in formset %}
-                                                <tr>
-                                                    <td>{{ forloop.counter }}</td>
-                                                    <td>
-                                                        {{ exam.exam_class.student_class.all|getuserbyindex:forloop.counter }}
-                                                    </td>
-                                                    <td>
-                                                        {{ form.id }} 
-                                                        {{ form.grade }}
-                                                        <input type="hidden" name="{{ form.student.html_name }}" value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}">
-                                                        <input type="hidden" name="{{ form.exam.html_name }}" value="{{ exam.pk }}">
-                                                        <input type="hidden" name="{{ form.subject.html_name }}" value="{{ exam.subject.pk }}">
-                                                    </td>
-                                                </tr>
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>
+                                                            {{ exam.exam_class.student_class.all|getuserbyindex:forloop.counter }}
+                                                        </td>
+                                                        <td>
+                                                            {{ form.id }} 
+                                                            {{ form.grade }}
+                                                            <input type="hidden" name="{{ form.student.html_name }}" value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}">
+                                                            <input type="hidden" name="{{ form.exam.html_name }}" value="{{ exam.pk }}">
+                                                            <input type="hidden" name="{{ form.subject.html_name }}" value="{{ exam.subject.pk }}">
+                                                        </td>
+                                                    </tr>
                                                 {% endfor %}
                                             </tbody>
                                         </form>
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick="$('#submitGrades').submit()">Add</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                    <button type="button" class="btn btn-primary" onclick="$('#submitGrades').submit()">{% trans 'Add' %}</button>
                                 </div>
                             </div>
                         </div>
@@ -111,17 +110,17 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Delete Exam</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Delete Exam' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="model-body text-center">
-                                    Are You sure you want to delete this exam PERMANENTLY?
+                                    {% trans 'Are You sure you want to delete this exam PERMANENTLY?' %}
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                    <a type="button" class="btn btn-danger text-white" href="{% url 'teachers:del-exam' exam.pk %}">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'No' %}</button>
+                                    <a type="button" class="btn btn-danger text-white" href="{% url 'teachers:del-exam' exam.pk %}">{% trans 'Yes' %}</a>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +138,7 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">Grades</h3>
+                    <h3 class="mb-0">{% trans 'Grades' %}</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
@@ -147,10 +146,10 @@
                         <thead class="thead-light">
                             <tr>
                                 <th scope="col" class="sort" data-sort="name"></th>
-                                <th scope="col" class="sort" data-sort="budget">Name</th>
-                                <th scope="col" class="sort" data-sort="status">Grade</th>
-                                <th scope="col">Users</th>
-                                <th scope="col" class="sort" data-sort="completion">Performance</th>
+                                <th scope="col" class="sort" data-sort="budget">{% trans 'Name' %}</th>
+                                <th scope="col" class="sort" data-sort="status">{% trans 'Grade' %}</th>
+                                <th scope="col">{% trans 'Student' %}</th>
+                                <th scope="col" class="sort" data-sort="completion">{% trans 'Performance' %}</th>
                             </tr>
                         </thead>
                         <tbody class="list">
@@ -179,7 +178,8 @@
                                                          src="{{ grade.student.user.picture.url }}" 
                                                      {% else %} 
                                                      src="../../../../media/empty-profile.jpg"
-                                                     {% endif %}>
+                                                     {% endif %}
+                                                >
                                             </a>
                                         </div>
                                     </td>

@@ -1,0 +1,101 @@
+{% extends 'layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load customtags %}
+{% load i18n %}
+
+{% block title %} {% trans 'Support' %} {% endblock title %}
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Support' %}</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Support' %}</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col mx-auto"><br>
+            <div class="alert alert-default" role="alert">
+                <div class="my-1 mx-3 pb-1">
+                    <div class="row mx-auto">
+                        <div class="col-lg-3 my-md-3">
+                            <div class="mt-2">
+                                <i class="fab fa-telegram fa-2x"></i>&nbsp;
+                                <a href="https://telegram.me/ContactDjS/" class="text-light text-lg">@ContactDjS</a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 my-md-3">
+                            <div class="mt-2">
+                                <i class="fas fa-phone-volume fa-2x"></i>&nbsp;
+                                <a href="tel:+989226761449" class="text-light text-lg">+98 922 676 1449</a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 my-md-3">
+                            <div class="mt-2">
+                                <i class="fas fa-envelope fa-2x"></i>&nbsp;
+                                <a href="mailto:tnsperuse@gmail.com" class="text-light text-lg">tnsperuse@gmail.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <hr>
+                    <div class="my-1">
+                        <h2 class="text-white">{% trans 'Send us your issues and suggestions.' %}</h2>
+
+                        <div class="my-2">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <p class="text-warning">- {{ field }}: {{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <p class="text-warning">- {{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="my-4">
+                                {{ form.name.label }}
+                                {{ form.name }}
+                            </div>
+
+                            <div class="my-4">
+                                {{ form.email.label }}
+                                {{ form.email }}
+                            </div>
+
+                            <div class="my-4">
+                                {{ form.text.label }}
+                                {{ form.text }}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+    {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %} {% endblock javascripts %}

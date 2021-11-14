@@ -1,5 +1,5 @@
 from django import forms
-from decimal import Decimal
+from django.utils.translation import gettext as _
 
 from mainapp.models import *
 
@@ -32,17 +32,12 @@ class SetGradeForm(forms.ModelForm):
         }
 
     def __init__(self, **kwargs):
-        init = super().__init__(**kwargs)
+        super().__init__(**kwargs)
         self.fields["student"].required = False
         self.fields["exam"].required = False
-        return init
 
     def clean_grade(self):
         grade = self.cleaned_data.get("grade")
         if not isinstance(grade, Decimal):
-            raise forms.ValidationError("Provided grade is not valid.")
+            raise forms.ValidationError(_("Provided grade is not valid."))
         return grade
-
-
-class SetUserBiographyForm(forms.Form):
-    about = forms.CharField(required=False)

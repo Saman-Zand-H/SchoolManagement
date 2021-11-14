@@ -1,113 +1,37 @@
 from django.db import models
-from django.db.models import Avg, Q
+from django.db.models import Avg
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
 from django.urls import reverse
+from django.utils.translation import gettext_noop as _
 
 from datetime import date
 from statistics import mean
 from decimal import Decimal
-from functools import partial
-from operator import is_not
+from logging import getLogger
 
-from .managers import *
 from .helpers import loop_through_month_number
+from teachers.models import Teacher
+from supports.models import School
 
-
-class School(models.Model):
-    name = models.CharField(max_length=100)
-    support = models.OneToOneField(
-        get_user_model(),
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="school_support",
-        limit_choices_to={"user_type": "SS"},
-    )
-
-    class Meta:
-        unique_together = ["name", "support"]
-        permissions = (("support", "has support staff's permissions"), )
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        permission = Permission.objects.get(codename="support")
-        self.support.user_permissions.add(permission)
-
-
-class Teacher(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
-    school = models.ForeignKey("School",
-                               on_delete=models.CASCADE,
-                               related_name="teacher_school")
-    degree = models.CharField(max_length=100, blank=True)
-    university = models.CharField(max_length=100, blank=True)
-
-    class Meta:
-        permissions = (("teacher", "has teachers' permissions"), )
-
-    def __str__(self):
-        return (self.user.first_name + " " + self.user.last_name).title()
-
-    def get_absolute_url(self):
-        return reverse("support:teachers-detail", kwargs={"pk": self.pk})
-
-    def get_performance_percent_six_months(self):
-        percents = []
-        init_month = date.today().month - 3
-        for i in range(6):
-            year = loop_through_month_number(init_month + i)[0]
-            month = loop_through_month_number(init_month + i)[1]
-            exams = self.exam_teacher.filter(
-                Q(timestamp__year=year) & Q(timestamp__month=month))
-            if exams.count() >= 1:
-                average_grade_uncleaned = [
-                    *map(lambda exam: float(exam.get_average_grade_percent()),
-                         exams)
-                ]
-                average_grade_cleaned = filter(partial(is_not, None),
-                                               average_grade_uncleaned)
-                average_grade = mean([*average_grade_cleaned] or [0])
-            else:
-                average_grade = 0
-            percents.append(average_grade)
-        return percents
-
-    def get_average_performance_six_months(self) -> Decimal:
-        """Returns a decimal representing the overall average performance."""
-        return round(mean(self.get_performance_percent_six_months() or [0]), 2)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.user.user_type != "T":
-            raise ValidationError("User must be typed as a teacher.")
-        group, group_created = Group.objects.get_or_create(name="Teachers")
-        if group_created:
-            perm = Permission.objects.get(codename="teacher")
-            group.permissions.add(perm)
-        self.user.groups.add(group)
+logger = getLogger(__name__)
 
 
 class Student(models.Model):
     user = models.OneToOneField(get_user_model(),
                                 related_name="student_user",
                                 on_delete=models.CASCADE)
-    student_class = models.ForeignKey(
-        "Class",
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="student_class",
-        blank=True)
+    student_class = models.ForeignKey("Class",
+                                      on_delete=models.SET_NULL,
+                                      null=True,
+                                      related_name="student_class",
+                                      blank=True)
 
     def __str__(self):
         return self.user.user_id
 
     def get_absolute_url_supports(self):
-        return reverse("support:students-detail", kwargs={"pk": self.pk})
+        return reverse("supports:students-detail", kwargs={"pk": self.pk})
 
     def get_absolute_url_teachers(self):
         return reverse("teachers:students-detail", kwargs={"pk": self.pk})
@@ -115,7 +39,11 @@ class Student(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.user.user_type != "S":
-            raise ValidationError("User must be typed as a student.")
+            logger.error(
+                _("A non-student typed user was being used as a student."))
+            raise ValidationError(
+                _("{} is not a student. User must be typed as a student."
+                  ).format(self.user.name))
 
 
 class Subject(models.Model):
@@ -128,7 +56,7 @@ class Subject(models.Model):
         return f"{self.name} - {self.teacher}"
 
     def get_absolute_url(self):
-        return reverse("support:subjects-detail", kwargs={"pk": self.pk})
+        return reverse("supports:subjects-detail", kwargs={"pk": self.pk})
 
     class Meta:
         unique_together = ["name", "teacher"]
@@ -176,7 +104,7 @@ class Exam(models.Model):
     exam_class = models.ForeignKey("Class",
                                    related_name="exam_class",
                                    on_delete=models.CASCADE)
-    timestamp = models.DateField()
+    timestamp = models.DateField(db_index=True)
     full_score = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -246,7 +174,7 @@ class Class(models.Model):
         return percents
 
     def get_absolute_url(self):
-        return reverse("support:classes-detail", kwargs={"pk": self.pk})
+        return reverse("supports:classes-detail", kwargs={"pk": self.pk})
 
     class Meta:
         verbose_name_plural = "classes"

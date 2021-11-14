@@ -9,4 +9,6 @@ class PermissionAndLoginRequiredMixin(PermissionRequiredMixin):
             return redirect("account_login")
         if not self.has_permission():
             raise PermissionDenied(self.get_permission_denied_message())
+        if self.request.user.phone_number is None:
+            pass
         return super().dispatch(request, *args, **kwargs)

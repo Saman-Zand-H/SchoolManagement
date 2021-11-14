@@ -1,0 +1,1229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-13 21:21+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: apps/homeapp/forms.py:7
+#: apps/templates/dashboard/supports/classes_detail.html:184
+#: apps/templates/dashboard/supports/index.html:174
+#: apps/templates/dashboard/teachers/grades.html:75
+#: apps/templates/dashboard/teachers/grades.html:149
+msgid "Name"
+msgstr "نام"
+
+#: apps/homeapp/forms.py:10
+msgid "e.g. John Gobbles"
+msgstr "مثلا علی علی زاده"
+
+#: apps/homeapp/forms.py:13
+msgid "Email Address"
+msgstr "آدرس ایمیل"
+
+#: apps/homeapp/forms.py:17
+msgid "e.g. example@example.com"
+msgstr "مثلا example@example.com"
+
+#: apps/homeapp/forms.py:20
+msgid "Issues or Requests"
+msgstr "پیشنهادات یا انتقادات"
+
+#: apps/homeapp/forms.py:23
+msgid "here goes your text...."
+msgstr "متن خود را اینجا وارد کنید..."
+
+#: apps/homeapp/views.py:71
+msgid "Thanks for your message. Message sent successfully."
+msgstr "از پیام شما متشکریم. پیام شما با موفقیت ارسال شد."
+
+#: apps/homeapp/views.py:75
+msgid "An internal error happened. Please call us as soon as you can."
+msgstr "مشکلی داخلی بوجود آمده است. لطفا در اسرع وقت با ما تماس بگیرید."
+
+#: apps/homeapp/views.py:79 apps/supports/views.py:56
+#: apps/supports/views.py:116 apps/supports/views.py:151
+#: apps/supports/views.py:202 apps/supports/views.py:301
+#: apps/supports/views.py:368 apps/supports/views.py:462
+#: apps/teachers/views.py:135 apps/teachers/views.py:161
+#: apps/teachers/views.py:261 apps/teachers/views.py:301
+msgid "Provided inputs are invalid."
+msgstr "اطلاعات وارد شده نادرست است."
+
+#: apps/mainapp/models.py:43
+msgid "A non-student typed user was being used as a student."
+msgstr "یک غیر دانش آموز درحال ثبت شدن بعنوان داشن آموز بود."
+
+#: apps/mainapp/models.py:45
+#, fuzzy
+#| msgid "A non-student typed user was being used as a student."
+msgid "{} is not a student. User must be typed as a student."
+msgstr "{} یک دانش آموز نیست. تایپ کاربر باید دانش آموز باشد."
+
+#: apps/supports/forms.py:18
+msgid "Name of your school"
+msgstr "نام مدرسه شما"
+
+#: apps/supports/forms.py:40
+msgid "A unique identifier for class"
+msgstr "یک نام یکتا برای این کلاس."
+
+#: apps/supports/forms.py:59
+msgid "This class already exists"
+msgstr "این کلاس در حال حاضر وجود دارد."
+
+#: apps/supports/views.py:53
+msgid "You registered successfully."
+msgstr "شما با موفقیت ثبت نام کردید."
+
+#: apps/supports/views.py:112
+msgid "Class saved successfully."
+msgstr "کلاس با موفقیت ذخیره شد."
+
+#: apps/supports/views.py:147
+msgid "Class updated successfully."
+msgstr "کلاس با موفقیت بروز شد."
+
+#: apps/supports/views.py:165
+msgid "Class deleted successfully."
+msgstr "کلاس با موفقیت حذف شد."
+
+#: apps/supports/views.py:198
+msgid "Teacher created successfully."
+msgstr "معلم با موفقیت ساخته شد."
+
+#: apps/supports/views.py:245
+msgid "Changes saved successfully."
+msgstr "تغییرات با موفقیت ذخیره شد."
+
+#: apps/supports/views.py:252
+msgid "Invalid inputs detected. Consider that empty inputs are not allowed."
+msgstr ""
+"ورودی نامعتبر یافت شد. لطفا درنظر بگیرید که ورودی های خالی معتبر نیستند."
+
+#: apps/supports/views.py:265
+msgid "Teacher deleted successfully."
+msgstr "معلم با موفقیت حذف شد."
+
+#: apps/supports/views.py:297
+msgid "Course created successfully."
+msgstr "دوره آموزشی با موفقیت ساخته شد."
+
+#: apps/supports/views.py:331
+msgid "Course deleted successfully."
+msgstr "دوره آموزشی با موفقیت حذف شد."
+
+#: apps/supports/views.py:364
+msgid "Student created successfully."
+msgstr "دانش آموز با موفقیت ساخته شد."
+
+#: apps/supports/views.py:403
+msgid "Student updated successfully."
+msgstr "دانش آموز با موفقیت بروز شد."
+
+#: apps/supports/views.py:421
+msgid "Student deleted successfully."
+msgstr "دانش آموز با موفقیت حذف شد."
+
+#: apps/supports/views.py:459
+msgid "Bio was updated successfully."
+msgstr "درباره من با موفقیت بروز شد."
+
+#: apps/teachers/forms.py:42
+msgid "Provided grade is not valid."
+msgstr "نمره وارد شده معتبر نیست."
+
+#: apps/teachers/models.py:68
+msgid "A non-teacher typed user was being used as a teacher."
+msgstr "یک کاربر غیر معلم درحال ثبت شدن بعنوان معلم بود."
+
+#: apps/teachers/models.py:70
+#, fuzzy
+#| msgid "A non-student typed user was being used as a student."
+msgid "{} is not a teacher. User must be typed as a teacher."
+msgstr "{} یک دانش آموز نیست. تایپ کاربر باید دانش آموز باشد."
+
+#: apps/teachers/views.py:158
+msgid "Exam created successfully."
+msgstr "امتحان با موفقیت ساخته شد."
+
+#: apps/teachers/views.py:207
+msgid "Exam deleted successfully."
+msgstr "امتحان با موفقیت حذف شد."
+
+#: apps/teachers/views.py:254
+msgid "Grades submitted successfully."
+msgstr "نمرات با موفقیت ذخیره شدند."
+
+#: apps/teachers/views.py:258
+msgid "Grades cannot exceed the full score."
+msgstr "نمرات نمیتوانند از نمره کامل بیشتر باشند."
+
+#: apps/teachers/views.py:298
+msgid "Bio updated successfully."
+msgstr "درباره من با موفقیت بروز شد."
+
+#: apps/templates/account/add_phonenumber.html:7
+msgid "Phonenumber"
+msgstr "شماره همراه"
+
+#: apps/templates/account/add_phonenumber.html:52
+msgid "Add Phonenumber"
+msgstr "افزودن شماره موبایل"
+
+#: apps/templates/account/add_phonenumber.html:73
+#: apps/templates/account/register_school.html:52
+#: apps/templates/dashboard/support.html:89
+msgid "Submit"
+msgstr "ثبت"
+
+#: apps/templates/account/email.html:7 apps/templates/account/email.html:48
+msgid "E-Mail Addresses"
+msgstr "آدرس های ایمیل"
+
+#: apps/templates/account/email.html:53
+msgid "The following e-mail addresses are associated with your account:"
+msgstr "آدرس های ایمیل مقابل در حساب کاربری شما ثبت شده اند."
+
+#: apps/templates/account/email.html:67
+msgid "Verified"
+msgstr "تایید شده"
+
+#: apps/templates/account/email.html:69
+msgid "Unverified"
+msgstr "تایید نشده"
+
+#: apps/templates/account/email.html:71
+msgid "Primary"
+msgstr "اصلی"
+
+#: apps/templates/account/email.html:79
+msgid "Make Primary"
+msgstr "ایمیل اصلی کن"
+
+#: apps/templates/account/email.html:80
+msgid "Re-send Verification"
+msgstr "ارسال مجدد تاییدیه ایمیل"
+
+#: apps/templates/account/email.html:85
+msgid "Remove"
+msgstr "حذف"
+
+#: apps/templates/account/email.html:94
+msgid "Warning:"
+msgstr "هشدار:"
+
+#: apps/templates/account/email.html:102 apps/templates/account/email.html:107
+msgid "Add E-Mail Address"
+msgstr "افزودن آدرس ایمیل"
+
+#: apps/templates/account/email.html:120
+msgid "Profile Page"
+msgstr "صفحه کاربر"
+
+#: apps/templates/account/email_confirm.html:7
+msgid "E-Mail Confirmation"
+msgstr "تایید ایمیل"
+
+#: apps/templates/account/email_confirm.html:51
+#: apps/templates/account/email_confirm.html:61
+msgid "Confirm"
+msgstr "تایید"
+
+#: apps/templates/account/email_confirm.html:57
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+"لطفا تایید کنید <a href=\"mailto:%(email)s\">%(email)s</a> یک ایمیل برای "
+"کاربر %(user_display)s است."
+
+#: apps/templates/account/email_confirm.html:68
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail\n"
+"                            confirmation request</a>."
+msgstr ""
+"این لینک منقضی شده یا نامعتبر است. لطفا <a href=\"%(email_url)s\">درخواست "
+"لینک جدید</a> بدهید."
+
+#: apps/templates/account/login.html:7 apps/templates/account/login.html:73
+msgid "Sign In"
+msgstr "ورود"
+
+#: apps/templates/account/login.html:47
+msgid "Add your credentials"
+msgstr "اطلاعات کاربری خود را وارد کنید"
+
+#: apps/templates/account/login.html:79
+#, python-format
+msgid "Or <a href=\"%(signup_url)s\">create a new account</a>"
+msgstr "یا <a href=\"%(signup_url)s\">یک حساب کاربری ایجاد کنید</a>"
+
+#: apps/templates/account/login.html:85 apps/templates/errors/403.html:45
+#: apps/templates/errors/404.html:38 apps/templates/errors/500.html:39
+msgid "Get Support"
+msgstr "درخواست پشتیبانی"
+
+#: apps/templates/account/logout.html:7 apps/templates/home/index.html:75
+#: apps/templates/includes/navigation.html:167
+#: apps/templates/includes/sidenav.html:100
+msgid "Log Out"
+msgstr "خروج"
+
+#: apps/templates/account/logout.html:16
+msgid "Sign Out"
+msgstr "خروج"
+
+#: apps/templates/account/logout.html:20
+#: apps/templates/dashboard/supports/classes.html:20
+#: apps/templates/dashboard/supports/classes_detail.html:21
+#: apps/templates/dashboard/supports/index.html:7
+#: apps/templates/dashboard/supports/index.html:21
+#: apps/templates/dashboard/supports/students.html:21
+#: apps/templates/dashboard/supports/students_detail.html:21
+#: apps/templates/dashboard/supports/subjects.html:20
+#: apps/templates/dashboard/supports/subjects_detail.html:20
+#: apps/templates/dashboard/supports/teachers.html:20
+#: apps/templates/dashboard/supports/teachers_detail.html:20
+#: apps/templates/dashboard/teachers/classes.html:23
+#: apps/templates/dashboard/teachers/exams.html:21
+#: apps/templates/dashboard/teachers/grades.html:20
+#: apps/templates/dashboard/teachers/index.html:7
+#: apps/templates/dashboard/teachers/index.html:21
+#: apps/templates/dashboard/teachers/students.html:21
+#: apps/templates/dashboard/teachers/students_detail.html:21
+#: apps/templates/home/index.html:63 apps/templates/home/index.html:71
+#: apps/templates/includes/sidenav.html:26
+#: apps/templates/includes/sidenav.html:63
+msgid "Dashboard"
+msgstr "داشبورد"
+
+#: apps/templates/account/logout.html:21 apps/templates/account/logout.html:34
+msgid "Logout"
+msgstr "خروج"
+
+#: apps/templates/account/logout.html:42
+msgid "Are you sure you want to sign out?"
+msgstr "آیا اطمینان دارید که میخواهید خارج بشوید؟"
+
+#: apps/templates/account/logout.html:48
+msgid "Sign out"
+msgstr "خارج شو"
+
+#: apps/templates/account/register_school.html:7
+msgid "School Registration"
+msgstr "ثبت مدرسه"
+
+#: apps/templates/account/register_school.html:72
+#: apps/templates/account/signup.html:7 apps/templates/account/signup.html:143
+#: apps/templates/home/index.html:82
+msgid "Sign Up"
+msgstr "ثبت نام"
+
+#: apps/templates/account/signup.html:98
+#: apps/templates/dashboard/supports/students.html:83
+#: apps/templates/dashboard/supports/teachers.html:79
+#: apps/templates/dashboard/teachers/students_detail.html:82
+msgid "Your password can’t be too similar to your other personal information."
+msgstr "رمز عبور شما نمیتواند با اطلاعات دیگر شما شباهت زیادی داشته باشد."
+
+#: apps/templates/account/signup.html:99
+#: apps/templates/dashboard/supports/students.html:84
+#: apps/templates/dashboard/supports/teachers.html:80
+#: apps/templates/dashboard/teachers/students_detail.html:83
+msgid "Your password must contain at least 8 characters."
+msgstr "رمز عبور شما باید شامل ۸ کاراکتر باشد."
+
+#: apps/templates/account/signup.html:100
+#: apps/templates/dashboard/supports/students.html:85
+#: apps/templates/dashboard/supports/teachers.html:81
+#: apps/templates/dashboard/teachers/students_detail.html:84
+msgid "Your password can’t be a commonly used password."
+msgstr "رمز عبور شما نمیتواند رمز عبور پر استفاده ای باشد."
+
+#: apps/templates/account/signup.html:101
+#: apps/templates/dashboard/supports/students.html:86
+#: apps/templates/dashboard/supports/teachers.html:82
+#: apps/templates/dashboard/teachers/students_detail.html:85
+msgid "Your password can’t be entirely numeric."
+msgstr "رمز عبور شما نمیتواند فقط عددی باشد."
+
+#: apps/templates/account/signup.html:134
+msgid "The size of your file can't exceed 3MB ."
+msgstr "حجم فایل شما نمیتواند بیشتر از ۳ مگابایت باشد."
+
+#: apps/templates/account/signup.html:135
+#: apps/templates/dashboard/supports/teachers.html:103
+msgid "Allowed extensions are .jpg and .png."
+msgstr "پسوند های مجاز: png و jpg"
+
+#: apps/templates/account/signup.html:149
+#, python-format
+msgid ""
+"Or if you already have an account <a href=\"%(login_url)s\">log in</a> ."
+msgstr ""
+
+#: apps/templates/account/verify_phonenumber.html:7
+msgid "Verify Phonenumber"
+msgstr ""
+
+#: apps/templates/account/verify_phonenumber.html:53
+msgid "Phonenumber Verification"
+msgstr ""
+
+#: apps/templates/account/verify_phonenumber.html:77
+msgid "Verify"
+msgstr ""
+
+#: apps/templates/dashboard/support.html:7
+#: apps/templates/dashboard/support.html:16
+#: apps/templates/dashboard/support.html:20
+#: apps/templates/includes/navigation.html:161
+#: apps/templates/includes/sidenav.html:115
+msgid "Support"
+msgstr ""
+
+#: apps/templates/dashboard/support.html:60
+msgid "Send us your issues and suggestions."
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:7
+#: apps/templates/dashboard/supports/classes.html:16
+#: apps/templates/dashboard/supports/classes.html:21
+#: apps/templates/dashboard/supports/classes.html:116
+#: apps/templates/dashboard/supports/classes_detail.html:22
+#: apps/templates/dashboard/supports/index.html:52
+#: apps/templates/dashboard/supports/index.html:96
+#: apps/templates/dashboard/supports/profile.html:60
+#: apps/templates/dashboard/supports/subjects_detail.html:68
+#: apps/templates/dashboard/supports/teachers_detail.html:146
+#: apps/templates/dashboard/supports/teachers_detail.html:233
+#: apps/templates/dashboard/teachers/classes.html:7
+#: apps/templates/dashboard/teachers/classes.html:18
+#: apps/templates/dashboard/teachers/classes.html:24
+#: apps/templates/dashboard/teachers/classes.html:37
+#: apps/templates/dashboard/teachers/index.html:52
+#: apps/templates/dashboard/teachers/profile.html:60
+#: apps/templates/includes/sidenav.html:38
+#: apps/templates/includes/sidenav.html:75
+msgid "Classes"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:28
+#: apps/templates/dashboard/supports/students.html:29
+#: apps/templates/dashboard/supports/subjects.html:28
+#: apps/templates/dashboard/supports/teachers.html:28
+#: apps/templates/dashboard/teachers/exams.html:31
+#: apps/templates/dashboard/teachers/grades.html:34
+#: apps/templates/dashboard/teachers/students_detail.html:30
+msgid "New"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:35
+msgid "Create Class"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:41
+#: apps/templates/dashboard/supports/students.html:43
+#: apps/templates/dashboard/supports/subjects.html:41
+#: apps/templates/dashboard/supports/teachers.html:41
+msgid "these fields are required"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:45
+#: apps/templates/dashboard/supports/classes_detail.html:76
+#: apps/templates/dashboard/supports/subjects.html:45
+#: apps/templates/dashboard/supports/teachers_detail.html:87
+#: apps/templates/dashboard/supports/teachers_detail.html:104
+#: apps/templates/dashboard/teachers/students_detail.html:48
+msgid "Invalid Inputs:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:88
+msgid "You haven't created any course yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:97
+#: apps/templates/dashboard/supports/classes_detail.html:123
+#: apps/templates/dashboard/supports/students.html:120
+#: apps/templates/dashboard/supports/subjects.html:71
+#: apps/templates/dashboard/supports/teachers.html:111
+#: apps/templates/dashboard/teachers/exams.html:94
+#: apps/templates/dashboard/teachers/exams.html:138
+#: apps/templates/dashboard/teachers/grades.html:103
+#: apps/templates/dashboard/teachers/students_detail.html:124
+msgid "Close"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:98
+#: apps/templates/dashboard/supports/students.html:122
+#: apps/templates/dashboard/supports/subjects.html:72
+#: apps/templates/dashboard/supports/teachers.html:112
+#: apps/templates/dashboard/teachers/students_detail.html:126
+msgid "Create"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:123
+#: apps/templates/dashboard/supports/index.html:104
+#: apps/templates/dashboard/supports/teachers_detail.html:153
+#: apps/templates/dashboard/teachers/classes.html:45
+msgid "Class ID"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:124
+#: apps/templates/dashboard/supports/index.html:105
+#: apps/templates/dashboard/supports/index.html:175
+msgid "Courses Count"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:125
+#: apps/templates/dashboard/supports/index.html:106
+#: apps/templates/dashboard/supports/subjects_detail.html:76
+#: apps/templates/dashboard/supports/teachers_detail.html:154
+#: apps/templates/dashboard/teachers/classes.html:48
+msgid "Students Count"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:126
+#: apps/templates/dashboard/supports/classes_detail.html:176
+#: apps/templates/dashboard/supports/index.html:107
+#: apps/templates/dashboard/supports/profile.html:53
+#: apps/templates/dashboard/supports/students.html:7
+#: apps/templates/dashboard/supports/students.html:16
+#: apps/templates/dashboard/supports/students.html:22
+#: apps/templates/dashboard/supports/students_detail.html:16
+#: apps/templates/dashboard/supports/students_detail.html:22
+#: apps/templates/dashboard/supports/subjects_detail.html:77
+#: apps/templates/dashboard/supports/teachers_detail.html:155
+#: apps/templates/dashboard/teachers/classes.html:51
+#: apps/templates/dashboard/teachers/profile.html:53
+#: apps/templates/dashboard/teachers/students.html:7
+#: apps/templates/dashboard/teachers/students.html:16
+#: apps/templates/dashboard/teachers/students.html:22
+#: apps/templates/dashboard/teachers/students_detail.html:16
+#: apps/templates/dashboard/teachers/students_detail.html:22
+#: apps/templates/includes/sidenav.html:44
+#: apps/templates/includes/sidenav.html:93
+msgid "Students"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:127
+#: apps/templates/dashboard/supports/index.html:108
+#: apps/templates/dashboard/supports/index.html:176
+#: apps/templates/dashboard/supports/teachers_detail.html:156
+#: apps/templates/dashboard/teachers/grades.html:152
+msgid "Performance"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:157
+#: apps/templates/dashboard/supports/classes_detail.html:211
+#: apps/templates/dashboard/supports/index.html:138
+#: apps/templates/dashboard/supports/teachers_detail.html:184
+#: apps/templates/dashboard/teachers/classes.html:83
+msgid "No student in this class"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes.html:171
+msgid "No class is created yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:16
+#: apps/templates/dashboard/supports/students.html:149
+#: apps/templates/dashboard/supports/students_detail.html:79
+#: apps/templates/dashboard/teachers/students.html:47
+#: apps/templates/dashboard/teachers/students_detail.html:154
+msgid "Class:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:31
+#: apps/templates/dashboard/supports/classes_detail.html:125
+#: apps/templates/dashboard/supports/profile.html:159
+#: apps/templates/dashboard/teachers/grades.html:31
+msgid "Edit"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:37
+#: apps/templates/dashboard/supports/students_detail.html:32
+#: apps/templates/dashboard/supports/subjects_detail.html:31
+#: apps/templates/dashboard/supports/teachers_detail.html:31
+#: apps/templates/dashboard/teachers/grades.html:39
+msgid "Delete"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:45
+#: apps/templates/dashboard/supports/students_detail.html:40
+#: apps/templates/dashboard/supports/subjects_detail.html:39
+#: apps/templates/dashboard/supports/teachers_detail.html:39
+#: apps/templates/dashboard/teachers/grades.html:113
+msgid "Delete Exam"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:51
+msgid "Are You sure you want to delete this class PERMANENTLY?"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:54
+#: apps/templates/dashboard/supports/students_detail.html:49
+#: apps/templates/dashboard/supports/subjects_detail.html:48
+#: apps/templates/dashboard/supports/teachers_detail.html:48
+#: apps/templates/dashboard/teachers/grades.html:122
+msgid "No"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:56
+#: apps/templates/dashboard/supports/students_detail.html:51
+#: apps/templates/dashboard/supports/subjects_detail.html:50
+#: apps/templates/dashboard/supports/teachers_detail.html:50
+#: apps/templates/dashboard/teachers/grades.html:123
+msgid "Yes"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:67
+msgid "Edit this Class"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:150
+#: apps/templates/dashboard/supports/subjects.html:98
+#: apps/templates/dashboard/supports/subjects_detail.html:16
+msgid "Teacher:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:165
+msgid "No subject is added yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:185
+msgid "Picture"
+msgstr ""
+
+#: apps/templates/dashboard/supports/classes_detail.html:219
+msgid "No student is added to this class yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/index.html:17
+#: apps/templates/dashboard/teachers/index.html:17
+#: apps/templates/errors/403.html:42 apps/templates/errors/404.html:28
+#: apps/templates/errors/404.html:35 apps/templates/errors/500.html:36
+#: apps/templates/includes/sidenav.html:13
+msgid "Home"
+msgstr ""
+
+#: apps/templates/dashboard/supports/index.html:34
+#: apps/templates/dashboard/teachers/index.html:34
+msgid "School"
+msgstr ""
+
+#: apps/templates/dashboard/supports/index.html:70
+#: apps/templates/dashboard/supports/index.html:166
+#: apps/templates/dashboard/supports/teachers.html:7
+#: apps/templates/dashboard/supports/teachers.html:16
+#: apps/templates/dashboard/supports/teachers.html:21
+#: apps/templates/dashboard/supports/teachers_detail.html:234
+#: apps/templates/includes/sidenav.html:81
+msgid "Teachers"
+msgstr ""
+
+#: apps/templates/dashboard/supports/index.html:95
+#: apps/templates/dashboard/supports/index.html:165
+#: apps/templates/dashboard/teachers/index.html:95
+#: apps/templates/dashboard/teachers/index.html:151
+msgid "Overview"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:6
+#: apps/templates/dashboard/teachers/profile.html:6
+#: apps/templates/includes/sidenav.html:32
+#: apps/templates/includes/sidenav.html:69
+msgid "Profile"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:18
+#: apps/templates/dashboard/teachers/profile.html:18
+msgid "Hello"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:20
+#: apps/templates/dashboard/teachers/profile.html:20
+msgid "This is your profile page."
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:81
+#: apps/templates/dashboard/teachers/profile.html:81
+msgid "Edit profile"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:86
+#: apps/templates/dashboard/teachers/profile.html:86
+msgid "User's information"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:91
+#: apps/templates/dashboard/teachers/grades.html:74
+#: apps/templates/dashboard/teachers/profile.html:91
+msgid "ID"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:92 apps/users/forms.py:63
+msgid "User ID"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:97
+#: apps/templates/dashboard/teachers/profile.html:97
+msgid "Email address"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:105
+#: apps/templates/dashboard/teachers/profile.html:105
+msgid "Phone Number"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:110
+#: apps/templates/dashboard/teachers/profile.html:110
+msgid "Manage your e-mail addresses"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:112
+#: apps/templates/dashboard/teachers/profile.html:112
+msgid "Change Your Password"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:145
+#: apps/templates/dashboard/teachers/profile.html:145
+msgid "Change"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:152
+msgid "About"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:155
+#: apps/templates/dashboard/teachers/profile.html:155
+msgid "Bio"
+msgstr ""
+
+#: apps/templates/dashboard/supports/profile.html:156
+#: apps/templates/dashboard/teachers/profile.html:156
+msgid "A few words about you ..."
+msgstr ""
+
+#: apps/templates/dashboard/supports/students.html:37
+#: apps/templates/dashboard/supports/teachers.html:35
+#: apps/templates/dashboard/teachers/students_detail.html:38
+msgid "Create A New Teacher"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students.html:106
+#: apps/templates/dashboard/supports/teachers.html:102
+#: apps/templates/dashboard/teachers/students_detail.html:110
+msgid "The size of your file can't exceed 3MB."
+msgstr ""
+
+#: apps/templates/dashboard/supports/students.html:107
+msgid "Allowed extensions: .jpg and .png."
+msgstr ""
+
+#: apps/templates/dashboard/supports/students.html:148
+#: apps/templates/dashboard/supports/students_detail.html:73
+#: apps/templates/dashboard/supports/teachers_detail.html:72
+#: apps/templates/dashboard/teachers/students.html:46
+#: apps/templates/dashboard/teachers/students_detail.html:148
+msgid "ID:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students.html:161
+msgid "No student is created yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:46
+#: apps/templates/dashboard/supports/teachers_detail.html:45
+msgid "Are You sure you want to delete this teacher PERMANENTLY?"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:67
+#: apps/templates/dashboard/supports/teachers_detail.html:66
+msgid "Current Information"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:70
+#: apps/templates/dashboard/supports/teachers_detail.html:69
+#: apps/templates/dashboard/teachers/students_detail.html:145
+msgid "Name:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:76
+#: apps/templates/dashboard/supports/teachers.html:140
+#: apps/templates/dashboard/supports/teachers_detail.html:75
+#: apps/templates/dashboard/teachers/students_detail.html:151
+msgid "Phonenumber:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:87
+#: apps/templates/dashboard/supports/teachers_detail.html:83
+msgid "Change Information"
+msgstr ""
+
+#: apps/templates/dashboard/supports/students_detail.html:132
+#: apps/templates/dashboard/supports/teachers_detail.html:136
+msgid "Save Changes"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects.html:16
+#: apps/templates/dashboard/supports/subjects.html:21
+#: apps/templates/dashboard/supports/teachers_detail.html:225
+#: apps/templates/dashboard/supports/teachers_detail.html:232
+#: apps/templates/includes/sidenav.html:87
+msgid "Courses"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects.html:35
+msgid "Create a Course"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects.html:110
+msgid "No course is created yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:21
+msgid "Subjects"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:45
+msgid "Are You sure you want to delete this subject PERMANENTLY?"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:75
+msgid "Class ID</"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:78
+msgid "Teacher"
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:105
+msgid "No student in this class."
+msgstr ""
+
+#: apps/templates/dashboard/supports/subjects_detail.html:124
+msgid "This course is not used by any class."
+msgstr ""
+
+#: apps/templates/dashboard/supports/teachers.html:138
+msgid "Courses:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/teachers.html:139
+msgid "Degree:"
+msgstr ""
+
+#: apps/templates/dashboard/supports/teachers.html:151
+msgid "No teacher is added yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/teachers_detail.html:211
+msgid "This teacher has not been added to any class yet."
+msgstr ""
+
+#: apps/templates/dashboard/supports/teachers_detail.html:263
+msgid "This teacher is not added to any course."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/ajax-pages/exams-filter.html:3
+#: apps/templates/dashboard/teachers/ajax-pages/exams-form.html:3
+msgid "Subject"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/ajax-pages/exams-filter.html:5
+#: apps/templates/dashboard/teachers/exams.html:116
+msgid "All"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/classes.html:54
+msgid "Average Grade"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/classes.html:108
+msgid "Sorry! We cannot find any class for you."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:7
+#: apps/templates/dashboard/teachers/exams.html:17
+#: apps/templates/dashboard/teachers/exams.html:22
+#: apps/templates/dashboard/teachers/grades.html:21
+#: apps/templates/includes/sidenav.html:56
+msgid "Exams"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:35
+msgid "Filters"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:43
+msgid "New Exam"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:69
+#: apps/templates/dashboard/teachers/exams.html:114
+#: apps/templates/dashboard/teachers/exams.html:166
+msgid "Class"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:83
+#: apps/templates/dashboard/teachers/exams.html:167
+msgid "Full Score"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:84
+msgid "e.g. 100 or ..."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:88
+#: apps/templates/dashboard/teachers/exams.html:165
+msgid "Date"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:89
+msgid "Choose using the datepicker"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:95
+#: apps/templates/dashboard/teachers/grades.html:104
+msgid "Add"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:104
+msgid "Filter Exams"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:111
+msgid "All exams corresponding to the following details:"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:129
+msgid "Since"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:132
+msgid "Until"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:139
+msgid "Filter"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:168
+msgid "Average Grade:"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/exams.html:180
+msgid "No exam is created yet."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/grades.html:7
+#: apps/templates/dashboard/teachers/grades.html:16
+#: apps/templates/dashboard/teachers/grades.html:22
+#: apps/templates/dashboard/teachers/grades.html:141
+msgid "Grades"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/grades.html:46
+msgid "Add Grades"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/grades.html:76
+#: apps/templates/dashboard/teachers/grades.html:150
+msgid "Grade"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/grades.html:119
+msgid "Are You sure you want to delete this exam PERMANENTLY?"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/grades.html:151
+msgid "Student"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/index.html:70
+msgid "Taken Exams"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/index.html:96
+msgid "Average Performance"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/index.html:128
+msgid "No Class"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/index.html:152
+msgid "Total Performance"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/profile.html:152
+msgid "About me"
+msgstr ""
+
+#: apps/templates/dashboard/teachers/students.html:59
+msgid "No student found."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/students_detail.html:44
+msgid "these fields are required."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/students_detail.html:111
+msgid "Supported extensions are .jpg and .png."
+msgstr ""
+
+#: apps/templates/dashboard/teachers/students_detail.html:142
+msgid "Current Spec"
+msgstr ""
+
+#: apps/templates/errors/403.html:5
+msgid "Error 403"
+msgstr ""
+
+#: apps/templates/errors/403.html:20
+msgid "Oops... Error 403."
+msgstr ""
+
+#: apps/templates/errors/403.html:24
+msgid "ACCESS DENIED"
+msgstr ""
+
+#: apps/templates/errors/403.html:29
+#, python-format
+msgid "You must <a href=\"%(create_school_url)s\">register your school</a>."
+msgstr ""
+
+#: apps/templates/errors/403.html:35
+#, python-format
+msgid "Go back to <a href=\"%(home_url)s\">homepage</a>."
+msgstr ""
+
+#: apps/templates/errors/404.html:5 apps/templates/errors/500.html:5
+msgid "Error 404"
+msgstr ""
+
+#: apps/templates/errors/404.html:20
+msgid "Oops... Error 404."
+msgstr ""
+
+#: apps/templates/errors/404.html:24
+msgid "PAGE NOT FOUND"
+msgstr ""
+
+#: apps/templates/errors/500.html:20
+msgid "Oops... Error 500."
+msgstr ""
+
+#: apps/templates/errors/500.html:24
+msgid "SERVER ERROR"
+msgstr ""
+
+#: apps/templates/errors/500.html:29
+#, python-format
+msgid "Please <a href=\"%(support_page)s\">contact support</a>."
+msgstr ""
+
+#: apps/templates/home/index.html:14 apps/templates/home/index.html:153
+#: apps/templates/home/index.html:170
+msgid "DjS School"
+msgstr ""
+
+#: apps/templates/home/index.html:37
+msgid "Toggle navigation"
+msgstr ""
+
+#: apps/templates/home/index.html:48
+msgid "Django Solutions"
+msgstr ""
+
+#: apps/templates/home/index.html:58 apps/templates/includes/sidenav.html:108
+msgid "Contact"
+msgstr ""
+
+#: apps/templates/home/index.html:67
+msgid "Create Your School"
+msgstr ""
+
+#: apps/templates/home/index.html:79
+msgid "Log In"
+msgstr ""
+
+#: apps/templates/home/index.html:122
+msgid "About DjS School"
+msgstr ""
+
+#: apps/templates/home/index.html:124
+msgid "Get to know us"
+msgstr ""
+
+#: apps/templates/home/index.html:127
+msgid ""
+"DjS School offers Management tools for managing your school. From "
+"administrators to teachers can use our app."
+msgstr ""
+
+#: apps/templates/home/index.html:130
+msgid ""
+"We deeply care for how administrators can manage their school more "
+"efficiently. Here administrators can create teachers and students, subjects "
+"and classes. Teachers are also important to us! Teachers here can create "
+"exams and submit grades for students."
+msgstr ""
+
+#: apps/templates/home/index.html:134
+#, python-format
+msgid ""
+"\n"
+"                            We take great interest in how our costumers use "
+"our app. We are constantly thinking about how to make our app more useful.\n"
+"                            One of our tools in improving our app is your "
+"feedbacks. So please feel free to leave feedbacks. You can do this on the <a "
+"href=\"%(support_page)s\">support page</a>.\n"
+"                            "
+msgstr ""
+
+#: apps/templates/home/index.html:153
+msgid "V2.0"
+msgstr ""
+
+#: apps/templates/home/index.html:156
+msgid "+ New Sections"
+msgstr ""
+
+#: apps/templates/home/index.html:157
+msgid "+ RESTful APIs"
+msgstr ""
+
+#: apps/templates/home/index.html:158
+msgid "+ Chatrooms"
+msgstr ""
+
+#: apps/templates/home/index.html:159
+msgid "Coming Soon..."
+msgstr ""
+
+#: apps/templates/home/index.html:170
+msgid "for managing schools more effectively."
+msgstr ""
+
+#: apps/templates/includes/footer-fullscreen.html:9
+#, python-format
+msgid ""
+"<a href=\"%(home_url)s\">DjS School</a> - coded by <a target=\"_blank\" href="
+"\"https://github.com/saman-zand-h\">Saman Zand</a>"
+msgstr ""
+
+#: apps/templates/includes/footer.html:14
+#, python-format
+msgid ""
+"DjS School</a> - coded by <a target=\"_blank\" href=\"%(support_url)s"
+"\">Saman Zand</a>"
+msgstr ""
+
+#: apps/templates/includes/navigation-fullscreen.html:35
+msgid "Follow me on Github"
+msgstr ""
+
+#: apps/templates/includes/navigation.html:151
+msgid "Welcome!"
+msgstr ""
+
+#: apps/templates/includes/navigation.html:156
+msgid "My profile"
+msgstr ""
+
+#: apps/users/forms.py:21
+msgid "Unsupported file extension."
+msgstr ""
+
+#: apps/users/forms.py:27
+msgid "Maximum file size is 3MB."
+msgstr ""
+
+#: apps/users/forms.py:37
+msgid "enter your first name"
+msgstr ""
+
+#: apps/users/forms.py:44
+msgid "enter your last name"
+msgstr ""
+
+#: apps/users/forms.py:49
+msgid "Avatar Picture"
+msgstr ""
+
+#: apps/users/forms.py:79 apps/users/forms.py:131
+msgid "Password"
+msgstr ""
+
+#: apps/users/forms.py:85 apps/users/forms.py:88
+msgid "Confirm Password"
+msgstr ""
+
+#: apps/users/forms.py:108
+msgid "This ID already exists."
+msgstr ""
+
+#: apps/users/forms.py:122
+msgid "Your ID"
+msgstr ""
+
+#: apps/users/forms.py:141
+msgid "like"
+msgstr ""
+
+#: apps/users/forms.py:149
+msgid "please enter the code sent to you"
+msgstr ""
+
+#: apps/users/models.py:27
+#, python-brace-format
+msgid "Unsupported file detected for: {file.name}."
+msgstr ""
+
+#: apps/users/models.py:28
+msgid "Invalid file extension."
+msgstr ""
+
+#: apps/users/models.py:33
+#, python-brace-format
+msgid "Maximum image file size exceeded for: {file.name}"
+msgstr ""
+
+#: apps/users/models.py:34
+msgid "Unacceptable file size."
+msgstr "حجم غیرقابل قبول."
+
+#: conf/settings.py:149
+msgid "English"
+msgstr "انگلیسی"
+
+#: conf/settings.py:149
+msgid "Persian"
+msgstr "فارسی"
+
+#, fuzzy
+#~| msgid "E-Mail Addresses"
+#~ msgid "E-mail Addresses"
+#~ msgstr "آدرس های ایمیل"
+
+#~ msgid "This name is already chosen. Please choose another name."
+#~ msgstr "این نام قبلا انتخاب شده است. لظفا یک نام دیگر انتخاب کنید."

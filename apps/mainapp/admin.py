@@ -3,11 +3,6 @@ from django.contrib import admin
 from .models import *
 
 
-@admin.register(School)
-class SchoolAdmn(admin.ModelAdmin):
-    list_display = ["name", "support"]
-
-
 @admin.register(Class)
 class ClassAdmin(admin.ModelAdmin):
     pass
@@ -15,11 +10,6 @@ class ClassAdmin(admin.ModelAdmin):
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(Teacher)
-class TeacherAdmin(admin.ModelAdmin):
     pass
 
 

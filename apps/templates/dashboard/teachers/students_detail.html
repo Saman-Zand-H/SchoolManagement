@@ -2,6 +2,7 @@
 
 {% load crispy_forms_tags %}
 {% load customtags %}
+{% load i18n %}
 
 {% block title %} {{ student.user.name|title }} {% endblock title %}
 
@@ -12,13 +13,13 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">Students</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Students' %}</h6>
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
                             </li>
-                            <li class="breadcrumb-item"><a href="{% url 'support:home' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'support:students' %}">Students</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'supports:students' %}">{% trans 'Students' %}</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{{ student.user.name }}</li>
                         </ol>
                     </nav>
@@ -26,7 +27,7 @@
                 <div class="col-lg-6 col-5 text-right">
                     <!-- Modals Buttons -->
                     <button type="button" data-toggle="modal" data-target="#createClass" class="btn btn-sm btn-neutral">
-                        <i class="fas fa-plus"></i> New
+                        <i class="fas fa-plus"></i> {% trans 'New' %}
                     </button>
                     <!-- Add Grades Modal -->
                     <div class="modal text-left fade" id="createClass" tabindex="-1" role="dialog"
@@ -34,28 +35,25 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Create A New Teacher</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Create A New Teacher' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="">* these fields are required</div>
+                                    <div class="">* {% trans 'these fields are required.' %}</div>
                                     <div class="mt-2">
-                                        {% if form.errors %}
-                                        <hr>
-                                        <h3>Invalid Inputs:</h3><br>
-                                        {% for field in form %}
-                                        {% for error in field.errors %}
-                                        <p class="text-danger">- {{ field.label }}: {{ error }}</p>
-                                        {% endfor %}
-                                        {% endfor %}
-                                        <hr>
-                                        {% endif %}
-                                        {% if form.non_field_errors %}
-                                        {% for error in field.non_field_errors %}
-                                        <p class="text-danger">- {{ error }}</p>
-                                        {% endfor %}
+                                        {% if form.errors or form.non_field_errors %}
+                                            <hr>
+                                            <h3>{% trans 'Invalid Inputs:' %}</h3><br>
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                                {% endfor %}
+                                            {% endfor %}
+                                            {% for error in field.non_field_errors %}
+                                                <p class="text-danger">- {{ error }}</p>
+                                            {% endfor %}
                                         {% endif %}
                                     </div>
                                     <form id="createClassForm" method="POST">
@@ -81,11 +79,10 @@
                                             {{ form.password1 }}
                                             <small>
                                                 <ul class="text-black-50">
-                                                    <li>Your password can’t be too similar to your other personal
-                                                        information.</li>
-                                                    <li>Your password must contain at least 8 characters.</li>
-                                                    <li>Your password can’t be a commonly used password.</li>
-                                                    <li>Your password can’t be entirely numeric.</li>
+                                                    <li>{% trans 'Your password can’t be too similar to your other personal information.' %}</li>
+                                                    <li>{% trans 'Your password must contain at least 8 characters.' %}</li>
+                                                    <li>{% trans 'Your password can’t be a commonly used password.' %}</li>
+                                                    <li>{% trans 'Your password can’t be entirely numeric.' %}</li>
                                                 </ul>
                                             </small>
                                         </div>
@@ -110,8 +107,8 @@
                                             {{ form.picture }}
                                             <small>
                                                 <ul class="text-black-50">
-                                                    <li>The size of your file can't exceed 3MB.</li>
-                                                    <li>Supported extensions are .jpg and .png.</li>
+                                                    <li>{% trans "The size of your file can't exceed 3MB." %}</li>
+                                                    <li>{% trans 'Supported extensions are .jpg and .png.' %}</li>
                                                 </ul>
                                             </small>
                                         </div>
@@ -124,9 +121,9 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
                                     <button type="button" class="btn btn-primary"
-                                        onclick="$('#createClassForm').submit()">Create</button>
+                                        onclick="$('#createClassForm').submit()">{% trans 'Create' %}</button>
                                 </div>
                             </div>
                         </div>
@@ -142,19 +139,19 @@
     <div class="row">
         <div class="col mx-auto"><br>
             <div class="alert alert-default" role="alert">
-                <h2 class="text-white">Current Spec</h2>
+                <h2 class="text-white">{% trans 'Current Spec' %}</h2>
 
                 <div class="my-4">
-                    Name: <strong>{{ student.user.name|title }}</strong>
+                    {% trans 'Name:' %} <strong>{{ student.user.name|title }}</strong>
                 </div>
                 <div class="my-4">
-                    ID: <strong>{{ student.user.user_id }}</strong>
+                    {% trans 'ID:' %} <strong>{{ student.user.user_id }}</strong>
                 </div>
                 <div class="my-4">
-                    Phonenumber: <strong>{{ student.user.phone_number }}</strong>
+                    {% trans 'Phonenumber:' %} <strong>{{ student.user.phone_number }}</strong>
                 </div>
                 <div class="my-4">
-                    Class: <strong>{{ student.student_class }}</strong>
+                    {% trans 'Class:' %} <strong>{{ student.student_class }}</strong>
                 </div>
             </div>
         </div>

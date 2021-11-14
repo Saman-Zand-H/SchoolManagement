@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!-- Footer -->
 <footer class="footer">
     <div class="row align-items-center justify-content-xl-between">
@@ -8,7 +10,8 @@
         </div>
         <div class="col-xl-6">
             <div class="text-center text-xl-center text-muted">
-                <a href="https://bit.ly/3fKQZaL" class="font-weight-bold ml-1" target="_blank"> &copy; DJS School</a> - coded by <a target="_blank" href="https://appseed.us">Saman Zand</a>
+                {% url 'home:support-page' as support_url %}
+                <a href="{% url 'home:home' %}" class="font-weight-bold ml-1"> &copy; {% blocktrans %}DjS School</a> - coded by <a target="_blank" href="{{ support_url }}">Saman Zand</a>{% endblocktrans %}
             </div>
         </div>
     </div>

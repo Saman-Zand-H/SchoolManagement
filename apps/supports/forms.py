@@ -1,7 +1,10 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext as _
 
-from mainapp.models import School, Class, Teacher, Subject, Student
+from mainapp.models import Class, Subject, Student
+from supports.models import School
+from teachers.models import Teacher
 
 
 class CreateSchoolForm(forms.ModelForm):
@@ -9,22 +12,16 @@ class CreateSchoolForm(forms.ModelForm):
         model = School
         fields = ["name", "support"]
         widgets = {
-            "name": forms.TextInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "the name of your school"})}
-
-    def clean_name(self):
-        name = self.cleaned_data.get("name")
-        if School.objects.filter(name=name).exists():
-            raise forms.ValidationError(
-                "This name is already chosen. Please choose another name.")
-        return name
+            "name":
+            forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": _("Name of your school")
+            })
+        }
 
     def __init__(self, *args, **kwargs):
-        init = super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["support"] = forms.IntegerField(required=False)
-        return init
 
 
 class EditClassForm(forms.ModelForm):
@@ -40,7 +37,7 @@ class EditClassForm(forms.ModelForm):
             widget=forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "A unique identifier for class",
+                    "placeholder": _("A unique identifier for class"),
                 }),
         )
         if self.request is not None:
@@ -59,8 +56,8 @@ class EditClassForm(forms.ModelForm):
         class_id = self.cleaned_data.get("class_id")
         class_instance = Class.objects.filter(class_id=class_id)
         if class_instance.exists() and str(self.instance) != str(class_id):
-            raise forms.ValidationError("This class already exists",
-                                        code="noneunique_class_id")
+            raise forms.ValidationError(_("This class already exists"),
+                                        code="non-unique_class_id")
         return class_id
 
 
@@ -72,6 +69,7 @@ class CreateClassForm(EditClassForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["school"].required = False
+        self.fields["subjects"].label = "Courses"
 
 
 class ChangePhonenumber(forms.ModelForm):

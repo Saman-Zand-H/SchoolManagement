@@ -2,8 +2,9 @@
 
 {% load static %}
 {% load customtags %}
+{% load i18n %}
 
-{% block title %} Dashboard {% endblock title %}
+{% block title %} {% trans 'Dashboard' %} {% endblock title %}
 
 {% block content %}
 
@@ -13,11 +14,11 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">Home</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Home' %}</h6>
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Dashboard' %}</li>
                         </ol>
                     </nav>
                 </div>
@@ -30,7 +31,7 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">School</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'School' %}</h5>
                                     <span class="h2 font-weight-bold mb-0">{{ teacher.school }}</span>
                                 </div>
                                 <div class="col-auto">
@@ -48,7 +49,7 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Classes</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Classes' %}</h5>
                                     <span class="h2 font-weight-bold mb-0">{{ classes.count }}</span>
                                 </div>
                                 <div class="col-auto">
@@ -66,7 +67,7 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Taken Exams</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Taken Exams' %}</h5>
                                     <span class="h2 font-weight-bold mb-0">{{ teacher.exam_teacher.count }}</span>
                                 </div>
                                 <div class="col-auto">
@@ -91,12 +92,12 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                            <h5 class="h3 text-white mb-0">Average Performance</h5>
+                            <h6 class="text-light text-uppercase ls-1 mb-1">{% trans 'Overview' %}</h6>
+                            <h5 class="h3 text-white mb-0">{% trans 'Average Performance' %}</h5>
                         </div>
                         <div class="col">
                             <ul class="nav nav-pills justify-content-end">
-                                {% if classes.count > 0 %}
+                                {% if classes %}
                                     {% for class in classes %}
                                         <li class="nav-item mr-2 mr-md-0" 
                                             data-toggle="chart" 
@@ -124,7 +125,7 @@
                                                 , "label": "Average Performance"}]
                                             , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
                                         <a href="#" class="nav-link py-2 px-3" data-toggle="tab" id="initialChart">
-                                            <span class="d-none d-block">No Class</span>
+                                            <span class="d-none d-block">{% trans 'No Class' %}</span>
                                             <span class="d-md-none"></span>
                                         </a>
                                     </li>
@@ -147,10 +148,10 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">Overview</h6>
-                            <h5 class="h3 mb-0">Total Performance</h5>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">{% trans 'Overview' %}</h6>
+                            <h5 class="h3 mb-0">{% trans 'Total Performance' %}</h5>
                             <ul class="nav nav-pills justify-content-end d-none">
-                                {% if classes.count > 0 %}
+                                {% if classes %}
                                     <li class="nav-item mr-2 mr-md-0 half-year-chart" 
                                     data-toggle="chart" 
                                     data-target="#chart-bars" 

@@ -1,6 +1,8 @@
 {% extends 'layouts/base-fullscreen.html' %}
 
-{% block title %} Error 403 {% endblock title %}
+{% load i18n %}
+
+{% block title %} {% trans 'Error 403' %} {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -15,31 +17,32 @@
             <div class="card-header bg-transparent pb-5">
 
               <div class="text-muted text-center mt-2 mb-3">
-                Oops! Error 403      
+                {% trans 'Oops... Error 403.' %}
               </div>
 
               <div class="text-center mb-4">
-                <h3 class="display-3">ACCESS DENIED</h3>
+                <h3 class="display-3">{% trans 'ACCESS DENIED' %}</h3>
               </div><br>
               {% if user.user_type == "SS" and not user.school_support %}
+                {% url 'supports:create-school' as create_school_url %}
                 <div class="text-center mb-4">
-                  You must <a href="{% url 'support:create-school' %}">register your school</a>.
+                  {% blocktrans %}You must <a href="{{ create_school_url }}">register your school</a>.{% endblocktrans %}
                 </div>
               {% endif %}
 
+              {% url 'home:home' as home_url %}
               <div class="text-center mb-4">
-                Click here to <a href="{% url 'home:home' %}">get back to home page</a>.
+                  {% blocktrans %}Go back to <a href="{{ home_url }}">homepage</a>.{% endblocktrans %}
               </div>
 
             </div>
           </div>
           <div class="row mt-3">
             <div class="col-6">
-              <a href="{% url 'home:home' %}" class="text-light"><small>Home</small></a>
+              <a href="{% url 'home:home' %}" class="text-light"><small>{% trans 'Home' %}</small></a>
             </div>          
             <div class="col-6 text-right">
-              <a target="_blank" 
-                 href="https://appseed.us/support" class="text-light"><small>Get Support</small></a>
+              <a href="{% url 'home:support-page' %}" class="text-light"><small>{% trans 'Get Support' %}</small></a>
             </div>
           </div>
         </div>

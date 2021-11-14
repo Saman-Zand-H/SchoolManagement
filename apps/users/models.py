@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_noop as _
 
 import logging
 
@@ -21,22 +22,23 @@ def validate_file_extension(file):
     import os
 
     ext = os.path.splitext(file.name)[1]
-    valid_exts = [".jpg", ".png"]
-    if not ext.lower() in valid_exts:
-        logger.error(f"Unsupported file detected for: {file.name}.")
-        raise ValidationError("Invalid file extension.")
+    valid_extensions = [".jpg", ".png"]
+    if not ext.lower() in valid_extensions:
+        logger.error(_(f"Unsupported file detected for: {file.name}."))
+        raise ValidationError(_("Invalid file extension."))
 
 
 def validate_file_size(file):
     if file.size > 3 * 1024 * 1024:
-        logger.error(f"Maximum image file size exceeded for: {file.name}")
-        raise ValidationError("Unacceptable file size.")
+        logger.error(_(f"Maximum image file size exceeded for: {file.name}"))
+        raise ValidationError(_("Unacceptable file size."))
 
 
 class CustomManager(BaseUserManager):
     def _create_user(
         self,
         user_id,
+        email,
         first_name,
         last_name,
         password,
@@ -47,8 +49,10 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         now = timezone.now()
+        user_email = self.normalize_email(email)
         user = self.model(
             user_id=user_id,
+            email=user_email,
             first_name=first_name,
             last_name=last_name,
             user_type=user_type,
@@ -65,6 +69,7 @@ class CustomManager(BaseUserManager):
     def create_user(
         self,
         user_id=None,
+        email=None,
         first_name=None,
         last_name=None,
         password=None,
@@ -72,13 +77,14 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        return self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, False, False,
+        return self._create_user(user_id, email, first_name, last_name,
+                                 password, user_type, picture, False, False,
                                  **extra_fields)
 
     def create_staff(
         self,
         user_id=None,
+        email=None,
         first_name=None,
         last_name=None,
         password=None,
@@ -86,13 +92,14 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        return self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, False, True,
+        return self._create_user(user_id, email, first_name, last_name,
+                                 password, user_type, picture, False, True,
                                  **extra_fields)
 
     def create_superuser(
         self,
         user_id=None,
+        email=None,
         first_name=None,
         last_name=None,
         password=None,
@@ -100,8 +107,8 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        user = self._create_user(user_id, first_name, last_name, password,
-                                 user_type, picture, True, True,
+        user = self._create_user(user_id, email, first_name, last_name,
+                                 password, user_type, picture, True, True,
                                  **extra_fields)
         user.save(using=self._db)
         return user
@@ -109,14 +116,19 @@ class CustomManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_id = models.CharField(max_length=20, unique=True)
+    email = models.EmailField(unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
     phone_number = PhoneNumberField(blank=True, null=True)
+    phonenumber_verification_code = models.CharField(blank=True,
+                                                     null=True,
+                                                     max_length=8)
     user_type = models.CharField(max_length=3, choices=USER_TYPE_CHOICES)
-    picture = models.FileField(blank=True,
-                               upload_to="media",
-                               default="empty-profile.jpg",
-                               validators=[validate_file_extension, validate_file_size])
+    picture = models.FileField(
+        blank=True,
+        upload_to="media",
+        default="empty-profile.jpg",
+        validators=[validate_file_extension, validate_file_size])
     about = models.TextField(blank=True, default="")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -124,7 +136,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "user_id"
-    EMAIL_FIELD = ""
+    EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["user_type", "first_name", "last_name"]
 
     objects = CustomManager()
@@ -137,3 +149,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.user_id
+
+    def save(self, *args, **kwargs):
+        if not self.email:
+            self.email = None
+        super().save(*args, **kwargs)

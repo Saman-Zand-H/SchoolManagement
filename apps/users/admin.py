@@ -14,6 +14,7 @@ class CustomAdmin(UserAdmin):
                 "fields": (
                     "user_id",
                     "user_type",
+                    "email",
                     "first_name",
                     "last_name",
                     "phone_number",
@@ -39,6 +40,7 @@ class CustomAdmin(UserAdmin):
             "fields": (
                 "user_id",
                 "user_type",
+                "email",
                 "first_name",
                 "last_name",
                 "phone_number",
@@ -51,7 +53,7 @@ class CustomAdmin(UserAdmin):
             "wide",
         },
     ), )
-    list_display = ["name", "user_id", "user_type"]
-    search_fields = ["name", "user_id"]
+    list_display = ["name", "user_id", "user_type", "email"]
+    search_fields = ["name", "user_id", "email"]
     list_filter = ["user_type"]
     filter_horizontal = ["groups", "user_permissions"]

@@ -4,6 +4,9 @@ import sys
 import socket
 from environs import Env
 
+from django.utils.translation import gettext as _
+import dj_database_url
+
 
 env = Env()
 env.read_env()
@@ -21,9 +24,9 @@ sys.path.append(os.path.join(BASE_DIR, "apps"))
 SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=1)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "takhte-whiteboard.ir"]
 
 
 # Application definition
@@ -56,22 +59,17 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'compression_middleware.middleware.CompressionMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    "compression_middleware.middleware.CompressionMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-]
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'conf.urls'
@@ -110,6 +108,10 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -128,6 +130,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 
@@ -144,45 +151,67 @@ USE_L10N = True
 
 USE_TZ = True
 
+LANGUAGES = (('en-US', _('English')), ('fa-IR', _('Persian')))
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, "locale"),
+]
+
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, os.path.join("staticfiles"))
 
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'djngo.db.models.BigAutoField'
 
 SITE_ID = 1
 
 # Crispy Forms Configuration
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-# Debug toolbar configurations
+# DjDT confs
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
-# Phonenumber_field configurations
+# Phonenumber_field confs
 PHONENUMBER_DEFAULT_REGION = "IR"
 PHONE_NUMBER_DEFAULT_FORMAT = "NATIONAL"
 
-# Allauth Configurations
+# Allauth confs
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
 ACCOUNT_ADAPTER = "users.forms.CustomSignUpAdapter"
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_FORMS = {
     'login': 'users.forms.CustomLoginForm',
     'signup': 'users.forms.BaseSignupForm',
 }
-ACCOUNT_SESSION_REMEMBER = True
 LOGIN_REDIRECT_URL = "home:home"
-ACCOUNT_SIGNUP_REDIRECT_URL = "support:create-school"
+ACCOUNT_SIGNUP_REDIRECT_URL = "supports:create-school"
+
+# EMAIL API confs
+EMAIL_API_KEY = env.str("EMAIL_API_KEY")
+EMAIL_API_HOST = env.str("EMAIL_API_HOST")
+
+# Email backend confs
+DEFAULT_FROM_EMAIL = "contact@takhte-whiteboard.ir"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "cp.baseprovider.com"
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 465
+DEFAULT_FROM_HOST = EMAIL_HOST_USER
+EMAIL_USE_SSL = True
+
+# OTP SMS confs
+OTPSMS_USERNAME = env.str("OTPSMS_USERNAME")
+OTPSMS_PASSWORD = env.str("OTPSMS_PASSWORD")
+OTPSMS_LINENUMBER = env.str("OTPSMS_LINENUMBER")

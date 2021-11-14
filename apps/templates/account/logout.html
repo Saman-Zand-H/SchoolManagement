@@ -2,8 +2,9 @@
 
 {% load crispy_forms_tags %}
 {% load static %}
+{% load i18n %}
 
-{% block title %} Logout {% endblock title %} 
+{% block title %} {% trans 'Log Out' %} {% endblock title %} 
 
 {% block content %}
 
@@ -12,12 +13,12 @@
 		<div class="header-body">
 			<div class="row align-items-center py-4">
 				<div class="col-lg-6 col-7">
-					<h6 class="h2 text-white d-inline-block mb-0">Logout</h6>
+					<h6 class="h2 text-white d-inline-block mb-0">{% trans 'Sign Out' %}</h6>
 					<nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
 						<ol class="breadcrumb breadcrumb-links breadcrumb-dark">
 							<li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-							<li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">Dashboard</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Logout</li>
+							<li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a></li>
+							<li class="breadcrumb-item active" aria-current="page">{% trans 'Logout' %}</li>
 						</ol>
 					</nav>
 				</div>
@@ -30,7 +31,7 @@
 	<div class="header bg-primary pb-6">
 		<div class="container-fluid">
 			<div class="header-body">
-			<h2 class="display-2 text-lighter ml-2 pt-2">Logout</h2><br>
+			<h2 class="display-2 text-lighter ml-2 pt-2">{% trans 'Logout' %}</h2><br>
 			</div>
 		</div>
 	</div>
@@ -38,13 +39,13 @@
 		<div class="row">
 			<div class="col mx-auto"><br>
 				<div class="alert alert-default" role="alert">
-					<h2 class="text-white pl-2">Are you sure you want to sign out?</h2>
+					<h2 class="text-white pl-2">{% trans 'Are you sure you want to sign out?' %}</h2>
 					<form method="post" action="{% url 'account_logout' %}">
 						{% csrf_token %}
 						{% if redirect_field_value %}
 							<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
 						{% endif %}
-						<button type="submit" class="btn btn-danger ml-4">Sign Out</button>
+						<button type="submit" class="btn btn-danger ml-4">{% trans 'Sign out' %}</button>
 					</form>
 				</div>
 			</div>

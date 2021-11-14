@@ -2,8 +2,9 @@
 
 {% load crispy_forms_tags %} 
 {% load static %} 
+{% load i18n %}
 
-{% block title %} Exams {% endblock title %} 
+{% block title %} {% trans 'Exams' %} {% endblock title %} 
 
 {% block content %}
 
@@ -13,12 +14,12 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">Exams</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Exams' %}</h6>
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Exams</li>
+                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Exams' %}</li>
                         </ol>
                     </nav>
                 </div>
@@ -27,11 +28,11 @@
                     <!-- Modals Buttons -->
                     <button type="button" data-toggle="modal" data-target="#newExam" class="btn btn-sm btn-neutral">
                         <i class="fas fa-plus"></i>
-                        New
+                        {% trans 'New' %}
                     </button>
                     <button type="button" data-toggle="modal" data-target="#filterExams" class="btn btn-sm btn-warning">
                         <i class="fas fa-filter"></i>
-                        Filters
+                        {% trans 'Filters' %}
                     </button>
 
                     <!-- New Exam Modal -->
@@ -39,14 +40,14 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">New Exam</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'New Exam' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="mt-2 mx-auto">
-                                        {% if form.errors %}
+                                        {% if form.errors or form.non_field_errors %}
                                             <hr>
                                             <h3>Invalid Inputs:</h3><br>
                                             {% for field in form %}
@@ -54,9 +55,6 @@
                                                     <p class="text-danger">- {{ field.label }}: {{ error }}</p>
                                                 {% endfor %}
                                             {% endfor %}
-                                            <hr>
-                                        {% endif %}
-                                        {% if form.non_field_errors %}
                                             {% for error in form.non_field_errors %}
                                                 <p class="text-danger">- {{ error }}</p>
                                             {% endfor %}
@@ -68,7 +66,7 @@
                                         data-subjects-url="{% url 'teachers:ajax-add-exam' %}">
                                         {% csrf_token %}
                                         <div id="select-class">
-                                            <label for="#exam_class">Class*</label>
+                                            <label for="#exam_class">{% trans 'Class' %}*</label>
                                             <select class="form-control my-1" name="exam_class" id="exam_class">
                                                 <option value=""><-------------------></option>
                                                 {% for class in classes %}
@@ -82,19 +80,19 @@
                                         </div>
 
                                         <div id="input-full-score">
-                                            <label for="#fullscore" class="mt-3">Full Score(The default is 20)</label>
-                                            <input class="form-control my-1" type="number" name="full_score" id="fullscore" placeholder="Full Score">
+                                            <label for="#fullscore" class="mt-3">{% trans 'Full Score' %}</label>
+                                            <input class="form-control my-1" type="number" name="full_score" id="fullscore" placeholder="{% trans 'e.g. 100 or ...' %}">
                                         </div>
 
                                         <div id="input-date">
-                                            <label for="#date" class="mt-3">Date*</label>
-                                            <input class="form-control datepicker my-1" type="text" name="timestamp" id="date" placeholder="Exam Date">
+                                            <label for="#date" class="mt-3">{% trans 'Date' %}</label>
+                                            <input class="form-control datepicker my-1" type="text" name="timestamp" id="date" placeholder="{% trans 'Choose using the datepicker' %}">
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick='$("#addExamForm").submit()'>Add</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                    <button type="button" class="btn btn-primary" onclick='$("#addExamForm").submit()'>{% trans 'Add' %}</button>
                                 </div>
                             </div>
                         </div>
@@ -103,19 +101,19 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Filter Exams</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Filter Exams' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
                                     <form method="GET" action="{% url 'teachers:exams' %}" data-subjects-filter="{% url 'teachers:ajax-filter-exam' %}" id="filterForm">
-                                        <h4>All exams with the following properties:</h4><br>
+                                        <h4>{% trans 'All exams corresponding to the following details:' %}</h4><br>
 
                                         <div id="select-class-filter" class="mb-3">
-                                            <label for="#classFilter">Class</label>
+                                            <label for="#classFilter">{% trans 'Class' %}</label>
                                             <select class="form-control my-1" name="classFilter" id="classFilter">
-                                                <option value="">All</option>
+                                                <option value="">{% trans 'All' %}</option>
                                                 {% for class in classes %}
                                                     <option value="{{ class.pk }}">{{ class.class_id }}</option>
                                                 {% endfor %}
@@ -128,17 +126,17 @@
                                         <hr>
 
                                         <div id="input-date-filter">
-                                            <label for="#sinceDate">Since</label>
+                                            <label for="#sinceDate">{% trans 'Since' %}</label>
                                             <input class="form-control datepicker my-1" id="sinceDate" placeholder="MM/DD/YYYY" name="dateSince" type="text">
 
-                                            <label for="#tillDate">Until</label>
+                                            <label for="#tillDate">{% trans 'Until' %}</label>
                                             <input class="form-control datepicker my-1" id="tillDate" placeholder="MM/DD/YYYY" name="dateTill" type="text">    
                                         </div>                                    
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick="$('#filterForm').submit()">Filter</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                    <button type="button" class="btn btn-primary" onclick="$('#filterForm').submit()">{% trans 'Filter' %}</button>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +152,7 @@
         <div class="col">
             <div class="row">
                 
-                {% if exams.count > 0 %}
+                {% if exams %}
                     {% for exam in exams %}
                         <div class="col-lg-4 col-md-6">
                             <div class="card border-0 bg-gradient-gray-dark">
@@ -164,10 +162,10 @@
                                             {{ exam.subject.name }}
                                         </div>
                                         <p class="card-text">
-                                            Time: {{ exam.timestamp|date:"D, j N Y" }}<br> 
-                                            Class: {{ exam.exam_class }}<br> 
-                                            Full Score: {{ exam.full_score }}<br> 
-                                            Average Grade: {{ exam.get_average_grade }}
+                                            {% trans 'Date' %}: {{ exam.timestamp|date:"D, j N Y" }}<br> 
+                                            {% trans 'Class' %}: {{ exam.exam_class }}<br> 
+                                            {% trans 'Full Score' %}: {{ exam.full_score }}<br> 
+                                            {% trans 'Average Grade:' %}: {{ exam.get_average_grade }}
                                         </p>
                                     </div>
                                 </a>
@@ -175,11 +173,11 @@
                         </div>
                     {% endfor %} 
                 {% else %}
-                    <div class="col-lg-12">
+                    <div class="col">
                         <div class="card border-0 bg-gradient-gray-dark">
                             <div class="card-body">
-                                <div class="card-title text-white text-center">
-                                    <strong>NO RECORDED EXAM</strong>
+                                <div class="card-body text-white text-center">
+                                    <strong>{% trans 'No exam is created yet.' %}</strong>
                                 </div>
                             </div>
                         </div>
@@ -230,9 +228,9 @@
     });
 
     $("#addExamForm").submit(function(event) {
-        const dateRegex = new RegExp("^((0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(20[0-9]{2})){1}$");
-        if ($("#select-class>select").val() == ""  || !dateRegex.test($("#input-date>input").val())) {
-            alert("Please fill all fields with an asterix (*) and for date use the format MM/DD/YYYY");
+        const dateRegex = new RegExp("^((0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(20[0-9]{2}))$");
+        if ($("#select-class>select").val() === ""  || !dateRegex.test($("#input-date>input").val())) {
+            alert("Please fill all fields with an asterisk (*) and for date use the format MM/DD/YYYY");
             event.preventDefault();
         } else {
             $("#addExamForm").submit(event);
@@ -240,7 +238,7 @@
     });
 
     $("#filterForm").submit(function(event) {
-        const dateRegex = new RegExp("^((0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(20[0-9]{2})){1}$");
+        const dateRegex = new RegExp("^((0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/(20[0-9]{2}))$");
         if ($("#input-date-filter>input").val()) {
             if (!dateRegex.test($("#sinceDate").val())) {
                 alert("Date format is not valid. Use the format MM/DD/YYYY");
