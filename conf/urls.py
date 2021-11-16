@@ -6,8 +6,7 @@ from django.conf.urls import handler404, handler403, handler500
 
 urlpatterns = [
     # Admin
-    # TODO: CHANGE THIS URL
-    path('admin/', admin.site.urls),
+    path('emperors-page/', admin.site.urls),
 
     # User Management 
     path('accounts/', include("allauth.urls")),

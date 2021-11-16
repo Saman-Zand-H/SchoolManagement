@@ -4,7 +4,7 @@ import sys
 import socket
 from environs import Env
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 import dj_database_url
 
 
@@ -15,6 +15,21 @@ env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(BASE_DIR, "apps"))
+
+# Production settings
+ENVIRONMENT = env.str('ENVIRONMENT', "development")
+
+if ENVIRONMENT == 'production':
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Quick-start development settings - unsuitable for production
@@ -100,11 +115,11 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'saman',
-        'PASSWORD': '123456789',
+        'NAME': env.str("DB_NAME", "postgres"),
+        'USER': env.str("DB_USER", "saman"),
+        'PASSWORD': env.str("DB_PASSWORD", "123456789"),
         'PORT': 5432,
-        'HOST': 'db',
+        'HOST': env.str("DB_HOST", "db"),
     }
 }
 
@@ -170,7 +185,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'djngo.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 

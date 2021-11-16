@@ -67,8 +67,8 @@ class Teacher(models.Model):
             logger.error(
                 _("A non-teacher typed user was being used as a teacher."))
             raise ValidationError(
-                _("{} is not a teacher. User must be typed as a teacher."
-                  ).format(self.user.name))
+                _("{} is not a teacher. User must be typed as a teacher.").
+                format(self.user.name))
         group, group_created = Group.objects.get_or_create(name="Teachers")
         if group_created:
             perm = Permission.objects.filter(codename="teacher")[0]

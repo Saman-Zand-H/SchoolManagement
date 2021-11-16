@@ -90,7 +90,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         load_template = self.request.path.split("-1")[-1]
         school = School.objects.get(support=self.request.user)
-        classes = Class.objects.filter(school=school)
+        classes = Class.objects.filter(school=school).distinct()
         subjects_exist = Subject.objects.filter(
             teacher__school=school).exists()
         form = CreateClassForm(request=self.request)
@@ -179,7 +179,7 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         load_template = self.request.path.split("-1")[-1]
         school = School.objects.get(support=self.request.user)
-        teachers = Teacher.objects.filter(school=school)
+        teachers = Teacher.objects.filter(school=school).distinct()
         form = BaseSignupForm()
         self.context = {
             "teachers": teachers,
@@ -218,7 +218,7 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("-1")[-1]
         teacher = Teacher.objects.get(pk=kwargs.get("pk"))
         subjects = teacher.subject_teacher.all()
-        classes = Class.objects.filter(subjects__teacher=teacher)
+        classes = Class.objects.filter(subjects__teacher=teacher).distinct()
         details_form = ChangeTeacherDetails(instance=teacher)
         change_number_form = ChangePhonenumber(instance=teacher.user)
         self.context = {
@@ -280,7 +280,8 @@ class SubjectsView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("-1")[-1]
         self.context = {
             "subjects":
-            Subject.objects.filter(teacher__school__support=self.request.user),
+            Subject.objects.filter(
+                teacher__school__support=self.request.user).distinct(),
             "form":
             CreateSubjectForm(request=self.request),
             "segment":
@@ -345,7 +346,7 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         load_template = self.request.path.split("-1")[-1]
         students = Student.objects.filter(
-            student_class__school__support=self.request.user)
+            student_class__school__support=self.request.user).distinct()
         self.context = {
             "form": SupportStudentSignupForm(request=self.request),
             "students": students,
@@ -435,9 +436,11 @@ class ProfileView(PermissionAndLoginRequiredMixin, View):
     def get(self, args, **kwargs):
         # For some reason, that I don't know, [-1] is None
         load_template = self.request.path.split('/')[-2]
-        classes = Class.objects.filter(school__support=self.request.user)
+        classes = Class.objects.filter(
+            school__support=self.request.user).distinct()
         students = Student.objects.filter(student_class__in=classes)
-        email_confirmed = EmailAddress.objects.filter(user=self.request.user)
+        email_confirmed = EmailAddress.objects.filter(
+            user=self.request.user).distinct()
         self.context = {
             "form": ChangePasswordForm(),
             "classes_count": classes.count(),
@@ -476,7 +479,7 @@ class CustomPasswordChangeView(PermissionAndLoginRequiredMixin,
 
     def render_to_response(self, context, **response_kwargs):
         classes = Class.objects.filter(school__support=self.request.user)
-        students = Student.objects.filter(student_class__in=classes)
+        students = Student.objects.filter(student_class__in=classes).distinct()
         context["classes_count"] = classes.count()
         context["students_count"] = students.count()
 

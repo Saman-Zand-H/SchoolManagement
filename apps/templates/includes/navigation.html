@@ -6,11 +6,6 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Navbar links -->
             <ul class="navbar-nav align-items-center  ml-md-auto ">
-                <li class="nav-item d-sm-none">
-                    <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
-                        <i class="ni ni-zoom-split-in"></i>
-                    </a>
-                </li>
                 {% comment %} 
                 THESE WILL BE ADDED IN FUTURE UPDATES
                 <li class="nav-item dropdown">
@@ -135,7 +130,7 @@
                                 {% if user.picture %}
                                     <img alt="Profile Picture" src="{{ user.picture.url }}">
                                 {% else %}
-                                    <img alt="Profile Picture" src="../../../media/empty-profile.jpg">
+                                    <img alt="Profile Picture" src="../../../static/empty-profile.jpg">
                                 {% endif %}
                             </span>
                             <div class="media-body  ml-2  d-none d-lg-block">

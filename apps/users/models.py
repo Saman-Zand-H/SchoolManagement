@@ -145,7 +145,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"/users/{self.pk}/"
 
     def name(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name.title()} {self.last_name.title()}"
 
     def __str__(self):
         return self.user_id

@@ -80,21 +80,27 @@
                                             {{ formset.management_form }} 
                                             {% csrf_token %}
                                             <tbody>
-                                                {% for form in formset %}
+                                                {% if exam.exam_class.student_class.all %}
+                                                    {% for form in formset %}
+                                                        <tr>
+                                                            <td>{{ forloop.counter }}</td>
+                                                            <td>
+                                                                {{ exam.exam_class.student_class.all|getuserbyindex:forloop.counter }}
+                                                            </td>
+                                                            <td>
+                                                                {{ form.id }}
+                                                                {{ form.grade }}
+                                                                <input type="hidden" name="{{ form.student.html_name }}" value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}">
+                                                                <input type="hidden" name="{{ form.exam.html_name }}" value="{{ exam.pk }}">
+                                                                <input type="hidden" name="{{ form.subject.html_name }}" value="{{ exam.subject.pk }}">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    {% else %}
                                                     <tr>
-                                                        <td>{{ forloop.counter }}</td>
-                                                        <td>
-                                                            {{ exam.exam_class.student_class.all|getuserbyindex:forloop.counter }}
-                                                        </td>
-                                                        <td>
-                                                            {{ form.id }} 
-                                                            {{ form.grade }}
-                                                            <input type="hidden" name="{{ form.student.html_name }}" value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}">
-                                                            <input type="hidden" name="{{ form.exam.html_name }}" value="{{ exam.pk }}">
-                                                            <input type="hidden" name="{{ form.subject.html_name }}" value="{{ exam.subject.pk }}">
-                                                        </td>
+                                                        <td colspan="3" class="text-center">This class has no student yet.</td>
                                                     </tr>
-                                                {% endfor %}
+                                                {% endif %}
                                             </tbody>
                                         </form>
                                     </table>
@@ -177,7 +183,7 @@
                                                      {% if student.user.picture is not None %} 
                                                          src="{{ grade.student.user.picture.url }}" 
                                                      {% else %} 
-                                                     src="../../../../media/empty-profile.jpg"
+                                                     src="../../../../static/empty-profile.jpg"
                                                      {% endif %}
                                                 >
                                             </a>

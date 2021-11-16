@@ -26,11 +26,11 @@
                 <!-- Modals -->
                 <div class="col-lg-6 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" data-toggle="modal" data-target="#newExam" class="btn btn-sm btn-neutral">
+                    <button type="button" data-toggle="modal" data-target="#newExam" class="btn btn-sm btn-neutral my-1">
                         <i class="fas fa-plus"></i>
                         {% trans 'New' %}
                     </button>
-                    <button type="button" data-toggle="modal" data-target="#filterExams" class="btn btn-sm btn-warning">
+                    <button type="button" data-toggle="modal" data-target="#filterExams" class="btn btn-sm btn-warning my-1">
                         <i class="fas fa-filter"></i>
                         {% trans 'Filters' %}
                     </button>
@@ -162,10 +162,10 @@
                                             {{ exam.subject.name }}
                                         </div>
                                         <p class="card-text">
-                                            {% trans 'Date' %}: {{ exam.timestamp|date:"D, j N Y" }}<br> 
-                                            {% trans 'Class' %}: {{ exam.exam_class }}<br> 
-                                            {% trans 'Full Score' %}: {{ exam.full_score }}<br> 
-                                            {% trans 'Average Grade:' %}: {{ exam.get_average_grade }}
+                                            {% trans 'Date:' %} {{ exam.timestamp|date:"D, j N Y" }}<br>
+                                            {% trans 'Class:' %} {{ exam.exam_class }}<br>
+                                            {% trans 'Full Score:' %} {{ exam.full_score }}<br>
+                                            {% trans 'Average Grade:' %} {{ exam.get_average_grade }}
                                         </p>
                                     </div>
                                 </a>

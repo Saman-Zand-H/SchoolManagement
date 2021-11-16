@@ -10,20 +10,23 @@ from .models import USER_TYPE_CHOICES
 from mainapp.models import Class
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(name)s: %(message)s')
+logger.setLevel(logging.DEBUG)
 
 
 def validate_file_extension(file):
     import os
-
     ext = os.path.splitext(file.name)[1]
     valid_extensions = [".jpg", ".png"]
     if not ext.lower() in valid_extensions:
+        logger.info("An invalid file was detected, and rejected.")
         raise forms.ValidationError(_("Unsupported file extension."),
                                     code="invalid_extension")
 
 
 def validate_file_size(file):
     if file.size > 3 * 1024**2:
+        logger.info("An invalid file was detected, and rejected.")
         raise forms.ValidationError(_("Maximum file size is 3MB."),
                                     code="invalid_filesize")
 
@@ -106,13 +109,16 @@ class CustomSignUpAdapter(DefaultAccountAdapter):
             super().clean_username(username, shallow=shallow)
         except forms.ValidationError:
             raise forms.ValidationError(_("This ID already exists."),
-                                        code="nonunique_username")
+                                        code="indistinct_username")
         return username
 
 
 class CustomLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
-        user = super(CustomLoginForm, self).__init__(*args, **kwargs)
+        self.error_messages.update({
+            "students_not_allowed": "Sorry. We don't support students currently.",
+        })
+        super(CustomLoginForm, self).__init__(*args, **kwargs)
         self.fields["login"] = forms.CharField(
             max_length=20,
             min_length=2,
@@ -131,7 +137,16 @@ class CustomLoginForm(LoginForm):
                 "placeholder": _("Password"),
             }),
         )
-        return user
+
+    def clean(self):
+        super().clean()
+        if self.user:
+            if self.user.user_type == "S":
+                logger.info(f"A student with id {self.user.user_id} was trying to sign in.")
+                raise forms.ValidationError(
+                    self.error_messages["students_not_allowed"],
+                    code="students_not_allowed")
+        return self.cleaned_data
 
 
 class AddPhonenumberForm(forms.Form):

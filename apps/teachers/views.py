@@ -129,7 +129,8 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
                     pk__in=[])
 
             queryset = exams.filter(time_range_filter & subject_filter
-                                    & class_filter).order_by("timestamp")
+                                    & class_filter).order_by(
+                                        "timestamp").distinct()
             self.context["exams"] = queryset
         else:
             messages.error(self.request, _("Provided inputs are invalid."))
@@ -173,7 +174,8 @@ def ajax_create_exam(request):
     class_pk = request.GET.get("ajax_exam_class")
     if class_pk is not None:
         class_instance = Class.objects.get(pk=class_pk)
-        subjects = class_instance.subjects.filter(teacher__user=request.user)
+        subjects = class_instance.subjects.filter(
+            teacher__user=request.user).distinct()
     else:
         subjects = Subject.objects.none()
     context = {"subjects": subjects}
@@ -276,8 +278,9 @@ class ProfileView(PermissionAndLoginRequiredMixin, View):
         # For a reason that I don't know [-1] is None
         loadTemplate = self.request.path.split('/')[-2]
         teacher = Teacher.objects.get(user=self.request.user)
-        classes = teacher.school.class_school.filter(subjects__teacher=teacher)
-        students = Student.objects.filter(student_class__in=classes)
+        classes = teacher.school.class_school.filter(
+            subjects__teacher=teacher).distinct()
+        students = Student.objects.filter(student_class__in=classes).distinct()
         self.context = {
             "form": ChangePasswordForm(),
             "teacher": teacher,
@@ -315,8 +318,8 @@ class CustomPasswordChangeView(PermissionAndLoginRequiredMixin,
 
     def render_to_response(self, context, **response_kwargs):
         teacher = Teacher.objects.get(user=self.request.user)
-        classes = Class.objects.filter(subjects__teacher=teacher)
-        students = Student.objects.filter(student_class__in=classes)
+        classes = Class.objects.filter(subjects__teacher=teacher).distinct()
+        students = Student.objects.filter(student_class__in=classes).distinct()
         context["teacher"] = teacher
         context["classes_count"] = classes.count()
         context["students_count"] = students.count()

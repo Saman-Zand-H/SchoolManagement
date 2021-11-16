@@ -42,8 +42,8 @@ class Student(models.Model):
             logger.error(
                 _("A non-student typed user was being used as a student."))
             raise ValidationError(
-                _("{} is not a student. User must be typed as a student."
-                  ).format(self.user.name))
+                _("{} is not a student. User must be typed as a student.").
+                format(self.user.name))
 
 
 class Subject(models.Model):

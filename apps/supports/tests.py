@@ -372,7 +372,7 @@ def test_create_teacher_successful(client, school_1):
     assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/supports/teachers.html")
 
-    picture_path = pathlib.Path.cwd() / "media" / "empty-profile.jpg"
+    picture_path = pathlib.Path.cwd() / "static" / "empty-profile.jpg"
     data = {
         "username":
         "test_created_teacher",
