@@ -4,6 +4,7 @@ from . import views
 
 app_name = "support"
 urlpatterns = [
+    # TODO: PLEASE MOVE THIS PIECE OF SHIT TO USERS APP ASAP
     path("account/signup/school/",
          views.create_school_view,
          name="create-school"),

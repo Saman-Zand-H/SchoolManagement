@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model, get_user
 from django.contrib.messages import get_messages
 
 import pytest
-from pytest_django.asserts import assertTemplateUsed, assertRedirects
+from pytest_django.asserts import assertTemplateUsed, assertRedirects, assertRaisesMessage
 from datetime import date
 
 from teachers.views import (DashboardView, ExamsListView, SetGradesView,

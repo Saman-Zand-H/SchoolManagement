@@ -10,7 +10,8 @@ from .models import USER_TYPE_CHOICES
 from mainapp.models import Class
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='[%(levelname)s] %(asctime)s - %(name)s: %(message)s')
+logging.basicConfig(
+    format='[%(levelname)s] %(asctime)s - %(name)s: %(message)s')
 logger.setLevel(logging.DEBUG)
 
 
@@ -116,7 +117,8 @@ class CustomSignUpAdapter(DefaultAccountAdapter):
 class CustomLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
         self.error_messages.update({
-            "students_not_allowed": "Sorry. We don't support students currently.",
+            "students_not_allowed":
+            "Sorry. We don't support students currently.",
         })
         super(CustomLoginForm, self).__init__(*args, **kwargs)
         self.fields["login"] = forms.CharField(
@@ -142,7 +144,9 @@ class CustomLoginForm(LoginForm):
         super().clean()
         if self.user:
             if self.user.user_type == "S":
-                logger.info(f"A student with id {self.user.user_id} was trying to sign in.")
+                logger.info(
+                    f"A student with id {self.user.user_id} was trying to sign in."
+                )
                 raise forms.ValidationError(
                     self.error_messages["students_not_allowed"],
                     code="students_not_allowed")
