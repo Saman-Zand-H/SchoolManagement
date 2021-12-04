@@ -88,7 +88,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'conf.urls'
-TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")
+TEMPLATE_DIR = os.path.join(CORE_DIR, "templates")
 
 TEMPLATES = [
     {
@@ -156,7 +156,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa'
 
 TIME_ZONE = 'UTC'
 
@@ -166,7 +166,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-LANGUAGES = (('en-US', _('English')), ('fa-IR', _('Persian')))
+LANGUAGES = (('en', _('English')), ('fa', _('Persian')))
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "locale"),
@@ -208,6 +208,8 @@ ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_FORMS = {
     'login': 'users.forms.CustomLoginForm',
     'signup': 'users.forms.BaseSignupForm',
+    'reset_password': 'users.forms.CustomPasswordResetForm',
+    'add_email': 'users.forms.CustomAddEmailForm',
 }
 LOGIN_REDIRECT_URL = "home:home"
 ACCOUNT_SIGNUP_REDIRECT_URL = "supports:create-school"

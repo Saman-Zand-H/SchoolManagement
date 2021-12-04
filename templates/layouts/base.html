@@ -1,0 +1,72 @@
+{% load static %}
+{% load i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>
+        {% trans 'DjS School' %} - {% block title %} Base {% endblock %}
+    </title>
+
+    <!-- Favicon - loaded as static -->
+    <link rel="icon" href="{% static 'assets/img/brand/favicon.png' %}" type="image/png">
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+    <!-- Icons -->
+    <link rel="stylesheet" href="{% static 'assets/vendor/nucleo/css/nucleo.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}" type="text/css">
+    <!-- Argon CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/argon.css' %}" type="text/css">
+    {% block extralinks %}{% endblock %}
+
+    <script src="/static/assets/js/argon.js" defer></script>
+
+    <!-- Specific CSS goes HERE -->
+    {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+
+<body>
+
+    {% include "includes/sidenav.html" %}
+
+    <div class="main-content" id="panel">
+
+        {% include "includes/navigation.html" %}
+        <section class="{% if LANGUAGE_CODE != 'en' %}rtl text-right{% endif %}">
+            <div class="header bg-primary mb--3">
+                <div class="container-fluid">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == "error" %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {% else %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {% endif %}
+                                <span class="alert-inner--text">{% if LANGUAGE_CODE == 'en' %}<strong>{{ message.tags|upper }}!</strong>{% endif %} {{ message }}</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% block content %}{% endblock content %}
+        </section>  
+    </div>
+
+    {% include "includes/scripts.html" %}
+
+    <!-- Specific JS goes HERE -->
+    {% block javascripts %}{% endblock javascripts %}
+
+</body>
+
+</html>

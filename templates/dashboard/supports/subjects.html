@@ -1,0 +1,126 @@
+{% extends 'layouts/base.html' %} 
+
+{% load crispy_forms_tags %} 
+{% load customtags %} 
+{% load i18n %}
+
+{% block title %} {% trans 'Courses' %} {% endblock title %} 
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-12 col-md-12 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Courses' %}</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Courses' %}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-12 col-md-12 col-5">
+                    <!-- Modals Buttons -->
+                    <button type="button" data-toggle="modal" data-target="#createClass" class="btn btn-sm btn-neutral">
+                        <i class="fas fa-plus"></i> {% trans 'New' %}
+                    </button>
+                    <!-- Add Grades Modal -->
+                    <div class="modal fade" id="createClass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Create a new course' %}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="">* {% trans 'these fields are required' %}</div>
+                                    <div class="mt-2">
+                                        {% if form.errors or form.non_field_errors %}
+                                            <hr>
+                                            <h3>{% trans 'Invalid Inputs:' %}</h3><br>
+                                                {% for error in form.non_field_errors %}
+                                                    <p class="text-danger">- {{ error }}</p>
+                                                {% endfor %}
+                                                {% for field in form %}
+                                                    {% for error in fiel.errors %}
+                                                        <p class="text-danger">- {{ error }}</p>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            <hr>
+                                        {% endif %}
+                                    </div>
+                                    <form id="createClassForm" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="my-4">
+                                            {{ form.name.label }}*
+                                            {{ form.name }}
+                                        </div>
+
+                                        <div class="my-4">
+                                            {{ form.teacher.label }}*
+                                            {{ form.teacher }}
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
+                                    <button type="button" class="btn btn-primary" onclick="$('#createClassForm').submit()">{% trans 'Create' %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                {% if subjects %}
+                    {% for subject in subjects %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card border-0 bg-gradient-gray-dark">
+                                <a href="{{ subject.get_absolute_url }}" class="text-light">
+                                    <div class="card-body">
+                                        <div class="card-title">
+                                            {{ subject.name|title }}
+                                        </div>
+                                        <p class="card-text">
+                                            {% trans 'Teacher:' %} {{ subject.teacher.user.name|title }}
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col my-4">
+                    <div class="card border-0 bg-gradient-gray-dark">
+                        <a href="{{ subject.get_absolute_url }}" class="text-light">
+                            <div class="card-body">
+                                <strong class="card-text text-white">{% trans 'No course is created yet.' %}</strong>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% include "includes/footer.html" %}
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %} {% endblock javascripts %}

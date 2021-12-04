@@ -10,6 +10,7 @@ from allauth.account.forms import ChangePasswordForm
 from allauth.account.admin import EmailAddress
 
 from collections import deque
+import logging
 
 from .forms import (CreateSchoolForm, CreateClassForm, ChangePhonenumber,
                     ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
@@ -19,6 +20,8 @@ from .models import School
 from teachers.models import Teacher
 from users.forms import BaseSignupForm, SupportStudentSignupForm, UserBioForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
+
+logger = logging.getLogger(__name__)
 
 
 class _BaseDeleteUser(PermissionAndLoginRequiredMixin, View):
@@ -124,15 +127,21 @@ classes_view = ClassesView.as_view()
 class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.context = dict()
+
     def get(self, *args, **kwargs):
+        load_template = self.request.path.split("-1")[-1]
         class_instance = Class.objects.get(pk=kwargs.get("pk"))
         form = EditClassForm(instance=class_instance, request=self.request)
-        context = {
+        self.context = {
             "class": class_instance,
             "form": form,
+            "segment": load_template,
         }
         return render(self.request, "dashboard/supports/classes_detail.html",
-                      context)
+                      self.context)
 
     def post(self, *args, **kwargs):
         class_instance = Class.objects.get(pk=kwargs.get("pk"))
@@ -147,10 +156,10 @@ class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
             messages.success(self.request, _("Class updated successfully."))
             return redirect("supports:classes-detail", pk=kwargs.get("pk"))
         else:
-            context = {"form": form, "class": class_instance}
+            self.context.update({"form": form, "class": class_instance})
             messages.error(self.request, _("Provided inputs are invalid."))
             return render(self.request,
-                          "dashboard/supports/classes_detail.html", context)
+                          "dashboard/supports/classes_detail.html", self.context)
 
 
 classes_detail_view = ClassesDetailView.as_view()
@@ -310,11 +319,16 @@ subjects_view = SubjectsView.as_view()
 class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def get(self, *args, **kwargs):
+        load_template = self.request.path.split("-1")[-1]
         subject = Subject.objects.get(pk=kwargs["pk"])
         context = {
             "classes": subject.class_subjects.all(),
             "subject": subject,
+            "segment": load_template,
         }
         return render(self.request, "dashboard/supports/subjects_detail.html",
                       context)
@@ -377,18 +391,21 @@ students_view = StudentsView.as_view()
 class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.context = dict()
+
     def get(self, *args, **kwargs):
+        load_template = self.request.path.split("-1")[-1]
         current_student = Student.objects.get(pk=kwargs.get("pk"))
-        context = {
-            "student_spec_form":
-            StudentsClassForm(instance=current_student, request=self.request),
-            "phonenumber_form":
-            ChangePhonenumber(instance=current_student.user),
-            "student":
-            current_student,
+        self.context = {
+            "student_spec_form": StudentsClassForm(instance=current_student, request=self.request),
+            "phonenumber_form": ChangePhonenumber(instance=current_student.user),
+            "student": current_student,
+            "segment": load_template,
         }
         return render(self.request, "dashboard/supports/students_detail.html",
-                      context)
+                      self.context)
 
     def post(self, *args, **kwargs):
         current_student = Student.objects.get(pk=kwargs.get("pk"))
@@ -404,13 +421,13 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
             messages.success(self.request, _("Student updated successfully."))
             return redirect("supports:students-detail", pk=kwargs.get("pk"))
         else:
-            context = {
+            self.context.update({
                 "student_spec_form": student_spec_form,
                 "phonenumber_form": phone_number_form,
                 "student": current_student,
-            }
+            })
         return render(self.request, "dashboard/supports/students_detail.html",
-                      context)
+                      self.context)
 
 
 students_detail_view = StudentsDetailView.as_view()
@@ -434,8 +451,7 @@ class ProfileView(PermissionAndLoginRequiredMixin, View):
         self.context = dict()
 
     def get(self, args, **kwargs):
-        # For some reason, that I don't know, [-1] is None
-        load_template = self.request.path.split('/')[-2]
+        load_template = [*filter(None, self.request.path.split('/'))][-1]
         classes = Class.objects.filter(
             school__support=self.request.user).distinct()
         students = Student.objects.filter(student_class__in=classes)

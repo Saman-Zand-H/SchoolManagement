@@ -78,8 +78,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
     permission_required = "teachers.teacher"
 
     def get(self, request, *args, **kwargs):
-        # For a reason that I don't know [-1] is None
-        loadTemplate = self.request.path.split('/')[-2]
+        loadTemplate = [*filter(None, self.request.path.split('/'))][-1]
         classes = Class.objects.filter(
             subjects__teacher__user=request.user).distinct()
         context = {
@@ -100,8 +99,7 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
         self.context = dict()
 
     def get(self, *args, **kwargs):
-        # For a reason that I don't know [-1] is None
-        loadTemplate = self.request.path.split('/')[-2]
+        loadTemplate = [*filter(None, self.request.path.split('/'))][-1]
         current_teacher = Teacher.objects.get(user=self.request.user)
         exams = current_teacher.exam_teacher.all().order_by("timestamp")
         classes = Class.objects.filter(
@@ -160,7 +158,7 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
             return redirect("teachers:exams")
         else:
             messages.error(self.request, _("Provided inputs are invalid."))
-            self.context["form"] = form
+            self.context.update({"form": form})
             return render(self.request, "dashboard/teachers/exams.html",
                           self.context)
 
@@ -275,8 +273,7 @@ class ProfileView(PermissionAndLoginRequiredMixin, View):
         self.context = dict()
 
     def get(self, args, **kwargs):
-        # For a reason that I don't know [-1] is None
-        loadTemplate = self.request.path.split('/')[-2]
+        loadTemplate = [*filter(None, self.request.path.split('/'))][-1]
         teacher = Teacher.objects.get(user=self.request.user)
         classes = teacher.school.class_school.filter(
             subjects__teacher=teacher).distinct()
@@ -336,8 +333,7 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
     permission_required = "teachers.teacher"
 
     def get(self, *args, **kwargs):
-        # For a reason that I don't know [-1] is None
-        loadTemplate = self.request.path.split('/')[-2]
+        loadTemplate = [*filter(None, self.request.path.split('/'))][-1]
         students = Student.objects.filter(
             student_class__subjects__teacher__user=self.request.user).distinct(
             )

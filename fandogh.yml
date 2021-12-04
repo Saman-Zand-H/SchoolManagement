@@ -1,0 +1,15 @@
+kind: ExternalService
+name: djs-school
+spec:
+  image_pull_policy: Always
+  port: 80
+  source:
+    context: .
+    media_path: media
+    project_type: django
+    python_version: 3.9.7
+    static_path: staticfiles
+    wsgi: conf.wsgi
+  volume_mounts:
+  - mount_path: /usr/src/app/media
+    sub_path: djs-school/media

@@ -24,13 +24,14 @@ def validate_file_extension(file):
     ext = os.path.splitext(file.name)[1]
     valid_extensions = [".jpg", ".png"]
     if not ext.lower() in valid_extensions:
-        logger.error(_(f"Unsupported file detected for: {file.name}."))
+        logger.error(_("Unsupported file detected by: {}.".format(file.name)))
         raise ValidationError(_("Invalid file extension."))
 
 
 def validate_file_size(file):
     if file.size > 3 * 1024 * 1024:
-        logger.error(_(f"Maximum image file size exceeded for: {file.name}"))
+        logger.error(
+            _("Maximum image file size exceeded by: {}.".format(file.name)))
         raise ValidationError(_("Unacceptable file size."))
 
 
@@ -44,6 +45,7 @@ class CustomManager(BaseUserManager):
         password,
         user_type,
         picture,
+        is_active,
         is_superuser,
         is_staff,
         **extra_fields,
@@ -57,6 +59,7 @@ class CustomManager(BaseUserManager):
             last_name=last_name,
             user_type=user_type,
             picture=picture,
+            is_active=is_active,
             is_superuser=is_superuser,
             is_staff=is_staff,
             last_login=now,
@@ -132,6 +135,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     about = models.TextField(blank=True, default="")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 

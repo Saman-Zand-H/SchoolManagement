@@ -1,0 +1,60 @@
+{% extends 'layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load customtags %}
+{% load i18n %}
+
+{% block title %} {{ student.user.name|title }} {% endblock title %}
+
+{% block content %}
+
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Students' %}</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
+                            </li>
+                            <li class="breadcrumb-item"><a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'supports:students' %}">{% trans 'Students' %}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ student.user.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col mx-auto"><br>
+            <div class="alert alert-default" role="alert">
+                <h2 class="text-white">{% trans 'Current Information' %}</h2>
+
+                <div class="my-4">
+                    {% trans 'Name:' %} <strong>{{ student.user.name|title }}</strong>
+                </div>
+                <div class="my-4">
+                    {% trans 'ID:' %} <strong>{{ student.user.user_id }}</strong>
+                </div>
+                <div class="my-4">
+                    {% trans 'Phonenumber:' %} <strong>{{ student.user.phone_number }}</strong>
+                </div>
+                <div class="my-4">
+                    {% trans 'Class:' %} <strong>{{ student.student_class }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %} {% endblock javascripts %}

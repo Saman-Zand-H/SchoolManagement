@@ -4,13 +4,32 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+            
+<url>
+  <loc>https://takhte-whiteboard.ir/</loc>
+  <lastmod>2021-11-28T08:01:42+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://takhte-whiteboard.ir/support-page/</loc>
+  <lastmod>2021-11-28T08:01:42+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://takhte-whiteboard.ir/accounts/login/</loc>
+  <lastmod>2021-11-28T08:01:42+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://takhte-whiteboard.ir/accounts/signup/</loc>
+  <lastmod>2021-11-28T08:01:42+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://takhte-whiteboard.ir/accounts/password/reset/</loc>
+  <lastmod>2021-11-28T08:01:42+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
 
-  <!-- Main links -->
-  <url>
-    <loc>https://django-dashboard-dattaable.appseed.us</loc>
-    <priority>1</priority>
-    <changefreq>monthly</changefreq>
-  </url>
 
 </urlset>
-

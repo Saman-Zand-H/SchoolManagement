@@ -1,7 +1,7 @@
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import LoginForm, SignupForm
+from allauth.account.forms import LoginForm, SignupForm, ResetPasswordForm, AddEmailForm
 from phonenumber_field.formfields import PhoneNumberField
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 
 import logging
@@ -36,6 +36,7 @@ class BaseSignupForm(SignupForm):
     first_name = forms.CharField(
         max_length=254,
         min_length=2,
+        label=_("Firstname"),
         widget=forms.TextInput(attrs={
             "class": "form-control",
             "placeholder": _("enter your first name"),
@@ -43,6 +44,7 @@ class BaseSignupForm(SignupForm):
     last_name = forms.CharField(
         max_length=254,
         min_length=2,
+        label=_("Lastname"),
         widget=forms.TextInput(attrs={
             "class": "form-control",
             "placeholder": _("enter your last name"),
@@ -61,23 +63,25 @@ class BaseSignupForm(SignupForm):
         self.fields["username"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label="ID",
+            label=_("ID"),
             widget=forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": _("User ID"),
             }),
         )
         self.fields["email"] = forms.EmailField(
-            widget=forms.EmailInput(attrs={
-                "class": "form-control",
-                "placeholder": "example@example.XXX",
-            }),
+            widget=forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("e.g. example@example.com"),
+                }),
+            label=_("E-Mail Address"),
             required=False,
         )
         self.fields["password1"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label="Password",
+            label=_("Password"),
             widget=forms.PasswordInput(attrs={
                 "class": "form-control",
                 "placeholder": _("Password"),
@@ -124,7 +128,7 @@ class CustomLoginForm(LoginForm):
         self.fields["login"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label="ID",
+            label=_("Your ID"),
             widget=forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": _("Your ID"),
@@ -133,7 +137,7 @@ class CustomLoginForm(LoginForm):
         self.fields["password"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label="Password",
+            label=_("Password"),
             widget=forms.PasswordInput(attrs={
                 "class": "form-control",
                 "placeholder": _("Password"),
@@ -151,6 +155,29 @@ class CustomLoginForm(LoginForm):
                     self.error_messages["students_not_allowed"],
                     code="students_not_allowed")
         return self.cleaned_data
+
+
+class CustomPasswordResetForm(ResetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"] = forms.EmailField(
+            label=_("E-Mail Address"),
+            widget=forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("e.g. example@example.com")
+                }))
+
+
+class CustomAddEmailForm(AddEmailForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"] = forms.EmailField(widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": _("e.g. example@example.com")
+            }),
+                                                label=_("E-Mail Address"))
 
 
 class AddPhonenumberForm(forms.Form):

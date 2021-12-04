@@ -768,6 +768,79 @@ fieldset[disabled] .btn-danger.active {
     border-top-color: #FF3B30;
 }
 
+.btn-green {
+    color: #fff;
+    border-color: rgba(76, 217, 100, 0.98);
+}
+
+.btn-green.btn-fill {
+    background-color: rgba(76, 217, 100, 0.98);
+    color: #fff;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.btn-green:hover,
+.btn-green:focus,
+.btn-green:active,
+.btn-green.active,
+.btn-green:active:focus,
+.btn-green:active:hover,
+.btn-green.active:focus,
+.btn-green.active:hover,
+.open>.btn-green.dropdown-toggle,
+.open>.btn-green.dropdown-toggle:focus,
+.open>.btn-green.dropdown-toggle:hover {
+    background-color: transparent;
+    color: #rgba(76, 217, 100, 0.98);
+    border-color: #rgba(76, 217, 100, 0.98);
+}
+
+.btn-green.disabled,
+.btn-green.disabled:hover,
+.btn-green.disabled:focus,
+.btn-green.disabled.focus,
+.btn-green.disabled:active,
+.btn-green.disabled.active,
+.btn-green:disabled,
+.btn-green:disabled:hover,
+.btn-green:disabled:focus,
+.btn-green:disabled.focus,
+.btn-green:disabled:active,
+.btn-green:disabled.active,
+.btn-green[disabled],
+.btn-green[disabled]:hover,
+.btn-green[disabled]:focus,
+.btn-green[disabled].focus,
+.btn-green[disabled]:active,
+.btn-green[disabled].active,
+fieldset[disabled] .btn-green,
+fieldset[disabled] .btn-green:hover,
+fieldset[disabled] .btn-green:focus,
+fieldset[disabled] .btn-green.focus,
+fieldset[disabled] .btn-green:active,
+fieldset[disabled] .btn-green.active {
+    background-color: transparent;
+    border-color: #rgba(76, 217, 100, 0.98);
+}
+
+.btn-green.btn-fill:hover,
+.btn-green.btn-fill:focus,
+.btn-green.btn-fill:active,
+.btn-green.btn-fill.active,
+.open>.btn-green.btn-fill.dropdown-toggle {
+    background-color: rgba(76, 217, 100, 0.98);
+    color: #FFFFFF;
+}
+
+.btn-green.btn-fill .caret {
+    border-top-color: #FFFFFF;
+}
+
+.btn-green .caret {
+    border-top-color: rgba(76, 217, 100, 0.98);
+}
+
 .btn-error {
     color: #fff;
     border-color: #f5365c;
@@ -2315,7 +2388,7 @@ fieldset[disabled] .form-control {
 
 .dropdown-menu>li>a {
     padding: 8px 16px;
-    color: #333333;
+    color: rgb(33, 223, 33);
 }
 
 .dropdown-menu>li>a:focus {
@@ -2335,7 +2408,7 @@ fieldset[disabled] .form-control {
 .dropdown-menu>li>a:hover,
 .dropdown-menu>li>a:focus {
     background-color: #F5F5F5;
-    color: #333333;
+    color: rgb(20, 167, 20);
     opacity: 1;
     text-decoration: none;
 }
@@ -3096,4 +3169,8 @@ fieldset[disabled] .form-control {
     .btn.dropdown-toggle {
         margin-bottom: 0;
     }
+}
+
+.rtl {
+    direction: rtl;
 }

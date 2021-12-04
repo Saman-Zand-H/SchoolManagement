@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from mainapp.models import Class, Subject, Student
 from supports.models import School
@@ -33,7 +33,7 @@ class EditClassForm(forms.ModelForm):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         self.fields["class_id"] = forms.CharField(
-            label="Class ID",
+            label=_("Class ID"),
             widget=forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -69,7 +69,7 @@ class CreateClassForm(EditClassForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["school"].required = False
-        self.fields["subjects"].label = "Courses"
+        self.fields["subjects"].label = _("Courses")
 
 
 class ChangePhonenumber(forms.ModelForm):
@@ -79,6 +79,10 @@ class ChangePhonenumber(forms.ModelForm):
         widgets = {
             "phone_number": forms.TextInput(attrs={"class": "form-control"}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["phone_number"].label = _("Phonenumber")
 
 
 class ChangeTeacherDetails(forms.ModelForm):
@@ -101,7 +105,7 @@ class SelectClassesForm(forms.Form):
         Class.objects.all(),
         to_field_name="id",
         widget=forms.CheckboxSelectMultiple(),
-        label="Classes")
+        label=_("Classes"))
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -134,7 +138,9 @@ class StudentsClassForm(forms.ModelForm):
         fields = ["student_class"]
 
     def __init__(self, *args, **kwargs):
+        super().__init__()
         self.request = kwargs.pop("request", None)
+        self.fields["student_class"].label = _("Class")
         super().__init__(*args, **kwargs)
         if self.request is not None:
             self.fields["student_class"].queryset = Class.objects.filter(

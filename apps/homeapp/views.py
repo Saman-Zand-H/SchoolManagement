@@ -1,14 +1,20 @@
 from django.views.generic import TemplateView, View
 from django.utils.translation import gettext as _
+from django.utils.translation import activate
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.contrib import messages
 from django.conf import settings
 
+import logging
 from typing import Any, Dict
 import requests
 
 from mainapp.models import School
 from .forms import SupportForm
+
+logger = logging.getLogger(__name__)
 
 
 class HomePageView(TemplateView):
@@ -82,3 +88,15 @@ class SupportView(View):
 
 
 support_view = SupportView.as_view()
+
+
+def set_language(request):
+    print(request.method)
+    if request.method == "POST":
+        user_language = request.POST.get("language")
+        logger.warning(user_language)
+        activate(user_language)
+        response = HttpResponseRedirect(reverse("home:home"))
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
+        return response
+    return redirect("home:home")

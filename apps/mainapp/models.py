@@ -3,7 +3,8 @@ from django.db.models import Avg
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils.translation import gettext_noop as _
+from django.utils.translation import gettext_noop
+from django.utils.translation import gettext_lazy as _
 
 from datetime import date
 from statistics import mean
@@ -25,6 +26,7 @@ class Student(models.Model):
                                       on_delete=models.SET_NULL,
                                       null=True,
                                       related_name="student_class",
+                                      verbose_name=_("Student Class"),
                                       blank=True)
 
     def __str__(self):
@@ -40,9 +42,9 @@ class Student(models.Model):
         super().save(*args, **kwargs)
         if self.user.user_type != "S":
             logger.error(
-                _("A non-student typed user was being used as a student."))
+                gettext_noop("A non-student typed user was being used as a student."))
             raise ValidationError(
-                _("{} is not a student. User must be typed as a student.").
+                gettext_noop("{} is not a student. User must be typed as a student.").
                 format(self.user.name))
 
 

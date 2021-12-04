@@ -24434,3 +24434,7 @@ input.datetimepicker[data-color="yellow"]+.bootstrap-datetimepicker-widget.dropd
 
 
 /*# sourceMappingURL=argon.css.map */
+
+.rtl {
+    direction: rtl;
+}
