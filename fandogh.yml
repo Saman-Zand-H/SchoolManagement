@@ -1,7 +1,8 @@
 kind: ExternalService
-name: djs-school
+name: djs
 spec:
-  image_pull_policy: Always
+  image_pull_policy: IfNotPresent
+  image: djs-school:1.0.0
   port: 80
   source:
     context: .
@@ -12,4 +13,4 @@ spec:
     wsgi: conf.wsgi
   volume_mounts:
   - mount_path: /usr/src/app/media
-    sub_path: djs-school/media
+    sub_path: djs/media
