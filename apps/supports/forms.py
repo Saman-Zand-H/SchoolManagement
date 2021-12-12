@@ -44,6 +44,7 @@ class EditClassForm(forms.ModelForm):
             self.fields["subjects"] = forms.ModelMultipleChoiceField(
                 widget=forms.CheckboxSelectMultiple(),
                 required=False,
+                label=_("Courses"),
                 queryset=Subject.objects.filter(
                     teacher__school__support=self.request.user),
                 to_field_name="pk")

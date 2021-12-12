@@ -1,6 +1,8 @@
 {% load static %}
 {% load i18n %}
 
+{% get_current_language as LANGUAGE_CODE %}
+
 <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
     <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -124,7 +126,8 @@
             </ul>
             <ul class="navbar-nav align-items-center ml-auto ml-md-0 ">
                 <li class="nav-item dropdown">
-                    <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link pr-0" href="#" role="button" 
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div class="media align-items-center">
                             <span class="avatar avatar-sm rounded-circle">
                                 {% if user.picture %}
@@ -140,7 +143,7 @@
                             </div>
                         </div>
                     </a>
-                    <div class="dropdown-menu text-right dropdown-menu-right ">
+                    <div class="dropdown-menu {% if LANGUAGE_CODE == 'fa' %} text-right {% endif %} dropdown-menu-right">
                         <div class="dropdown-header noti-title">
                             <h6 class="text-overflow m-0">{% trans 'Welcome!' %}</h6>
                         </div>

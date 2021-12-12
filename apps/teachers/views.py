@@ -215,7 +215,7 @@ class SetGradesView(PermissionAndLoginRequiredMixin, View):
     permission_required = "teachers.teacher"
 
     def get(self, *args, **kwargs):
-        loadTemplate = self.request.path.split('/')[-1]
+        loadTemplate = "exams"
         exam = Exam.objects.get(pk=kwargs["pk"])
         grades = exam.grade_exam.all().order_by("student")
         if exam.grade_exam:
@@ -350,6 +350,11 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, DetailView):
     permission_required = "teachers.teacher"
     template_name = "dashboard/teachers/students_detail.html"
     model = Student
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "students"
+        return context
 
 
 students_detail_view = StudentsDetailView.as_view()

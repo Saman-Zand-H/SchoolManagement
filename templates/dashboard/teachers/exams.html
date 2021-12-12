@@ -23,32 +23,53 @@
                     <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Exams' %}</h6>
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Exams' %}</li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
+                            </li>
+
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a>
+                            </li>
+
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {% trans 'Exams' %}
+                            </li>
                         </ol>
                     </nav>
                 </div>
                 <!-- Modals -->
                 <div class="col-lg-12 col-md-12 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" data-toggle="modal" data-target="#newExam" class="btn btn-sm btn-neutral my-1">
+                    <button type="button" 
+                            data-toggle="modal" 
+                            data-target="#newExam" 
+                            class="btn btn-sm btn-neutral my-1">
                         <i class="fas fa-plus"></i>
                         {% trans 'New' %}
                     </button>
-                    <button type="button" data-toggle="modal" data-target="#filterExams" class="btn btn-sm btn-warning my-1">
+                    <button type="button" 
+                            data-toggle="modal" 
+                            data-target="#filterExams" 
+                            class="btn btn-sm btn-warning my-1">
                         <i class="fas fa-filter"></i>
                         {% trans 'Filters' %}
                     </button>
 
                     <!-- New Exam Modal -->
-                    <div class="modal fade" id="newExam" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %}" 
+                         id="newExam" 
+                         tabindex="-1" 
+                         role="dialog" 
+                         aria-labelledby="exampleModalLabel" 
+                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'New Exam' %}</h5>
+                                    <h5 class="modal-title" id="exampleModalLabel">
+                                        {% trans 'New Exam' %}
+                                    </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                        <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
@@ -87,34 +108,60 @@
 
                                         <div id="input-full-score">
                                             <label for="#fullscore" class="mt-3">{% trans 'Full Score' %}</label>
-                                            <input class="form-control my-1" type="number" name="full_score" id="fullscore" placeholder="{% trans 'e.g. 100 or ...' %}">
+                                            <input class="form-control my-1" 
+                                                   type="number" 
+                                                   name="full_score" 
+                                                   id="fullscore" 
+                                                   placeholder="{% trans 'e.g. 100 or ...' %}">
                                         </div>
 
                                         <div id="input-date">
                                             <label for="#date" class="mt-3">{% trans 'Date' %}</label>
-                                            <input class="form-control datepicker my-1" type="text" name="timestamp" id="date" placeholder="{% trans 'Choose using the datepicker' %}">
+                                            <input class="form-control datepicker my-1" 
+                                                   type="text" 
+                                                   name="timestamp" 
+                                                   id="date" 
+                                                   placeholder="{% trans 'Choose using the datepicker' %}">
                                         </div>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-                                    <button type="button" class="btn btn-primary" onclick='$("#addExamForm").submit()'>{% trans 'Add' %}</button>
+                                    <button type="button" 
+                                            class="btn btn-secondary" 
+                                            data-dismiss="modal">
+                                            {% trans 'Close' %}
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-primary" 
+                                            onclick='$("#addExamForm").submit()'>
+                                            {% trans 'Add' %}
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal text-left fade" id="filterExams" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal text-left fade {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %}" 
+                         id="filterExams" 
+                         tabindex="-1" 
+                         role="dialog" 
+                         aria-labelledby="exampleModalLabel" 
+                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">{% trans 'Filter Exams' %}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                        <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form method="GET" action="{% url 'teachers:exams' %}" data-subjects-filter="{% url 'teachers:ajax-filter-exam' %}" id="filterForm">
-                                        <h4>{% trans 'All exams corresponding to the following details:' %}</h4><br>
+                                    <form method="GET" 
+                                          action="{% url 'teachers:exams' %}" 
+                                          data-subjects-filter="{% url 'teachers:ajax-filter-exam' %}" 
+                                          id="filterForm">
+                                        <h4>
+                                            {% trans 'All exams corresponding to the following details:' %}
+                                        </h4><br>
 
                                         <div id="select-class-filter" class="mb-3">
                                             <label for="#classFilter">{% trans 'Class' %}</label>
@@ -133,16 +180,33 @@
 
                                         <div id="input-date-filter">
                                             <label for="#sinceDate">{% trans 'Since' %}</label>
-                                            <input class="form-control datepicker my-1" id="sinceDate" placeholder="MM/DD/YYYY" name="dateSince" type="text">
+                                            <input class="form-control datepicker my-1" 
+                                                   id="sinceDate" 
+                                                   placeholder="MM/DD/YYYY" 
+                                                   name="dateSince" 
+                                                   type="text">
 
                                             <label for="#tillDate">{% trans 'Until' %}</label>
-                                            <input class="form-control datepicker my-1" id="tillDate" placeholder="MM/DD/YYYY" name="dateTill" type="text">    
+                                            <input class="form-control datepicker my-1" 
+                                                   id="tillDate" 
+                                                   placeholder="MM/DD/YYYY" 
+                                                   name="dateTill" 
+                                                   type="text">    
                                         </div>                                    
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close' %}</button>
-                                    <button type="button" class="btn btn-primary" onclick="$('#filterForm').submit()">{% trans 'Filter' %}</button>
+                                    <button type="button" 
+                                            class="btn btn-secondary" 
+                                            data-dismiss="modal">
+                                        {% trans 'Close' %}
+                                    </button>
+
+                                    <button type="button" 
+                                            class="btn btn-primary" 
+                                            onclick="$('#filterForm').submit()">
+                                        {% trans 'Filter' %}
+                                    </button>
                                 </div>
                             </div>
                         </div>

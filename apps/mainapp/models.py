@@ -62,6 +62,7 @@ class Subject(models.Model):
 
     class Meta:
         unique_together = ["name", "teacher"]
+        verbose_name = _("Courses")
 
 
 class Grade(models.Model):
