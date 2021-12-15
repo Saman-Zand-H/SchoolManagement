@@ -231,6 +231,3 @@ EMAIL_USE_SSL = True
 OTPSMS_USERNAME = env.str("OTPSMS_USERNAME")
 OTPSMS_PASSWORD = env.str("OTPSMS_PASSWORD")
 OTPSMS_LINENUMBER = env.str("OTPSMS_LINENUMBER")
-
-# heroku confs
-django_heroku.settings(locals())
