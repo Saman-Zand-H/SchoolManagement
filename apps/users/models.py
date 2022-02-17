@@ -81,8 +81,8 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         return self._create_user(user_id, email, first_name, last_name,
-                                 password, user_type, picture, False, False,
-                                 **extra_fields)
+                                 password, user_type, picture, True, False,
+                                 False, **extra_fields)
 
     def create_staff(
         self,
@@ -96,8 +96,8 @@ class CustomManager(BaseUserManager):
         **extra_fields,
     ):
         return self._create_user(user_id, email, first_name, last_name,
-                                 password, user_type, picture, False, True,
-                                 **extra_fields)
+                                 password, user_type, picture, True, False,
+                                 True, **extra_fields)
 
     def create_superuser(
         self,
@@ -112,7 +112,7 @@ class CustomManager(BaseUserManager):
     ):
         user = self._create_user(user_id, email, first_name, last_name,
                                  password, user_type, picture, True, True,
-                                 **extra_fields)
+                                 True, **extra_fields)
         user.save(using=self._db)
         return user
 
@@ -122,10 +122,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
-    phone_number = PhoneNumberField(blank=True, null=True)
-    phonenumber_verification_code = models.CharField(blank=True,
-                                                     null=True,
-                                                     max_length=8)
     user_type = models.CharField(max_length=3, choices=USER_TYPE_CHOICES)
     picture = models.FileField(
         blank=True,
@@ -158,3 +154,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.email:
             self.email = None
         super().save(*args, **kwargs)
+
+
+class PhoneNumber(models.Model):
+    user = models.OneToOneField(CustomUser,
+                                on_delete=models.CASCADE,
+                                related_name="phonenumber_user")
+    verification_code = models.CharField(max_length=6, null=True, blank=True)
+    phonenumber = PhoneNumberField(blank=True, null=True)
+    verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.name()

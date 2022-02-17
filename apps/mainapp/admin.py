@@ -13,6 +13,11 @@ class SubjectAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Exam)
 class ExamAdmin(admin.ModelAdmin):
     list_display = [

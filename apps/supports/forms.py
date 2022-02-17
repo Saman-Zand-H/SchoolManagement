@@ -73,17 +73,8 @@ class CreateClassForm(EditClassForm):
         self.fields["subjects"].label = _("Courses")
 
 
-class ChangePhonenumber(forms.ModelForm):
-    class Meta:
-        model = get_user_model()
-        fields = ["phone_number"]
-        widgets = {
-            "phone_number": forms.TextInput(attrs={"class": "form-control"}),
-        }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["phone_number"].label = _("Phonenumber")
+class ChangePhonenumber(forms.Form):
+    phone_number = forms.CharField(max_length=5)
 
 
 class ChangeTeacherDetails(forms.ModelForm):

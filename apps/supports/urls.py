@@ -38,4 +38,12 @@ urlpatterns = [
     path("profile/change-password/",
          views.password_change_view,
          name="change-password"),
+    path("articles/", views.articles_template_view, name="articles"),
+    path("articles/<int:pk>/",
+         views.article_detail_view,
+         name="article-detail"),
+    path("articles/add/", views.add_article_view, name="add-articles"),
+    path("articles/del/<int:pk>",
+         views.delete_article_view,
+         name="del-article"),
 ]

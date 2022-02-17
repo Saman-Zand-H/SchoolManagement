@@ -20,7 +20,9 @@ logger = getLogger(__name__)
 
 
 class Teacher(models.Model):
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    user = models.OneToOneField(get_user_model(),
+                                on_delete=models.CASCADE,
+                                limit_choices_to={"user_type": "T"})
     school = models.ForeignKey(School,
                                on_delete=models.CASCADE,
                                related_name="teacher_school")

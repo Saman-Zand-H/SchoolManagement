@@ -6,10 +6,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.conf import settings
+from django.core.mail import mail_admins
 
 import logging
 from typing import Any, Dict
-import requests
+from smtplib import SMTPException
 
 from mainapp.models import School
 from .forms import SupportForm
@@ -40,42 +41,38 @@ class SupportView(View):
 
     def post(self, *args, **kwargs):
         form = SupportForm(self.request.POST)
+        logger.info(
+            f"[blue]{self.request.user} tried to send a support message.[/]",
+            extra={"markup": True})
+
         if form.is_valid():
             users_name = form.cleaned_data.get("name")
             users_email = form.cleaned_data.get("email")
             users_text = form.cleaned_data.get("text")
-            email_url = "https://email-sender1.p.rapidapi.com/"
-            querystring = {
-                "txt_msg": users_text,
-                "to": "clientdjs@gmail.com",
-                "from": "DJS School-Management-System",
-                "subject": "Support",
-                "bcc": "bcc-mail@gmail.com",
-                "reply_to": "samanzandh@gmail.com@gmail.com",
-                "html_msg": f"""
-                            <html><body>
-                                <h1>{_("DJSchool Support")}</h1>
-                                <h3>{users_name}- {users_email}</h3>
-                                <pre>{users_text}</pre>
-                            </body></html>""",
-                "cc": "cc-mail@gmail.com"
-            }
-            payload = "{\"key1\": \"value\", \"key2\": \"value\"}"
-            headers = {
-                'content-type': "application/json",
-                'x-rapidapi-host': settings.EMAIL_API_HOST,
-                'x-rapidapi-key': settings.EMAIL_API_KEY
-            }
-            response = requests.request("POST",
-                                        email_url,
-                                        data=payload,
-                                        headers=headers,
-                                        params=querystring)
-            if response.status_code == 200:
+            try:
+                mail_admins(f"DjS-School Supprt by {users_name}",
+                            users_text,
+                            html_message=f"""
+                    <html>
+                        <body>
+                            <h1>{_("DjSchool Support")}</h1>
+                            <h3>{users_name}- {users_email}</h3>
+                            <pre>{users_text}</pre>
+                        </body>
+                    </html>""")
+                logger.info(
+                    f"[green]User {self.request.user} succesfully sent a support message.[/]",
+                    extra={"markup": True})
                 messages.success(
                     self.request,
                     _("Thanks for your message. Message sent successfully."))
-            else:
+            except SMTPException as e:
+                logger.error(
+                    f"[red]There was an error while user {self.request.user} "
+                    "was trying to send a support message! The problem "
+                    "caused by the email API.[/]",
+                    extra={"markup": True})
+                logger.error(f"The error: {e}")
                 messages.error(
                     self.request,
                     _("An internal error happened. Please call us as soon as you can."
@@ -91,12 +88,11 @@ support_view = SupportView.as_view()
 
 
 def set_language(request):
-    print(request.method)
     if request.method == "POST":
         user_language = request.POST.get("language")
-        logger.warning(user_language)
         activate(user_language)
         response = HttpResponseRedirect(reverse("home:home"))
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME, user_language)
         return response
+
     return redirect("home:home")

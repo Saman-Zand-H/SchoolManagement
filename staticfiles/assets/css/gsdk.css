@@ -2187,8 +2187,7 @@ fieldset[disabled] .form-control {
 [class*="navbar-ct"] .navbar-nav>.open>a,
 [class*="navbar-ct"] .navbar-nav>.open>a:hover,
 [class*="navbar-ct"] .navbar-nav>.open>a:focus {
-    background-color: transparent;
-    color: #FFFFFF;
+    color: white;
     opacity: 1;
     filter: alpha(opacity=100);
 }
@@ -2224,7 +2223,7 @@ fieldset[disabled] .form-control {
 
 .navbar-transparent .navbar-toggle .icon-bar,
 [class*="navbar-ct"] .navbar-toggle .icon-bar {
-    background-color: #FFFFFF !important;
+    background-color: rgb(97, 94, 94) !important;
 }
 
 .navbar-toggle:hover,
@@ -2388,7 +2387,7 @@ fieldset[disabled] .form-control {
 
 .dropdown-menu>li>a {
     padding: 8px 16px;
-    color: #333333;
+    color: rgb(33, 223, 33);
 }
 
 .dropdown-menu>li>a:focus {
@@ -2408,7 +2407,7 @@ fieldset[disabled] .form-control {
 .dropdown-menu>li>a:hover,
 .dropdown-menu>li>a:focus {
     background-color: #F5F5F5;
-    color: #333333;
+    color: rgb(20, 167, 20);
     opacity: 1;
     text-decoration: none;
 }
@@ -2806,7 +2805,7 @@ fieldset[disabled] .form-control {
 @media (max-width: 767px) {
     .navbar-transparent {
         padding-top: 0px;
-        background-color: rgba(0, 0, 0, 0.45);
+        background-color: rgba(255, 255, 255, 0.8);
     }
     .body-click {
         right: 230px;
@@ -3143,7 +3142,7 @@ fieldset[disabled] .form-control {
     [class*="navbar-"] .navbar-nav .open .dropdown-menu>li>a:hover,
     [class*="navbar-"] .navbar-nav .open .dropdown-menu>li>a:focus {
         opacity: .7;
-        background: transparent;
+        color: black
     }
     [class*="navbar-"] .navbar-nav.navbar-nav .open .dropdown-menu>li>a:active {
         opacity: 1;

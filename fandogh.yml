@@ -1,0 +1,16 @@
+kind: ExternalService
+name: djs
+spec:
+  image_pull_policy: IfNotPresent
+  image: test:1.0.0
+  port: 80
+  source:
+    context: .
+    media_path: media
+    project_type: django
+    python_version: 3.9.7
+    static_path: staticfiles
+    wsgi: conf.wsgi
+  volume_mounts:
+  - mount_path: /usr/src/app/media
+    sub_path: djs/media

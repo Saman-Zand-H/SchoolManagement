@@ -18,6 +18,8 @@ urlpatterns = [
     path("teacher/", include("teachers.urls", namespace="teachers")),
     path("support/", include("supports.urls", namespace="supports")),
     path("", include("homeapp.urls", namespace="home")),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

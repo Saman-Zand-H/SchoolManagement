@@ -10,6 +10,7 @@ services:
       - 8000:8000
     depends_on:
       - db
+    tty: true
   db:
     image: postgres:13.0-alpine
     volumes:

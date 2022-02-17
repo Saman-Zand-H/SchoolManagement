@@ -1,7 +1,9 @@
 from django import forms
 from django.utils.translation import gettext as _
+from ckeditor.widgets import CKEditorWidget
 
-from mainapp.models import *
+from decimal import Decimal
+from mainapp.models import Grade, Article
 
 
 class ExamForm(forms.Form):
@@ -41,3 +43,27 @@ class SetGradeForm(forms.ModelForm):
         if not isinstance(grade, Decimal):
             raise forms.ValidationError(_("Provided grade is not valid."))
         return grade
+
+
+class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        exclude = ['author', 'school']
+        widgets = {
+            "title":
+            forms.TextInput(attrs={
+                "class": "form-control",
+                "id": "article-title",
+            }),
+            "categories":
+            forms.TextInput(attrs={
+                "class": "form-control",
+                "id": "article-categories",
+            }),
+            "text":
+            CKEditorWidget(attrs={
+                "class": "form-control",
+                "id": "article-text",
+            },
+                           extra_plugins="mathjax"),
+        }

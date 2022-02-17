@@ -6,7 +6,7 @@ from environs import Env
 
 from django.utils.translation import gettext_lazy as _
 import dj_database_url
-import django_heroku
+from rich.logging import RichHandler
 
 
 env = Env()
@@ -35,12 +35,14 @@ if ENVIRONMENT == 'production':
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=1)
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "takhte-whiteboard.ir"]
+ALLOWED_HOSTS = ["localhost", 
+                 "127.0.0.1", 
+                 "djs-tnsaman.fandogh.cloud",
+                 "takhte-whiteboard.ir"]
 
 
 # Application definition
@@ -62,6 +64,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
+    'ckeditor',
+    'ckeditor_uploader',
 
     # Local apps
     'users.apps.UsersConfig',
@@ -155,7 +159,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
@@ -170,6 +174,36 @@ LANGUAGES = (('en', _('English')), ('fa', _('Persian')))
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, "locale"),
 ]
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'rich.logging.RichHandler',
+            'formatter': 'console'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'formatter': 'console',
+            'filename': '/general.log'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console', 'file'],
+        }
+    }
+}
 
 
 # Static files (CSS, JavaScript, Images)
@@ -197,7 +231,8 @@ INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
 # Phonenumber_field confs
 PHONENUMBER_DEFAULT_REGION = "IR"
-PHONE_NUMBER_DEFAULT_FORMAT = "NATIONAL"
+PHONENUMBER_DB_FORMAT = "NATIONAL"
+PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
 
 # Allauth confs
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
@@ -213,10 +248,6 @@ ACCOUNT_FORMS = {
 LOGIN_REDIRECT_URL = "home:home"
 ACCOUNT_SIGNUP_REDIRECT_URL = "supports:create-school"
 
-# EMAIL API confs
-EMAIL_API_KEY = env.str("EMAIL_API_KEY")
-EMAIL_API_HOST = env.str("EMAIL_API_HOST")
-
 # Email backend confs
 DEFAULT_FROM_EMAIL = "contact@takhte-whiteboard.ir"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -227,7 +258,52 @@ EMAIL_PORT = 465
 DEFAULT_FROM_HOST = EMAIL_HOST_USER
 EMAIL_USE_SSL = True
 
+# Admins configuration
+ADMINS = [
+    ('Saman', 'tnsperuse@gmail.com'),
+]
+
 # OTP SMS confs
 OTPSMS_USERNAME = env.str("OTPSMS_USERNAME")
 OTPSMS_PASSWORD = env.str("OTPSMS_PASSWORD")
-OTPSMS_LINENUMBER = env.str("OTPSMS_LINENUMBER")
+
+# CKEditor configuration
+CKEDITOR_UPLOAD_PATH = 'media/ckeditor/'
+CKEDITOR_IMAGE_BACKEND = "ckeditor_uploader.backends.PillowBackend"
+CKEDITOR_BROWSE_SHOW_DIRS = False
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar_Basic': [
+            ['Source', '-', 'Bold', 'Italic']
+        ],
+        'toolbar_Customized': [
+            {'name': 'document', 'items': ['Templates']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+            '/',
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
+                       'Language']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'insert',
+             'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 
+                       'SpecialChar', 'Mathjax', 'PageBreak', 'Iframe']},
+            '/',
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks', 'Preview']},
+        ],
+        'toolbar': 'Customized',
+        'height': 291,
+        'width': '100%',
+        'toolbarCanCollapse': True,
+        'mathJaxLib': '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
+        'extraPlugins': ','.join([
+            'mathjax', 
+            ]),
+    },
+}
+

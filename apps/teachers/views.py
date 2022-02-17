@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.views.generic import View, DetailView
+from django.views.generic import View, DetailView, TemplateView
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.contrib import messages
 from django.db.models import Q
 from django.forms import modelformset_factory
@@ -12,10 +13,10 @@ from allauth.account.forms import ChangePasswordForm
 from allauth.account.views import PasswordChangeView
 
 from datetime import date
-from typing import List
+from typing import List, Any
 
-from mainapp.models import Class, Exam, Grade, Subject, Student
-from teachers.forms import ExamForm, FilterExamsForm, SetGradeForm
+from mainapp.models import Class, Exam, Grade, Subject, Student, Article
+from .forms import ExamForm, FilterExamsForm, SetGradeForm, ArticleForm
 from users.forms import UserBioForm
 from mainapp.helpers import (loop_through_month_number, filter_by_timestamp,
                              get_month_from_number)
@@ -358,3 +359,87 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, DetailView):
 
 
 students_detail_view = StudentsDetailView.as_view()
+
+
+class ArticlesTemplateView(PermissionAndLoginRequiredMixin, TemplateView):
+    template_name = "dashboard/supports/articles.html"
+    permission_required = "teachers:teacher"
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        teachers_school = Teacher.objects.get(user=self.request.user).school
+        context["articles"] = Article.objects.filter(school=teachers_school)
+        context["segment"] = self.request.path.split("/")
+        return context
+
+
+articles_template_view = ArticlesTemplateView.as_view()
+
+
+class AddArticleView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "teachers:teacher"
+
+    def __init__(self, **kwargs: Any):
+        super().__init__(**kwargs)
+        self.template = "dashboard/teachers/add_article.html"
+        self.context = dict()
+
+    def get(self, *args, **kwargs):
+        self.context.update({
+            "segment": self.request.path.split("/"),
+            "form": ArticleForm(),
+            "nav_color": "bg-gradient-danger",
+        })
+        return render(self.request, self.template, self.context)
+
+    def post(self, *args, **kwargs):
+        form = ArticleForm(self.request.POST)
+        user = get_user(self.request)
+        school = Teacher.objects.get(user=user).school
+        if form.is_valid():
+            unsaved_article = form.save(commit=False)
+            unsaved_article.author = user
+            unsaved_article.school = school
+            unsaved_article.save()
+            messages.success(self.request,
+                             _("Article submitted successfully."))
+            return redirect("teachers:articles")
+        else:
+            messages.error(self.request, _("Provided inputs are invalid."))
+            return redirect("teachers:articles")
+
+
+add_article_view = AddArticleView.as_view()
+
+
+class ArticleDetailView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "teachers:teacher"
+
+    def __init__(self, *args, **kwargs):
+        self.template = "dashboard/teachers/article_detail.html"
+        self.context = dict()
+
+    def get(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs["pk"])
+        self.context.update({
+            "article": article,
+            "form": ArticleForm(instance=article),
+            "segment": self.request.path.split("/")
+        })
+        return render(self.request, self.template, self.context)
+
+
+article_detail_view = ArticleDetailView.as_view()
+
+
+class DeleteArticleView(PermissionAndLoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs["pk"])
+        if article.author == self.request.user:
+            article.delete()
+            return redirect("teachers:articles")
+        else:
+            raise PermissionDenied()
+
+
+delete_article_view = DeleteArticleView.as_view()

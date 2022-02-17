@@ -2,17 +2,15 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, ResetPasswordForm, AddEmailForm
 from phonenumber_field.formfields import PhoneNumberField
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user
 from django import forms
 
 import logging
 
-from .models import USER_TYPE_CHOICES
+from .models import USER_TYPE_CHOICES, PhoneNumber
 from mainapp.models import Class
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(
-    format='[%(levelname)s] %(asctime)s - %(name)s: %(message)s')
-logger.setLevel(logging.DEBUG)
 
 
 def validate_file_extension(file):
@@ -187,9 +185,18 @@ class AddPhonenumberForm(forms.Form):
             "placeholder": _("like") + " 09xxxxxxxxx"
         }))
 
+    def clean(self):
+        super_clean = super().clean()
+        # By default this package separates numbers by whitespaces.
+        # Thus, we remove them.
+        unmodified_phone_number = str(
+            self.cleaned_data.get('phone_number')).split(" ")
+        self.cleaned_data['phone_number'] = "".join(unmodified_phone_number)
+        return super_clean
+
 
 class PhoneVerificationForm(forms.Form):
-    users_input = forms.CharField(widget=forms.TextInput(
+    verification_code = forms.CharField(widget=forms.TextInput(
         attrs={
             "class": "form-control",
             "placeholder": _("please enter the code sent to you")

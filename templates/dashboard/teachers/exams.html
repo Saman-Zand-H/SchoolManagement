@@ -26,11 +26,9 @@
                             <li class="breadcrumb-item">
                                 <a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
                             </li>
-
                             <li class="breadcrumb-item">
                                 <a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a>
                             </li>
-
                             <li class="breadcrumb-item active" aria-current="page">
                                 {% trans 'Exams' %}
                             </li>
@@ -112,7 +110,8 @@
                                                    type="number" 
                                                    name="full_score" 
                                                    id="fullscore" 
-                                                   placeholder="{% trans 'e.g. 100 or ...' %}">
+                                                   placeholder="{% trans 'e.g. 100 or ...' %}"
+                                                >
                                         </div>
 
                                         <div id="input-date">

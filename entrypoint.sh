@@ -14,6 +14,7 @@ fi
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput 
 python manage.py compilemessages
-service nginx start
+
+# gunicorn conf.wsgi -b 0.0.0.0:80
 
 exec "$@"

@@ -4,7 +4,8 @@ from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 import pytest
-from pytest_django.asserts import assertRedirects, assertTemplateNotUsed, assertTemplateUsed
+from pytest_django.asserts import (assertRedirects, assertTemplateNotUsed,
+                                   assertTemplateUsed)
 import pathlib
 
 from mainapp.models import Class, Subject, Student

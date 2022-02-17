@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import CustomUser
+from .models import CustomUser, PhoneNumber
 
 
 @admin.register(CustomUser)
@@ -17,7 +17,6 @@ class CustomAdmin(UserAdmin):
                     "email",
                     "first_name",
                     "last_name",
-                    "phone_number",
                     "picture",
                     "about",
                 )
@@ -43,7 +42,6 @@ class CustomAdmin(UserAdmin):
                 "email",
                 "first_name",
                 "last_name",
-                "phone_number",
                 "picture",
                 "password1",
                 "password2",
@@ -57,3 +55,9 @@ class CustomAdmin(UserAdmin):
     search_fields = ["name", "user_id", "email"]
     list_filter = ["user_type"]
     filter_horizontal = ["groups", "user_permissions"]
+
+
+@admin.register(PhoneNumber)
+class PhoneNumberAdmin(admin.ModelAdmin):
+    list_display = ["user", "phonenumber", "verified"]
+    search_fields = ["user", "phonenumber"]

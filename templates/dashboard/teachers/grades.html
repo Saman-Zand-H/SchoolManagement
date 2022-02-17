@@ -4,6 +4,8 @@
 {% load customtags %} 
 {% load i18n %} 
 
+{% get_current_language as LANGUAGE_CODE %}
+
 {% block title %} {% trans 'Grades' %} {% endblock title %} 
 
 {% block content %}
@@ -32,7 +34,6 @@
 
                             <li class="breadcrumb-item active" aria-current="page">
                                 {% trans 'Grades' %}
-
                             </li>
                         </ol>
                     </nav>

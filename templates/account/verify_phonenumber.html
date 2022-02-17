@@ -44,7 +44,7 @@
                             {% if form.errors %}
                                 {% for field in form %}
                                     {% for error in field.errors %}
-                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                        <p class="text-danger">- {{ field.label }}: {{ error }}</p>
                                     {% endfor %}
                                 {% endfor %}
                                 {% for error in field.non_field_errors %}
@@ -59,7 +59,6 @@
                     </div>
 
                     <form method="POST">
-
                         {% csrf_token %}
 
                         <div class="form-group mb-3">
@@ -68,7 +67,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-asterisk"></i></span>
                                 </div>
-                                {{ form.users_input }}
+                                {{ form.verification_code }}
                             </div>
                         </div>
                         <div class="mt-5 text-center">

@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model, get_user
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from allauth.account.views import PasswordChangeView
@@ -15,9 +16,10 @@ import logging
 from .forms import (CreateSchoolForm, CreateClassForm, ChangePhonenumber,
                     ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
                     StudentsClassForm)
-from mainapp.models import Class, Subject, Student
+from mainapp.models import Class, Subject, Student, Article
 from .models import School
 from teachers.models import Teacher
+from teachers.forms import ArticleForm
 from users.forms import BaseSignupForm, SupportStudentSignupForm, UserBioForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 
@@ -159,7 +161,8 @@ class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
             self.context.update({"form": form, "class": class_instance})
             messages.error(self.request, _("Provided inputs are invalid."))
             return render(self.request,
-                          "dashboard/supports/classes_detail.html", self.context)
+                          "dashboard/supports/classes_detail.html",
+                          self.context)
 
 
 classes_detail_view = ClassesDetailView.as_view()
@@ -399,10 +402,14 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("-1")[-1]
         current_student = Student.objects.get(pk=kwargs.get("pk"))
         self.context = {
-            "student_spec_form": StudentsClassForm(instance=current_student, request=self.request),
-            "phonenumber_form": ChangePhonenumber(instance=current_student.user),
-            "student": current_student,
-            "segment": load_template,
+            "student_spec_form":
+            StudentsClassForm(instance=current_student, request=self.request),
+            "phonenumber_form":
+            ChangePhonenumber(instance=current_student.user),
+            "student":
+            current_student,
+            "segment":
+            load_template,
         }
         return render(self.request, "dashboard/supports/students_detail.html",
                       self.context)
@@ -505,3 +512,82 @@ class CustomPasswordChangeView(PermissionAndLoginRequiredMixin,
 
 
 password_change_view = CustomPasswordChangeView.as_view()
+
+
+class ArticlesTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard/supports/articles.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school = School.objects.get(support=self.request.user)
+        context["articles"] = Article.objects.filter(school=school)
+        context["segment"] = self.request.path.split("/")
+        return context
+
+
+articles_template_view = ArticlesTemplateView.as_view()
+
+
+class AddArticleView(LoginRequiredMixin, View):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.template = "dashboard/supports/add_article.html"
+        self.context = dict()
+
+    def get(self, *args, **kwargs):
+        self.context.update({
+            "segment": self.request.path.split("/"),
+            "form": ArticleForm(),
+            "nav_color": "bg-gradient-danger",
+        })
+        return render(self.request, self.template, self.context)
+
+    def post(self, *args, **kwargs):
+        form = ArticleForm(self.request.POST)
+        user = get_user(self.request)
+        school = School.objects.get(support=self.request.user)
+        if form.is_valid():
+            unsaved_article = form.save(commit=False)
+            unsaved_article.author = user
+            unsaved_article.school = school
+            unsaved_article.save()
+            messages.success(self.request,
+                             _("Article submitted successfully."))
+            return redirect("teachers:articles")
+        else:
+            messages.error(self.request, _("Provided inputs are invalid."))
+            return redirect("teachers:articles")
+
+
+add_article_view = AddArticleView.as_view()
+
+
+class ArticleDetailView(LoginRequiredMixin, View):
+    def __init__(self, *args, **kwargs):
+        self.template = "dashboard/supports/article_detail.html"
+        self.context = dict()
+
+    def get(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs["pk"])
+        self.context.update({
+            "article": article,
+            "form": ArticleForm(instance=article),
+            "segment": self.request.path.split("/")
+        })
+        return render(self.request, self.template, self.context)
+
+
+article_detail_view = ArticleDetailView.as_view()
+
+
+class DeleteArticleView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        article = Article.objects.get(pk=kwargs["pk"])
+        if article.author == self.request.user:
+            article.delete()
+            return redirect("teachers:articles")
+        else:
+            raise PermissionDenied()
+
+
+delete_article_view = DeleteArticleView.as_view()

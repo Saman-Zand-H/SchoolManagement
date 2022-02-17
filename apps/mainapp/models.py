@@ -1,10 +1,12 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.db.models import Avg
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.translation import gettext_noop
 from django.utils.translation import gettext_lazy as _
+from ckeditor.fields import RichTextField
 
 from datetime import date
 from statistics import mean
@@ -42,9 +44,11 @@ class Student(models.Model):
         super().save(*args, **kwargs)
         if self.user.user_type != "S":
             logger.error(
-                gettext_noop("A non-student typed user was being used as a student."))
+                gettext_noop(
+                    "A non-student typed user was being used as a student."))
             raise ValidationError(
-                gettext_noop("{} is not a student. User must be typed as a student.").
+                gettext_noop(
+                    "{} is not a student. User must be typed as a student.").
                 format(self.user.name))
 
 
@@ -63,6 +67,7 @@ class Subject(models.Model):
     class Meta:
         unique_together = ["name", "teacher"]
         verbose_name = _("Courses")
+        verbose_name_plural = "Courses"
 
 
 class Grade(models.Model):
@@ -182,3 +187,25 @@ class Class(models.Model):
     class Meta:
         verbose_name_plural = "classes"
         unique_together = ["school", "class_id"]
+
+
+class Article(models.Model):
+    author = models.ForeignKey(get_user_model(),
+                               on_delete=models.CASCADE,
+                               limit_choices_to=models.Q(user_type="T")
+                               | models.Q(user_type="SS"),
+                               related_name='article_author',
+                               blank=True,
+                               null=True)
+    school = models.ForeignKey(School,
+                               related_name='article_school',
+                               on_delete=models.CASCADE,
+                               blank=True,
+                               null=True)
+    title = models.CharField(max_length=80)
+    categories = ArrayField(base_field=models.CharField(max_length=20), size=5)
+    text = RichTextField()
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.author}: {self.title}"

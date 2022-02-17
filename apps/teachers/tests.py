@@ -1,6 +1,7 @@
 from django.urls import reverse, resolve
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.messages import get_messages
+from django.utils.translation import activate
 
 import pytest
 from pytest_django.asserts import assertTemplateUsed, assertRedirects, assertRaisesMessage
@@ -13,6 +14,8 @@ from teachers.views import (DashboardView, ExamsListView, SetGradesView,
 from mainapp.models import Class, Subject, Exam, Student, Grade
 from supports.models import School
 from teachers.models import Teacher
+
+activate("en")
 
 
 ################## Fixture Factories ##################
