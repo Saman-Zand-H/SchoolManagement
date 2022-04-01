@@ -19,7 +19,7 @@
                             <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
                             <li class="breadcrumb-item"><a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a></li>
                             <li class="breadcrumb-item"><a href="{% url 'supports:teachers' %}">trans 'Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ teacher.user.user_id }}</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ teacher.user.username }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -69,7 +69,7 @@
                     {% trans 'Name:' %} <strong>{{ teacher.user.name|title }}</strong>
                 </div>
                 <div class="my-4">
-                    {% trans 'ID:' %} <strong>{{ teacher.user.user_id }}</strong>
+                    {% trans 'ID:' %} <strong>{{ teacher.user.username }}</strong>
                 </div>
                 <div class="my-4">
                     {% trans 'Phonenumber:' %} <strong>{{ teacher.user.phone_number }}</strong>

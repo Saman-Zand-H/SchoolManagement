@@ -1,0 +1,253 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+{% load customtags %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %} {% trans 'Messages' %} {% endblock title %}
+
+{% block content %}
+
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white mt-3">
+    <div class="list-group list-group-flush border-bottom scrollarea">
+        <li class="list-group-item text-right">
+            {% if is_support %}
+                <button 
+                        type="button" 
+                        data-toggle="modal" 
+                        data-target="#new-group" 
+                        class="btn btn-outline-dark"
+                    >
+                    <i class="fas fa-plus"></i> Start a new group
+                </button>
+                <!-- New Grop Modal -->
+                <div 
+                     class="modal fade"
+                     id="new-group"
+                     tabindex="-1"
+                     role="dialog"
+                    >
+                    <div 
+                         class="modal-dialog modal-dialog-centered" 
+                         role="document"
+                        >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    {% trans "Start a new group" %}
+                                </h5>
+                                <button 
+                                        type="button" 
+                                        class="close" 
+                                        data-dismiss="modal" 
+                                        aria-label="Close"
+                                       >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="mt-2 mb-4 mx-auto text-left">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {{ group_form|crispy }}
+                                    <input name="conversation_type" value="group" type="hidden">
+                                    <button class="btn btn-success" type="submit">
+                                        Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <button 
+                    type="button" 
+                    data-toggle="modal" 
+                    data-target="#new-conversation" 
+                    class="btn btn-outline-dark"
+                >
+                <i class="fas fa-plus"></i> Start a new conversation
+            </button>
+            <!-- New Conversation Modal -->
+            <div 
+                 class="modal fade"
+                 id="new-conversation"
+                 tabindex="-1"
+                 role="dialog"
+                >
+                <div 
+                     class="modal-dialog modal-dialog-centered" 
+                     role="document"
+                    >
+                    <div class="modal-content w-75 mx-auto">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                {% trans "Start a new conversation" %}
+                            </h5>
+                            <button 
+                                    type="button" 
+                                    class="close" 
+                                    data-dismiss="modal" 
+                                    aria-label="Close"
+                                   >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="mt-2 mb-4 mx-auto text-left">
+                            <input 
+                                   type="text" 
+                                   class="form-control" 
+                                   id="search-username" 
+                                   autocorrect="false"
+                                   autocomplete="off"
+                                   spellcheck="false"
+                                   placeholder="target user's username..."
+                                  >
+                            <form method="post">
+                                {% csrf_token %}
+                                <input name="conversation_type" value="pm" type="hidden">
+                                <div class="text-center text-danger">
+                                    <small id="no-hits"></small>
+                                </div>
+                                <div class="table-responsive my-3">
+                                    <table class="table align-items-center" id="hits-table">
+                                        <thead class="thead-light" d="hits-thead">
+                                            <tr>
+                                                <th class="col-1"></th>
+                                                <th>Name</th>
+                                                <th>Username</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="hits"></tbody>
+                                    </table>
+                                </div>
+                                <button class="btn btn-success" type="submit">
+                                    Start
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% if memberships %}
+            {% for membership in memberships %}
+                    <a href="{{ membership.chatgroup.get_absolute_url }}" 
+                       class="list-group-item list-group-item-action py-3" 
+                       aria-current="true">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <div class="media align-items-center">
+                                <span class="avatar avatar-sm rounded-circle">
+                                    <img alt="Profile Picture" 
+                                         src={% with profile_picture=membership.chatgroup|get_group_photo:user %}
+                                                 {% if profile_picture %} 
+                                                     "{{ profile_picture.url }}" 
+                                                 {% else%}
+                                                     "{% static 'empty-profile.jpg' %}" 
+                                                 {% endif %}>
+                                             {% endwith %}
+                                </span>
+                                <div class="media-body ml-2 d-lg-block">
+                                    <span class="mb-0 text-sm font-weight-bold">
+                                        {{ membership.chatgroup|get_group_name:user }}
+                                    </span>
+                                </div>
+                            </div>
+                            <small>
+                                {% if membership.chatgroup.is_marked_as_unread %}
+                                    <span class="badge badge-pill bg-gradient-cyan">Unread</span>
+                                {% endif %}
+                                {{ membership.chatgroup.message_chatgroup.last.date_written|date:"D" }}
+                            </small>
+                        </div>
+                        <div class="col-10 mb-1 pt-2 small text-muted">
+                            {{ membership.chatgroup.ordered_messages.last.body|truncatechars:30|default:"" }}
+                        </div>
+                    </a>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item text-center">
+                You haven't started any conversation yet.
+            </li>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"
+    integrity="sha256-EXPXz4W6pQgfYY3yTpnDa3OH8/EPn16ciVsPQ/ypsjk=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.8.3/dist/instantsearch.production.min.js"
+    integrity="sha256-LAGhRRdtVoD6RLo2qDQsU2mp+XVSciKRC8XPOBWmofM=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/hogan.js/3.0.2/hogan.min.js"></script>
+
+{% verbatim %}
+    <script type="text/template" id="hit-template">
+        <tr>
+            <td class="col-1">
+                <input type="radio" name="target_user" value="{{{ _highlightResult.username.value }}}">
+            </td>
+            <td>{{{ _highlightResult.name.value }}}</td>
+            <td>{{{ _highlightResult.username.value }}}</td>
+        </tr>
+    </script>
+{% endverbatim %}
+
+<script>
+    const $searchField = $("#search-username"),
+          $hits = $("#hits"),
+          $hitsTable = $("#hits-table"),
+          $hitsThead = $("#hits-thead"),
+          $noHits = $("#no-hits"),
+          hitTemplate = Hogan.compile($("#hit-template").text()),
+          client = algoliasearch(
+              "{{ algolia_application_id|safe }}",
+              "{{ algolia_search_key|safe }}",
+          ),
+          indexName = "{{ user.get_index_name|safe }}",
+          helper = algoliasearchHelper(client, indexName),
+          username = "{{ user.username|safe }}";
+          school_name = "{{ school_name|safe }}";
+    $noHits.hide();
+    $hitsTable.hide();
+    $hitsThead.hide();
+    $hits.hide();
+
+    helper.setQueryParameter("tagFilters", school_name);
+
+    $searchField.keyup(function() {
+        var query = $searchField.val();
+        helper.setQuery(query).search();
+    }).focus();
+
+    helper.on("result", function(data) {
+        renderHits(data);
+    });
+    helper.search();
+
+    function renderHits(content) {
+        var hitsHtml = "";
+        if (content.hits.length === 0) {
+            hitsHtml = "Found no user with this username";
+            $noHits.text(hitsHtml);
+            $hitsTable.hide();
+            $hitsThead.hide();
+            $hits.hide();
+            $noHits.show();
+        } else {
+            for (var i = 0; i < content.hits.length; ++i) {
+                console.log("YES");
+                hitsHtml += hitTemplate.render(content.hits[i]);
+            }
+            $noHits.hide();
+            $hits.html(hitsHtml);
+            $hitsTable.show();
+            $hitsThead.show();
+            $hits.show();
+        }
+    };
+</script>
+{% endblock javascripts %}

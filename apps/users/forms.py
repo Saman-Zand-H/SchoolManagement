@@ -147,7 +147,7 @@ class CustomLoginForm(LoginForm):
         if self.user:
             if self.user.user_type == "S":
                 logger.info(
-                    f"A student with id {self.user.user_id} was trying to sign in."
+                    f"A student with id {self.user.username} was trying to sign in."
                 )
                 raise forms.ValidationError(
                     self.error_messages["students_not_allowed"],

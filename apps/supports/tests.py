@@ -21,12 +21,12 @@ from teachers.models import Teacher
 ################## Fixture Factories ##################
 @pytest.fixture
 def user_factory(db):
-    def create_user(user_id,
+    def create_user(username,
                     first_name="name",
                     last_name="name",
                     phone_number="01223334455",
                     password="test123456789"):
-        user = get_user_model().objects.create_user(user_id=user_id,
+        user = get_user_model().objects.create_user(username=username,
                                                     first_name=first_name,
                                                     last_name=last_name,
                                                     phone_number=phone_number,
@@ -40,14 +40,14 @@ def user_factory(db):
 
 @pytest.fixture
 def teacher_factory(db):
-    def create_teacher(user_id,
+    def create_teacher(username,
                        school,
                        first_name="Test",
                        last_name="name",
                        phone_number="01223334455",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
-            user_id=user_id,
+            username=username,
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
@@ -77,14 +77,14 @@ def class_factory(db):
 
 @pytest.fixture
 def student_factory(db):
-    def create_student(user_id,
+    def create_student(username,
                        student_class,
                        first_name="name",
                        last_name="name",
                        phone_number="01223334458",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
-            user_id=user_id,
+            username=username,
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
@@ -403,7 +403,7 @@ def test_create_teacher_successful(client, school_1):
     assert str(messages[-1]) == "Teacher created successfully."
 
     assert Teacher.objects.count() == 1
-    assert created_teacher.user.user_id == "test_created_teacher"
+    assert created_teacher.user.username == "test_created_teacher"
 
 
 def test_create_teacher_unsuccessful(client, school_1):
@@ -517,7 +517,7 @@ def test_create_student_successful(client, school_1, class_1):
 
     assert Student.objects.count() == 1
     assert created_student.student_class == class_1
-    assert created_student.user.user_id == "test_created_student"
+    assert created_student.user.username == "test_created_student"
 
 
 def test_create_student_unsuccessful(client, school_1):

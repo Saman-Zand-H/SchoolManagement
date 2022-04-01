@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Avg
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext_noop
 from django.utils.translation import gettext_lazy as _
@@ -21,7 +21,7 @@ logger = getLogger(__name__)
 
 
 class Student(models.Model):
-    user = models.OneToOneField(get_user_model(),
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 related_name="student_user",
                                 on_delete=models.CASCADE)
     student_class = models.ForeignKey("Class",
@@ -32,7 +32,7 @@ class Student(models.Model):
                                       blank=True)
 
     def __str__(self):
-        return self.user.user_id
+        return self.user.username
 
     def get_absolute_url_supports(self):
         return reverse("supports:students-detail", kwargs={"pk": self.pk})
@@ -190,7 +190,7 @@ class Class(models.Model):
 
 
 class Article(models.Model):
-    author = models.ForeignKey(get_user_model(),
+    author = models.ForeignKey(settings.AUTH_USER_MODEL,
                                on_delete=models.CASCADE,
                                limit_choices_to=models.Q(user_type="T")
                                | models.Q(user_type="SS"),

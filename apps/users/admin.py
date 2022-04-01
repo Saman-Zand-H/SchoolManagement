@@ -6,13 +6,13 @@ from .models import CustomUser, PhoneNumber
 
 @admin.register(CustomUser)
 class CustomAdmin(UserAdmin):
-    ordering = ["user_id"]
+    ordering = ["username"]
     fieldsets = (
         (
             None,
             {
                 "fields": (
-                    "user_id",
+                    "username",
                     "user_type",
                     "email",
                     "first_name",
@@ -37,7 +37,7 @@ class CustomAdmin(UserAdmin):
         None,
         {
             "fields": (
-                "user_id",
+                "username",
                 "user_type",
                 "email",
                 "first_name",
@@ -51,8 +51,8 @@ class CustomAdmin(UserAdmin):
             "wide",
         },
     ), )
-    list_display = ["name", "user_id", "user_type", "email"]
-    search_fields = ["name", "user_id", "email"]
+    list_display = ["name", "username", "user_type", "email"]
+    search_fields = ["name", "username", "email"]
     list_filter = ["user_type"]
     filter_horizontal = ["groups", "user_permissions"]
 

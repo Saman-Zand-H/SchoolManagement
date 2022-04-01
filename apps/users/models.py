@@ -5,6 +5,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_noop as _
+from algoliasearch_django import get_adapter
 
 import logging
 
@@ -14,7 +15,6 @@ USER_TYPE_CHOICES = (
     ("S", "student"),
     ("T", "teacher"),
     ("SS", "support staff"),
-    ("P", "principal"),
 )
 
 
@@ -38,7 +38,7 @@ def validate_file_size(file):
 class CustomManager(BaseUserManager):
     def _create_user(
         self,
-        user_id,
+        username,
         email,
         first_name,
         last_name,
@@ -53,7 +53,7 @@ class CustomManager(BaseUserManager):
         now = timezone.now()
         user_email = self.normalize_email(email)
         user = self.model(
-            user_id=user_id,
+            username=username,
             email=user_email,
             first_name=first_name,
             last_name=last_name,
@@ -71,7 +71,7 @@ class CustomManager(BaseUserManager):
 
     def create_user(
         self,
-        user_id=None,
+        username=None,
         email=None,
         first_name=None,
         last_name=None,
@@ -80,13 +80,13 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        return self._create_user(user_id, email, first_name, last_name,
+        return self._create_user(username, email, first_name, last_name,
                                  password, user_type, picture, True, False,
                                  False, **extra_fields)
 
     def create_staff(
         self,
-        user_id=None,
+        username=None,
         email=None,
         first_name=None,
         last_name=None,
@@ -95,13 +95,13 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        return self._create_user(user_id, email, first_name, last_name,
+        return self._create_user(username, email, first_name, last_name,
                                  password, user_type, picture, True, False,
                                  True, **extra_fields)
 
     def create_superuser(
         self,
-        user_id=None,
+        username=None,
         email=None,
         first_name=None,
         last_name=None,
@@ -110,7 +110,7 @@ class CustomManager(BaseUserManager):
         picture=None,
         **extra_fields,
     ):
-        user = self._create_user(user_id, email, first_name, last_name,
+        user = self._create_user(username, email, first_name, last_name,
                                  password, user_type, picture, True, True,
                                  True, **extra_fields)
         user.save(using=self._db)
@@ -118,16 +118,16 @@ class CustomManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    user_id = models.CharField(max_length=20, unique=True)
+    username = models.CharField(max_length=20, unique=True)
     email = models.EmailField(unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
     user_type = models.CharField(max_length=3, choices=USER_TYPE_CHOICES)
-    picture = models.FileField(
+    picture = models.ImageField(
         blank=True,
+        null=True,
         upload_to="media",
-        default="empty-profile.jpg",
-        validators=[validate_file_extension, validate_file_size])
+        validators=[validate_file_size])
     about = models.TextField(blank=True, default="")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -135,7 +135,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = "user_id"
+    USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["user_type", "first_name", "last_name"]
 
@@ -145,10 +145,31 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"/users/{self.pk}/"
 
     def name(self):
-        return f"{self.first_name.title()} {self.last_name.title()}"
+        return f"{self.first_name.title()} {self.last_name.title()}".strip()
+    
+    @classmethod
+    def get_index_name(cls):
+        return get_adapter(cls).index_name
 
     def __str__(self):
-        return self.user_id
+        return self.username
+    
+    def is_not_principal(self):
+        return self.user_type != "SS"
+    
+    def is_group_owner(self, group):
+        if group.is_pm:
+            return group.owner == self.id
+        return
+    
+    def school_name(self):
+        if self.user_type == "T":
+            queryset = self.teacher_user.school
+        elif self.user_type == "S":
+            queryset = self.student_user.student_class.school
+        elif self.user_type == "SS":
+            queryset = self.school_support
+        return [queryset.name]
 
     def save(self, *args, **kwargs):
         if not self.email:

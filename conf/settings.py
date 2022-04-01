@@ -63,9 +63,12 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'algoliasearch_django',
     'crispy_forms',
     'ckeditor',
     'ckeditor_uploader',
+    'channels',
+    'channels_redis',
 
     # Local apps
     'users.apps.UsersConfig',
@@ -74,6 +77,7 @@ INSTALLED_APPS = [
     'teachers',
     'students',
     'supports',
+    'messenger',
 ]
 
 MIDDLEWARE = [
@@ -110,7 +114,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'conf.wsgi.application'
+ASGI_APPLICATION = 'conf.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -194,7 +198,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'formatter': 'console',
-            'filename': '/general.log'
+            'filename': 'logger.log'
         }
     },
     'loggers': {
@@ -235,7 +239,7 @@ PHONENUMBER_DB_FORMAT = "NATIONAL"
 PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
 
 # Allauth confs
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_ADAPTER = "users.forms.CustomSignUpAdapter"
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = False
@@ -307,3 +311,26 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+
+# Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                ("redis_server", 6379),
+            ],
+        },
+    },
+}
+
+# Algolia search configurations
+ALGOLIA_APPLICATION_ID = env.str("ALGOLIA_APPLICATION_ID")
+ALGOLIA_API_KEY = env.str("ALGOLIA_API_KEY")
+ALGOLIA_SEARCH_KEY = env.str("ALGOLIA_SEARCH_KEY")
+ALGOLIA = {
+    "AUTO_INDEXING": False,
+    "APPLICATION_ID": ALGOLIA_APPLICATION_ID,
+    "SEARCH_API_KEY": ALGOLIA_SEARCH_KEY,
+    "API_KEY": ALGOLIA_API_KEY,
+}

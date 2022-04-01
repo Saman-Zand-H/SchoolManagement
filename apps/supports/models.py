@@ -16,7 +16,10 @@ class School(models.Model):
 
     class Meta:
         unique_together = ["name", "support"]
-        permissions = (("support", "has support staff's permissions"), )
+        permissions = (
+            ("support", "has support staff's permissions"), 
+            ("create_group", "can create groups in the messenger"),
+        )
 
     def __str__(self):
         return self.name

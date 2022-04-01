@@ -1,0 +1,513 @@
+{% extends 'layouts/base.html' %}
+
+{% load static %}
+{% load customtags %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+
+{% block title %} {{ chatgroup|get_group_name:user }} {% endblock title %}
+
+{% block content %}
+
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white mt-3">
+    <div class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-1">
+                    <a href="{% url 'messenger:conversations-list' %}">
+                        <i class="fas fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                </div>
+                <div class="col-4 offset-4 pt-1">
+                    <button class="btn btn-outline-dark" data-toggle="modal" data-target="#group-details">
+                        <strong>
+                            {{ chatgroup|get_group_name:user|truncatechars:30 }}
+                        </strong>
+                    </button>
+                </div>
+                <div class="col-1 offset-2">
+                    <span class="avatar avatar-sm rounded-circle">
+                        {% with profile_picture=chatgroup|get_group_photo:user %}
+                            <img alt="Profile Picture" 
+                                 src={% if profile_picture %} 
+                                         "{{ profile_picture.url }}" 
+                                     {% else %} 
+                                         "{% static 'empty-profile.jpg' %}" 
+                                     {% endif %}
+                                >
+                        {% endwith %}
+                    </span>
+                </div>
+                <div class="modal fade"
+                     id="group-details"
+                     tabindex="-1"
+                     role="dialog"
+                    >
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    {{ chatgroup|get_group_name:user }}
+                                    <button type="button" 
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            aria-label="Close"
+                                           >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </h5>
+                            </div>
+                            <div class="mt-2 mb-4 px-4 mx-auto table-responsive">
+                                <div class="text-center">
+                                    <span class="avatar avatar-lg rounded-circle border border-dark">
+                                        {% with profile_picture=chatgroup|get_group_photo:user %}
+                                            <img alt="Group picture" src="{% if profile_picture %}
+                                                                              {{ profile_picture.url }}
+                                                                          {% else %}
+                                                                              {% static 'empty-profile.jpg' %}
+                                                                          {% endif %}"
+                                                >
+                                        {% endwith %}
+                                    </span><br>
+                                    <h6 class="display-4">{{ chatgroup|get_group_name:user }}</h6>
+                                    <p class="lead">{{ chatgroup.bio|default_if_none:other_user_about }}</p>
+                                </div>
+                                {% if not chatgroup.is_pm %}
+                                    <hr>
+                                    {% if chatgroup.owner == user %}
+                                        <h4>Edit</h4>
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            {{ group_form.name|as_crispy_field }}
+                                            {{ group_form.bio|as_crispy_field }}
+                                            <label for="group-photo-field">
+                                                {{ group_form.photo.label }}
+                                            </label>
+                                            <div class="input-group mb-3">
+                                                <button 
+                                                        type="button" 
+                                                        class="btn btn-outline-default" 
+                                                        style="display: none;" 
+                                                        id="discard-photo"
+                                                       >
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                {{ group_form.photo }}
+                                            </div>
+                                            <button class="btn btn-warning mx-2" type="submit">
+                                                Edit
+                                            </button>
+                                        </form>
+                                        <hr>
+                                    {% endif %}
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <h4>
+                                                Member{{ chatgroup.member_chatgroup.all|pluralize }} 
+                                                ({{ chatgroup.member_chatgroup.all|length }})
+                                            </h4>
+                                        </div>
+                                        <div class="col">
+                                            {% if chatgroup.owner == user %}
+                                                <button 
+                                                        type="button" 
+                                                        data-toggle="collapse" 
+                                                        data-target="#search-users" 
+                                                        class="btn btn-outline-success"
+                                                       >
+                                                    Add member
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div class="collapse" id="search-users">
+                                                <input 
+                                                       autocomplete="off" 
+                                                       autocorrect="false" 
+                                                       spellcheck="false" 
+                                                       placeholder="a username or a name" 
+                                                       type="text" 
+                                                       class="form-control w-100" 
+                                                       id="search-users-input"
+                                                      >
+                                                <div class="text-center text-danger">
+                                                    <small id="no-hits"></small>
+                                                </div>
+                                                <div class="table-responsive my-3">
+                                                    <form 
+                                                          action="{% url 'messenger:manage-members' chatgroup.group_id %}" 
+                                                          method="POST"
+                                                         >
+                                                        {% csrf_token %}
+                                                        <table class="table align-items-center" id="hits-table">
+                                                            <thead class="thead-light"=>
+                                                                <tr>
+                                                                    <th div="col-1">Add</th>
+                                                                    <th class="col-3">Type</th>
+                                                                    <th>Username</th>
+                                                                    <th>Name</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="hits"></tbody>
+                                                        </table>
+                                                        <button class="btn btn-success" type="submit">
+                                                            Update Members
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table class="table align-items-center table-bordered">
+                                        <tbody class="list">
+                                            {% for member in chatgroup.member_chatgroup.all %}  
+                                                <tr>
+                                                    <td class="col-2">
+                                                        <span class="avatar avatar-sm rounded-circle ml-1">
+                                                            <img 
+                                                                alt="Profile picture"
+                                                                src="{% if member.user.picture %}
+                                                                        {{ member.user.picture.url }}
+                                                                    {% else %}
+                                                                        {% static 'empty-profile.jpg' %}
+                                                                    {% endif %}"
+                                                                >
+                                                        </span>
+                                                        {% if member.user == chatgroup.owner %}
+                                                            <br>
+                                                            <span class="badge badge-pill badge-warning">Owner</span>
+                                                        {% endif %}
+                                                        {% if user == chatgroup.owner and member.user != user %}
+                                                            <form 
+                                                                action="{% url 'messenger:manage-members' chatgroup.group_id %}" 
+                                                                method="POST"
+                                                                class="text-center" 
+                                                                id="delete_{{ member.user.username }}"
+                                                                >
+                                                                {% csrf_token %}
+                                                                <input type="hidden" value="delete" name="request_type">
+                                                                <input 
+                                                                       type="hidden" 
+                                                                       value="{{ member.user.username }}" 
+                                                                       name="member"
+                                                                      >
+                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                    <i class="fas fa-minus-circle fa-medium"></i>
+                                                                </button>
+
+                                                            </form>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ member.user.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="my-3">
+                                        <form 
+                                              method="POST"
+                                              action="{% url 'messenger:manage-members' chatgroup.group_id %}"
+                                             >
+                                            {% csrf_token %}
+                                            <input type="hidden" value="leave" name="request_type">
+                                            <input type="hidden" value="{{ user.username }}" name="member">
+                                            <button 
+                                                type="submit" 
+                                                class="btn btn-outline-danger w-100"
+                                            >
+                                                Leave {% if chatgroup.owner == user %}and delete{% endif %}
+                                            </button>
+                                        </form> 
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </div>
+</div>
+<div class="d-flex flex-column align-items-stretch">
+    <div class="card order-0" 
+         style="overflow-y:scroll; height:64vh" 
+         id="msg-card"
+        >
+        <div class="card-body align-content-start">
+            <div class="list-group list-group-flush" id="message-box">
+                {% if chatgroup.message_chatgroup.exists %}
+                    {% for message in chatgroup.ordered_messages %}
+                        <li class="message list-group-item 
+                                   {% if message.author == user %}
+                                       bg-gradient-gray-dark
+                                   {% else %}
+                                       bg-gray
+                                   {% endif %}"
+                            id="{{ message.message_id.hex }}"
+                           >
+                            {% if message.author == user %}
+                                <h5 class="text-success">
+                                    <strong>YOU</strong>
+                                </h5>
+                            {% else %}
+                                <h5>{{ message.author.name }}</h5>
+                            {% endif %}
+                            
+                            <small>{{ message.date_written }}</small>
+                            <p class="text-lighter">{{ message.body }}</p>
+
+                            {% if message.author == user %}
+                                <div class="text-right">
+                                    <small class="small">
+                                        <i class="fas fa-check-double" 
+                                           id="read_{{ message.message_id.hex }}"
+                                           {% if not message.seen %}style="display:none;"{% endif %}
+                                          ></i>
+                                        <i class="fas fa-check" 
+                                           id="unread_{{ message.message_id.hex }}"
+                                           {% if message.seen %}style="display:none;"{% endif %}
+                                          ></i>
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="order-1 container-fluid">
+        <div class="row">
+            <div class="col-11 mb-2">
+                <input type="text" 
+                       class="form-group w-100" 
+                       placeholder="Your message..." 
+                       id="msg-input"
+                      >
+            </div>
+            <div class="col-1">
+                <button type="submit" class="btn btn-primary mb-2" 
+                        id="send-msg-btn"
+                       >
+                    <i class="far fa-sm fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {% if not chatgroup.is_pm %}
+        <script src="https://cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js"
+            integrity="sha256-EXPXz4W6pQgfYY3yTpnDa3OH8/EPn16ciVsPQ/ypsjk=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.8.3/dist/instantsearch.production.min.js"
+            integrity="sha256-LAGhRRdtVoD6RLo2qDQsU2mp+XVSciKRC8XPOBWmofM=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/hogan.js/3.0.2/hogan.min.js"></script>
+
+        {% verbatim %}
+        <script type="text/template" id="hit-template">
+            <tr>
+                <td class="col-1">
+                    <input type="hidden" value="add" name="request_type">
+                    <input type="radio" value="{{{ _highlightResult.username.value }}}" name="member">
+                </td>
+                <td class="col-3">{{{ _highlightResult.get_user_type_display.value }}}</td>
+                <td>{{{ _highlightResult.username.value }}}</td>
+                <td>{{{ _highlightResult.name.value }}}</td>
+            </tr>
+        </script>
+        {% endverbatim %}
+
+        <script>
+            $(document).ready(function() {
+                var $inputField = $("#search-users-input"),
+                    $hits = $("#hits"),
+                    $hitsTable = $("#hits-table"),
+                    $noHits = $("#no-hits"),
+                    hitTemplate = Hogan.compile($("#hit-template").text()),
+                    client = algoliasearch(
+                        "{{ algolia_application_id|safe }}",
+                        "{{ algolia_search_key|safe }}",
+                    ),
+                    indexName = "{{ user.get_index_name|safe }}",
+                    helper = algoliasearchHelper(client, indexName),
+                    school_name = "{{ school_name|safe }}";
+                    
+                $noHits.hide();
+                $hits.hide();
+
+                helper.setQueryParameter("tagFilters", school_name);
+                $inputField.keyup(function() {
+                    var query = $inputField.val();
+                    helper.setQuery(query).search();
+                }).focus();
+
+                helper.on("result", function(data) {
+                    renderHits(data);
+                });
+                helper.search();
+
+                function renderHits(content) {
+                    var hitsHtml = "";
+                    if (content.hits.length === 0) {
+                        hitsHtml = "We found no result for your search.";
+                        $noHits.text(hitsHtml);
+                        $noHits.show();
+                    } else {
+                        for (var i = 0; i < content.hits.length; ++i) {
+                            hitsHtml += hitTemplate.render(content.hits[i]);
+                        }
+                        $noHits.hide();
+                        $hits.html(hitsHtml);
+                        $hits.show();
+                    }
+                };
+            });
+        </script>
+    {% endif %}
+    <script>
+        const group_id = "{{ chatgroup.group_id|safe }}",
+              socket = new WebSocket(`ws://${window.location.host}/ws/messenger/${group_id}/`),
+              sendMsgBtn = $("#send-msg-btn"),
+              msgInput = $("#msg-input"),
+              msgBox = $("#message-box"),
+              username = "{{ user.username }}",
+              msgCard = $("#msg-card");
+
+        {% if chatgroup.owner == user %}
+            var groupNameField = $("#group-photo-field");
+            var discardBtn = $("#discard-photo");
+            if (groupNameField.val()) {
+                discardBtn.show();
+            }
+            groupNameField.change(function(e) {
+                if (groupNameField.val()){
+                    discardBtn.show();
+                };
+            });
+            discardBtn.click(function(e) {
+                groupNameField.val("");
+                discardBtn.hide();
+            });
+        {% endif %}
+
+        window.onload = function() {
+            msgInput.focus();
+            msgCard.scrollTop(msgCard.prop("scrollHeight"));
+
+            {% if last_message %}
+                var message_id = "{{ last_message.message_id.hex }}",
+                    read_mark = $(`#read_${message_id}`),
+                    message_sender = "{{ last_message.author }}";
+                    unread_mark = $(`#unread_${message_id}`);
+                unread_mark.hide();
+                read_mark.show();
+                socket.send(
+                    JSON.stringify(
+                        {
+                            "type": "seen",
+                            "message_id": message_id,
+                            "sender": message_sender,
+                        },
+                    ),
+                );
+            {% endif %}
+        };
+
+        msgInput.keyup(function(e) {
+            if (e.which == 13) {
+                sendMsgBtn.click();
+            };
+        });
+
+        sendMsgBtn.click(function(e) {
+            e.preventDefault();
+            var msg = msgInput.val();
+            if (msg.length > 0) {
+                var data = JSON.stringify(
+                    {
+                        "body": msg,
+                        "type": "msg",
+                    }
+                );
+                socket.send(data);
+                msgInput.val("");
+            };
+        });
+
+        socket.onclose = function(e) {
+            console.log("[!] Connection closed.");
+        };
+
+        socket.onopen = function(e) {
+            console.log("[+] Connection established.");
+        };
+
+        socket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            switch(data.type){
+                case "msg":
+                    if (data.sender_username === username) {
+                        msgBox.append(
+                            `<li class="list-group-item bg-gradient-gray-dark">
+                                <h5 class="text-success">
+                                    <strong>YOU</strong>
+                                </h5>
+                                <p class="text-light">${data.body}</p>
+                                <div class="text-right">
+                                    <small class="small">
+                                        <i class="fas fa-check-double" 
+                                           id="read_${data.message_id}"
+                                           style="display: none;"
+                                          ></i>
+                                        <i class="fas fa-check" 
+                                           id="unread_${data.message_id}"
+                                          ></i>
+                                    </small>
+                                </div>
+                            </li>`
+                        );
+                        msgCard.scrollTop(msgCard.prop("scrollHeight"));
+                    } else {
+                        msgBox.append(
+                            `<li class="message 
+                                    list-group-item 
+                                    bg-gray"
+                             id="${data.message_id}"
+                            >
+                            <h5>
+                                <strong>${data.sender}</strong>
+                            </h5>
+                            <p class="text-light">${data.body}</p>
+                        </li>`
+                        );  
+                        msgCard.scrollTop(msgCard.prop("scrollHeight"));
+                        const seen_data = {
+                            "type": "seen",
+                            "message_id": data.message_id,
+                            "sender": data.sender_username,
+                        };
+                        socket.send(
+                            JSON.stringify(seen_data),
+                        );
+                    };
+                    break;
+                case "seen":
+                    var message_id = data.message_id,
+                        message_author = data.sender;
+                    if (username === message_author){
+                        $(`#unread_${message_id}`).hide();
+                        $(`#read_${message_id}`).show();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        };
+    </script>
+{% endblock javascripts %}

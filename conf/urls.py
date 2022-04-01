@@ -17,6 +17,7 @@ urlpatterns = [
     # Local Apps
     path("teacher/", include("teachers.urls", namespace="teachers")),
     path("support/", include("supports.urls", namespace="supports")),
+    path("messenger/", include("messenger.urls", namespace="messenger")),
     path("", include("homeapp.urls", namespace="home")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 

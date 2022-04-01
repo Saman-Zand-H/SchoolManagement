@@ -52,7 +52,7 @@ class AddPhoneNumberView(LoginRequiredMixin, View):
                 users_phonenumber = str(
                     add_phonenumber_form.cleaned_data.get("phone_number"))
                 logger.info(
-                    f"User {user.user_id}'s entered phone number is {users_phonenumber}."
+                    f"User {user.username}'s entered phone number is {users_phonenumber}."
                 )
                 otp_url = "https://portal.amootsms.com/webservice2.asmx/SendWithPattern_REST"
                 otp = ''.join(random.choices(string.digits, k=5))
@@ -77,7 +77,7 @@ class AddPhoneNumberView(LoginRequiredMixin, View):
                 else:
                     logger.error(
                         f"[indian_red]Status code {otp_response.status_code}[/]"
-                        f" while {user.user_id} - {users_phonenumber} "
+                        f" while {user.username} - {users_phonenumber} "
                         "was trying to send a support message.",
                         extra={"markup": True})
                     messages.error(
@@ -140,7 +140,7 @@ class PhonenumberVerificationView(View):
             else:
                 self.context.update({"form": phone_verification_form})
                 logger.warning(
-                    f"Invalid inputs provided by {user.user_id}:"
+                    f"Invalid inputs provided by {user.username}:"
                     f"\n[red]{phone_verification_form.errors}\n{phone_verification_form.non_field_errors()}[/]",
                     extra={"markup": True})
                 messages.error(self.request, _("Provided inputs are invalid."))

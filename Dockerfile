@@ -1,23 +1,17 @@
-FROM python:3.9.7-alpine
+FROM python:3.10.4-slim
 
 ENV PYTHONDONTWRITEBYTECODE = 1
 ENV PYTHONUNBUFFERED = 1
+
+RUN apt-get update && apt-get install --fix-broken\
+    && apt-get install -y build-essential libssl-dev\
+    libffi-dev libpq-dev python-dev gcc gettext
 
 RUN mkdir /usr/src/app
 ENV HOME=/usr/src/app
 RUN mkdir $HOME/staticfiles
 RUN mkdir $HOME/media
 WORKDIR /usr/src/app
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-WORKDIR /usr/src/app
-
-RUN apk update \
-    && apk add postgresql-dev gcc python3-dev nginx \ 
-    musl-dev make supervisor gettext jpeg-dev \
-    libffi-dev build-base zlib-dev
 
 COPY requirements.txt /usr/src/app/
 RUN pip install -U pip && pip install -r requirements.txt

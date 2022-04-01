@@ -10,6 +10,7 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - redis_server
     tty: true
   db:
     image: postgres:13.0-alpine
@@ -18,6 +19,18 @@ services:
     environment:
       - "POSTGRES_USER=saman"
       - "POSTGRES_PASSWORD=123456789"
+  redis_server:
+    image: redis:6.2-alpine
+    command: redis-server --save
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/var/lib/redis/data/
+  adminer:
+    image: adminer:latest
+    ports:
+      - 8080:8080
 
 volumes:
   postgres_data:
+  redis_data:

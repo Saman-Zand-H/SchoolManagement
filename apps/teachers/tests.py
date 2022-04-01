@@ -21,13 +21,13 @@ activate("en")
 ################## Fixture Factories ##################
 @pytest.fixture
 def school_factory(db):
-    def create_support(user_id,
+    def create_support(username,
                        school_name,
                        first_name="name",
                        last_name="name",
                        phone_number="01223334455",
                        password="test123456789"):
-        user = get_user_model().objects.create_user(user_id=user_id,
+        user = get_user_model().objects.create_user(username=username,
                                                     first_name=first_name,
                                                     last_name=last_name,
                                                     phone_number=phone_number,
@@ -49,14 +49,14 @@ def class_factory(db):
 
 @pytest.fixture
 def student_factory(db):
-    def create_student(user_id,
+    def create_student(username,
                        student_class,
                        first_name="name",
                        last_name="name",
                        phone_number="01223334458",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
-            user_id=user_id,
+            username=username,
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
@@ -72,14 +72,14 @@ def student_factory(db):
 
 @pytest.fixture
 def teacher_factory(db):
-    def create_teacher(user_id,
+    def create_teacher(username,
                        school,
                        first_name="name",
                        last_name="name",
                        phone_number="01223334455",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
-            user_id=user_id,
+            username=username,
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,

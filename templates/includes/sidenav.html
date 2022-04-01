@@ -2,7 +2,13 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-<nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white {% if LANGUAGE_CODE != 'en' %}text-right{% endif %}" id="sidenav-main">
+<nav 
+     class="sidenav navbar navbar-vertical 
+            fixed-left navbar-expand-xs 
+            navbar-light bg-white 
+            {% if LANGUAGE_CODE != 'en' %}text-right{% endif %}" 
+     id="sidenav-main"
+    >
     <div class="scrollbar-inner">
         <div class="navbar-inner">
             <!-- Collapse -->
@@ -26,90 +32,148 @@
                     <ul class="navbar-nav">
                         {% if user.user_type == "T" %}
                             <li class="nav-item">
-                                <a class="nav-link {% if 'home' in segment %} active {% endif %}" href="{% url 'teachers:home' %}">
-                                    <i class="fas fa-tachometer-alt px-1 {% if 'home' in segment %}text-primary{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'home' in segment %} active {% endif %}" 
+                                   href="{% url 'teachers:home' %}">
+                                    <i class="fas fa-tachometer-alt px-1 
+                                              {% if 'home' in segment %}text-primary{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Dashboard' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'teachers:profile' %}">
-                                    <i class="ni ni-single-02 px-1 {% if 'profile' in segment %}text-orange{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'profile' in segment %} active {% endif %}" 
+                                   href="{% url 'teachers:profile' %}">
+                                    <i class="ni ni-single-02 px-1 
+                                              {% if 'profile' in segment %}text-orange{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Profile' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'articles' in segment %} active {% endif %}" 
+                                <a class="nav-link 
+                                          {% if 'messenger' in segment %} active {% endif %}" 
+                                   href="{% url 'messenger:conversations-list' %}">
+                                    <i class="fas fa-comment-alt 
+                                              {% if 'messenger' in segment %}text-orange{% endif %}"></i>
+                                    <span class="nav-link-text">{% trans 'Messenger' %}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link 
+                                          {% if 'articles' in segment %} active {% endif %}" 
                                    href="{% url 'teachers:articles' %}">
-                                    <i class="fas fa-newspaper px-1 {% if 'articles' in segment %}text-info{% endif %}"></i>
+                                    <i class="fas fa-newspaper px-1 
+                                              {% if 'articles' in segment %}text-info{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Articles' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'classes' in segment %} active {% endif %}" href="{% url 'teachers:classes' %}">
-                                    <i class="ni ni-badge px-1 {% if 'classes' in segment %}text-yellow{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'classes' in segment %} active {% endif %}" 
+                                   href="{% url 'teachers:classes' %}">
+                                    <i class="ni ni-badge px-1 
+                                              {% if 'classes' in segment %}text-yellow{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Classes' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'students' in segment %} active {% endif %}" href="{% url 'teachers:students' %}">
-                                    <i class="fas fa-user-graduate px-1 {% if 'students' in segment %}text-green{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'students' in segment %} active {% endif %}" 
+                                   href="{% url 'teachers:students' %}">
+                                    <i class="fas fa-user-graduate px-1 
+                                              {% if 'students' in segment %}text-green{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Students' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'exams' in segment %} active {% endif %}" href="{% url 'teachers:exams' %}">
-                                    <i class="fas fa-clipboard px-1 {% if 'exams' in segment %}text-default{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'exams' in segment %} active {% endif %}" 
+                                   href="{% url 'teachers:exams' %}">
+                                    <i class="fas fa-clipboard px-1 
+                                              {% if 'exams' in segment %}text-default{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Exams' %}</span>
                                 </a>
                             </li>
                         {% elif user.user_type == "SS" and user.school_support %}
                             <li class="nav-item">
-                                <a class="nav-link {% if 'home' in segment %} active {% endif %}" href="{% url 'supports:home' %}">
-                                    <i class="fas fa-tachometer-alt px-1 {% if 'home' in segment %}text-primary{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'home' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:home' %}">
+                                    <i class="fas fa-tachometer-alt px-1 
+                                              {% if 'home' in segment %}text-primary{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Dashboard' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'profile' in segment %} active {% endif %}" href="{% url 'supports:profile' %}">
-                                    <i class="ni ni-single-02 px-1 {% if 'profile' in segment %}text-orange{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'profile' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:profile' %}">
+                                    <i class="ni ni-single-02 px-1 
+                                              {% if 'profile' in segment %}text-orange{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Profile' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'classes' in segment %} active {% endif %}" href="{% url 'supports:classes' %}">
-                                    <i class="fas fa-chalkboard px-1 {% if 'classes' in segment %}text-yellow{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'messenger' in segment %} active {% endif %}" 
+                                   href="{% url 'messenger:conversations-list' %}">
+                                    <i class="fas fa-comment-alt 
+                                              {% if 'messenger' in segment %}text-orange{% endif %}"></i>
+                                    <span class="nav-link-text">{% trans 'Messenger' %}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link 
+                                          {% if 'classes' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:classes' %}">
+                                    <i class="fas fa-chalkboard px-1 
+                                              {% if 'classes' in segment %}text-yellow{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Classes' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'teachers' in segment %} active {% endif %}" href="{% url 'supports:teachers' %}">
-                                    <i class="fas fa-chalkboard-teacher px-1 {% if 'teachers' in segment %}text-green{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'teachers' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:teachers' %}">
+                                    <i class="fas fa-chalkboard-teacher px-1 
+                                              {% if 'teachers' in segment %}text-green{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Teachers' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'articles' in segment %} active {% endif %}" href="{% url 'supports:articles' %}">
-                                    <i class="fas fa-newspaper px-1 {% if 'articles' in segment %}text-info{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'articles' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:articles' %}">
+                                    <i class="fas fa-newspaper px-1 
+                                              {% if 'articles' in segment %}text-info{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Articles' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'courses' in segment %} active {% endif %}" href="{% url 'supports:subjects' %}">
-                                    <i class="fas fa-book px-1 {% if 'courses' in segment %}text-black{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'courses' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:subjects' %}">
+                                    <i class="fas fa-book px-1 
+                                              {% if 'courses' in segment %}text-black{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Courses' %}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {% if 'students' in segment %} active {% endif %}" href="{% url 'supports:students' %}">
-                                    <i class="fas fa-user-graduate px-1 {% if 'students' in segment %}text-default{% endif %}"></i>
+                                <a class="nav-link 
+                                          {% if 'students' in segment %} active {% endif %}" 
+                                   href="{% url 'supports:students' %}">
+                                    <i class="fas fa-user-graduate px-1 
+                                              {% if 'students' in segment %}text-default{% endif %}"></i>
                                     <span class="nav-link-text">{% trans 'Students' %}</span>
                                 </a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link {% if 'logout' in segment %} active {% endif %}" 
+                            <a class="nav-link 
+                                      {% if 'logout' in segment %} active {% endif %}" 
                                href="{% url 'logout' %}">
-                                <i class="ni ni-user-run px-1 {% if 'logout' in segment %}text-red{% endif %}"></i>
+                                <i class="ni ni-user-run px-1 
+                                          {% if 'logout' in segment %}text-red{% endif %}"></i>
                                 <span class="nav-link-text">{% trans 'Log Out' %}</span>
                             </a>
                         </li>
@@ -125,7 +189,8 @@
                     <li class="nav-item">
                         <a class="nav-link {% if 'support-page' in segment %} active {% endif %}" 
                            href="{% url 'home:support-page' %}">
-                            <i class="ni ni-support-16 px-1 {% if 'support-page' in segment %}text-purple{% endif %}"></i>
+                            <i class="ni ni-support-16 px-1 
+                                      {% if 'support-page' in segment %}text-purple{% endif %}"></i>
                             <span class="nav-link-text">{% trans 'Support' %}</span>
                         </a>
                     </li>
