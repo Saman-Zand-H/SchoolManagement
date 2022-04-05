@@ -20,7 +20,7 @@ class MessengerConsumer(AsyncConsumer):
         self.chatgroup = await self.get_chatgroup(self.group_id)
         if self.chatgroup is not None:            
             if self.chatgroup.is_pm:
-                self.group_name = f"{self.sender.username}_{self.group_id}"
+                self.group_name = self.group_id
             else:
                 self.group_name = f"group_{self.group_id}"
             await self.channel_layer.group_add(
@@ -51,7 +51,6 @@ class MessengerConsumer(AsyncConsumer):
         if text_data is not None:
             text_data_json = json.loads(text_data)
             message_type = text_data_json["type"]
-
             match message_type:
                 case "msg":
                     chatgroup = await self.get_chatgroup(self.group_id)
@@ -62,7 +61,6 @@ class MessengerConsumer(AsyncConsumer):
                     text_data_json.update({
                         "sender": self.sender.name(),
                         "sender_username": self.sender.username,
-                        "channel_name": self.channel_name,
                         "type": "msg",
                         "message_id": message.message_id.hex,
                     })
@@ -75,16 +73,15 @@ class MessengerConsumer(AsyncConsumer):
                     )
                 case "seen":
                     msg_id = text_data_json["message_id"]
-                    logger.error(msg_id)
                     msg_sender = text_data_json["sender"]
-                    logger.error(f"socket received a request to mark message as seen a message by {msg_sender}")
                     sender_distinct_group = f"activity_{msg_sender}_{self.group_id}"
                     
-                    await self.mark_message_as_read(msg_id)
+                    text_data_json["message_ids"] = await self.mark_message_as_read(msg_id)
+                    
                     await self.channel_layer.group_send(
                         sender_distinct_group,
                         {
-                            "type": "chat_activity",
+                            "type": "chat_message",
                             "message": text_data_json,
                         },
                     )
@@ -95,12 +92,6 @@ class MessengerConsumer(AsyncConsumer):
                 "type": "websocket.send",
                 "text": json.dumps(event["message"]),
             })
-
-    async def chat_activity(self, event):
-        await self.send({
-            "type": "websocket.send",
-            "text": json.dumps(event["message"])
-        })
 
     @database_sync_to_async
     def get_chatgroup(self, group_id):
@@ -120,8 +111,11 @@ class MessengerConsumer(AsyncConsumer):
         try:
             message = Message.objects.get(
                 message_id=UUID(message_id.strip()))
-            Message.objects.filter(
-                date_written__lte=message.date_written).update(seen=True)
+            messages_qs = Message.objects.filter(
+                date_written__lte=message.date_written, seen=False)
+            messages_qs_ids = [message.message_id.hex for message in messages_qs]
+            messages_qs.update(seen=True)
+            return messages_qs_ids
         except Message.DoesNotExist:
             pass
 

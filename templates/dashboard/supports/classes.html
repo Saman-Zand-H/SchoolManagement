@@ -185,7 +185,7 @@
                                                            data-toggle="tooltip" 
                                                            data-original-title="{{ student.user.name }}">
                                                             <img alt="profile picture" 
-                                                                 src="{{ student.user.picture.url }}" 
+                                                                 src="{{ student.user.get_picture_url }}" 
                                                                  class="rounded-circle">
                                                         </a>
                                                     {% endfor %}

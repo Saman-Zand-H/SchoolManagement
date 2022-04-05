@@ -18,6 +18,7 @@
                         data-toggle="modal" 
                         data-target="#new-group" 
                         class="btn btn-outline-dark"
+                        id="create-group-modal-button"
                     >
                     <i class="fas fa-plus"></i> Start a new group
                 </button>
@@ -51,8 +52,12 @@
                                     {% csrf_token %}
                                     {{ group_form|crispy }}
                                     <input name="conversation_type" value="group" type="hidden">
-                                    <button class="btn btn-success" type="submit">
-                                        Submit
+                                    <button 
+                                            class="btn btn-success" 
+                                            type="submit" 
+                                            id="create-group-button"
+                                           >
+                                        Create
                                     </button>
                                 </form>
                             </div>
@@ -65,6 +70,7 @@
                     data-toggle="modal" 
                     data-target="#new-conversation" 
                     class="btn btn-outline-dark"
+                    id="create-conversation-modal-button"
                 >
                 <i class="fas fa-plus"></i> Start a new conversation
             </button>
@@ -79,7 +85,7 @@
                      class="modal-dialog modal-dialog-centered" 
                      role="document"
                     >
-                    <div class="modal-content w-75 mx-auto">
+                    <div class="modal-content w-75 mx-auto" id="modal-content-conversation">
                         <div class="modal-header">
                             <h5 class="modal-title">
                                 {% trans "Start a new conversation" %}
@@ -101,7 +107,7 @@
                                    autocorrect="false"
                                    autocomplete="off"
                                    spellcheck="false"
-                                   placeholder="target user's username..."
+                                   placeholder="enter the user's username..."
                                   >
                             <form method="post">
                                 {% csrf_token %}
@@ -121,7 +127,11 @@
                                         <tbody id="hits"></tbody>
                                     </table>
                                 </div>
-                                <button class="btn btn-success" type="submit">
+                                <button 
+                                        class="btn btn-success" 
+                                        id="create-conversation-button" 
+                                        type="submit"
+                                       >
                                     Start
                                 </button>
                             </form>
@@ -131,21 +141,21 @@
             </div>
         </li>
         {% if memberships %}
-            {% for membership in memberships %}
-                    <a href="{{ membership.chatgroup.get_absolute_url }}" 
+            <div style="overflow-y:scroll">
+                {% for membership in memberships %}
+                    <a 
+                       href="{{ membership.chatgroup.get_absolute_url }}" 
                        class="list-group-item list-group-item-action py-3" 
-                       aria-current="true">
+                       aria-current="true"
+                       id="group-{{ membership.chatgroup.group_id }}"
+                      >
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <div class="media align-items-center">
                                 <span class="avatar avatar-sm rounded-circle">
-                                    <img alt="Profile Picture" 
-                                         src={% with profile_picture=membership.chatgroup|get_group_photo:user %}
-                                                 {% if profile_picture %} 
-                                                     "{{ profile_picture.url }}" 
-                                                 {% else%}
-                                                     "{% static 'empty-profile.jpg' %}" 
-                                                 {% endif %}>
-                                             {% endwith %}
+                                    <img 
+                                         alt="Profile Picture" 
+                                         src="{{ membership.chatgroup|get_group_photo:user }}"
+                                    >
                                 </span>
                                 <div class="media-body ml-2 d-lg-block">
                                     <span class="mb-0 text-sm font-weight-bold">
@@ -164,7 +174,8 @@
                             {{ membership.chatgroup.ordered_messages.last.body|truncatechars:30|default:"" }}
                         </div>
                     </a>
-            {% endfor %}
+                {% endfor %}
+            </div>
         {% else %}
             <li class="list-group-item text-center">
                 You haven't started any conversation yet.
@@ -186,9 +197,14 @@
 
 {% verbatim %}
     <script type="text/template" id="hit-template">
-        <tr>
+        <tr id="userrow_{{{ _highlightResult.username.value }}}">
             <td class="col-1">
-                <input type="radio" name="target_user" value="{{{ _highlightResult.username.value }}}">
+                <input 
+                       type="radio" 
+                       name="target_user" 
+                       id="select_{{{ _highlightResult.username.value }}}"
+                       value="{{{ _highlightResult.username.value }}}"
+                      >
             </td>
             <td>{{{ _highlightResult.name.value }}}</td>
             <td>{{{ _highlightResult.username.value }}}</td>
@@ -239,7 +255,6 @@
             $noHits.show();
         } else {
             for (var i = 0; i < content.hits.length; ++i) {
-                console.log("YES");
                 hitsHtml += hitTemplate.render(content.hits[i]);
             }
             $noHits.hide();

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 
 class School(models.Model):
@@ -18,7 +18,6 @@ class School(models.Model):
         unique_together = ["name", "support"]
         permissions = (
             ("support", "has support staff's permissions"), 
-            ("create_group", "can create groups in the messenger"),
         )
 
     def __str__(self):
@@ -26,5 +25,8 @@ class School(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        permission = Permission.objects.filter(codename="support")[0]
-        self.support.user_permissions.add(permission)
+        group, group_created = Group.objects.get_or_create(name="Principals")
+        if group_created:
+            perm = Permission.objects.filter(codename="support")[0]
+            group.permissions.add(perm)
+        self.support.groups.add(group)

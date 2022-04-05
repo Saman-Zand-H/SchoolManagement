@@ -10,7 +10,7 @@ from django.conf import settings
 from functools import partial
 from logging import getLogger
 
-from .models import ChatGroup, Message, Member
+from .models import ChatGroup, Member
 from .forms import GroupForm, MembersForm, ConversationForm
 
 
@@ -32,7 +32,7 @@ class ChatsListView(LoginRequiredMixin, View):
             "is_support": is_support,
             "algolia_application_id": settings.ALGOLIA_APPLICATION_ID,
             "algolia_search_key": settings.ALGOLIA_SEARCH_KEY,
-            "school_name": self.request.user.school_name()[0],
+            "school_name": self.request.user.school_name[0],
         })
         if is_support:
             self.context["group_form"] = GroupForm()
@@ -46,7 +46,7 @@ class ChatsListView(LoginRequiredMixin, View):
             conversation_type = conversation_form.cleaned_data.get("conversation_type")
             match conversation_type:
                 case "group":
-                    if self.request.user.has_perm("supports:create_group"):
+                    if self.request.user.has_perm("supports.support"):
                         form = GroupForm(self.request.POST, self.request.FILES)
                         if form.is_valid():
                             form = form.save(commit=False)
@@ -54,26 +54,28 @@ class ChatsListView(LoginRequiredMixin, View):
                             form.owner = self.request.user
                             form.is_pm = False
                             form.save()
-                            Member.objects.create(user=self.request.user, 
-                                                chatgroup=ChatGroup.objects.get(group_id=group_id))
+                            Member.objects.create(
+                                user=self.request.user, 
+                                chatgroup=ChatGroup.objects.get(group_id=group_id),
+                            )
                             success_message(message=_("Group created successfully"))
                             return redirect("messenger:chat-page", group_id=group_id)
                         error_message(message=_("Invalid input provided."))
                         return render(self.request, self.template_name, self.context)
                     raise PermissionDenied()
                 case "pm":
-                    logger.error(conversation_form.cleaned_data.get("target_user"))
                     target_user = get_object_or_404(
                         get_user_model(), 
-                        username=conversation_form.cleaned_data.get("target_user")
+                        username=conversation_form.cleaned_data.get(
+                            "target_user"),
                     )
                     chatgroup, created = ChatGroup.objects.get_or_create(
                         group_id=f"{self.request.user.username}_{target_user.username}",
                         is_pm=True,
                     )
-                    logger.error(chatgroup.group_id)
                     if created:
-                        Member.objects.get_or_create(user=self.request.user, chatgroup=chatgroup)
+                        Member.objects.get_or_create(user=self.request.user, 
+                                                     chatgroup=chatgroup)
                         Member.objects.get_or_create(user=target_user, chatgroup=chatgroup)
                         success_message(message=_("Conversation created successfully."))
                     return redirect("messenger:chat-page", group_id=chatgroup.group_id)
@@ -93,20 +95,22 @@ class ChatPageView(LoginRequiredMixin, View):
         loadTemplate = self.request.path.split()[-1]
         chatgroup = ChatGroup.objects.get(group_id=self.kwargs["group_id"])
         other_user = None
+        # if the room is a private message room, show the other
+        # endpoint's bio 
         if chatgroup.is_pm:
             other_user = chatgroup.member_chatgroup.exclude(
                 user=self.request.user).first().user.about
-        last_message = Message.objects.filter(
-            chatgroup=chatgroup, seen=False).exclude(author=self.request.user)
+        last_message = chatgroup.ordered_messages.filter(
+            seen=False).last()
         self.context.update({
             "nav_color": "bg-dark",
             "segment": loadTemplate,
             "chatgroup": chatgroup,
-            "last_message": last_message.last() or None,
+            "last_message": last_message,
             "group_form": GroupForm(instance=chatgroup),
             "algolia_search_key": settings.ALGOLIA_SEARCH_KEY,
             "algolia_application_id": settings.ALGOLIA_APPLICATION_ID,
-            "school_name": self.request.user.school_name()[0],
+            "school_name": self.request.user.school_name[0],
             "other_user_about": other_user,
         })
         return render(self.request, self.template_name, self.context)
@@ -115,7 +119,7 @@ class ChatPageView(LoginRequiredMixin, View):
         error_message = partial(messages.error, request=self.request)
         success_message = partial(messages.success, request=self.request)
         chatgroup = get_object_or_404(ChatGroup, group_id=self.kwargs["group_id"])
-        if self.request.user.is_group_owner(chatgroup):
+        if chatgroup in self.request.user.owned_groups:
             form = GroupForm(self.request.POST, self.request.FILES, instance=chatgroup)
             if form.is_valid():
                 form.save()
@@ -137,8 +141,10 @@ class MembersView(LoginRequiredMixin, View):
         if form.is_valid():
             username = form.cleaned_data["member"]
             request_type = form.cleaned_data["request_type"]
-            user = get_object_or_404(get_user_model(), username=username)
-            chatgroup = get_object_or_404(ChatGroup, group_id=self.kwargs["group_id"])
+            user = get_object_or_404(get_user_model(), 
+                                     username=username)
+            chatgroup = get_object_or_404(ChatGroup, 
+                                          group_id=self.kwargs["group_id"])
             match request_type:
                 case "add":
                     instance, created = Member.objects.get_or_create(

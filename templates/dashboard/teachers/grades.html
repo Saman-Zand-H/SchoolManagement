@@ -233,12 +233,10 @@
                                                class="avatar avatar-sm rounded-circle" 
                                                data-toggle="tooltip" 
                                                data-original-title="{{ grade.student.user.name }}">
-                                                <img alt="Image placeholder" 
-                                                     {% if student.user.picture is not None %} 
-                                                         src="{{ grade.student.user.picture.url }}" 
-                                                     {% else %} 
-                                                     src="../../../../static/empty-profile.jpg"
-                                                     {% endif %}
+                                                <img 
+                                                     alt="Image placeholder" 
+                                                     src="{{ grade.student.user.get_picture_url }}"
+                                                    >
                                                 >
                                             </a>
                                         </div>

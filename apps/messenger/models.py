@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.db import IntegrityError
+from django.templatetags.static import static
 
 from string import ascii_letters
 from random import choices
@@ -46,6 +47,7 @@ class ChatGroup(models.Model):
     def get_absolute_url(self):
         return reverse("messenger:chat-page", kwargs={"group_id": self.group_id})
     
+    @property
     def ordered_messages(self):
         return self.message_chatgroup.order_by("date_written")
     
@@ -61,9 +63,9 @@ class ChatGroup(models.Model):
         members = self.member_chatgroup.all()
         if self.is_pm:
             the_other_member = [*filter(lambda member: member.user != user, members)][0]
-            return the_other_member.user.picture
+            return the_other_member.user.get_picture_url
         else:
-            return self.photo
+            return self.photo.url if self.photo else static("empty-profile.jpg")
         
     def is_marked_as_unread(self):
         if self.message_chatgroup.filter(seen=False).exists():

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
+from django.templatetags.static import static
 from django.utils import timezone
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
@@ -137,7 +138,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS = ["user_type", "first_name", "last_name"]
+    REQUIRED_FIELDS = ["user_type"]
 
     objects = CustomManager()
 
@@ -157,18 +158,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def is_not_principal(self):
         return self.user_type != "SS"
     
-    def is_group_owner(self, group):
-        if group.is_pm:
-            return group.owner == self.id
-        return
+    @property
+    def owned_groups(self):
+        return self.chatgroup_owner.all()
     
+    @property
+    def get_picture_url(self):
+        return self.picture.url if self.picture else static("empty-profile.jpg")
+    
+    @property
     def school_name(self):
-        if self.user_type == "T":
-            queryset = self.teacher_user.school
-        elif self.user_type == "S":
-            queryset = self.student_user.student_class.school
-        elif self.user_type == "SS":
-            queryset = self.school_support
+        match self.user_type:
+            case "T":
+                queryset = self.teacher_user.school
+            case "S":
+                queryset = self.student_user.student_class.school
+            case "SS":
+                queryset = self.school_support
         return [queryset.name]
 
     def save(self, *args, **kwargs):

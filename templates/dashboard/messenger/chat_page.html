@@ -28,15 +28,10 @@
                 </div>
                 <div class="col-1 offset-2">
                     <span class="avatar avatar-sm rounded-circle">
-                        {% with profile_picture=chatgroup|get_group_photo:user %}
-                            <img alt="Profile Picture" 
-                                 src={% if profile_picture %} 
-                                         "{{ profile_picture.url }}" 
-                                     {% else %} 
-                                         "{% static 'empty-profile.jpg' %}" 
-                                     {% endif %}
-                                >
-                        {% endwith %}
+                        <img 
+                             alt="Profile Picture" 
+                             src="{{ chatgroup|get_group_photo:user }}"
+                            >
                     </span>
                 </div>
                 <div class="modal fade"
@@ -61,14 +56,10 @@
                             <div class="mt-2 mb-4 px-4 mx-auto table-responsive">
                                 <div class="text-center">
                                     <span class="avatar avatar-lg rounded-circle border border-dark">
-                                        {% with profile_picture=chatgroup|get_group_photo:user %}
-                                            <img alt="Group picture" src="{% if profile_picture %}
-                                                                              {{ profile_picture.url }}
-                                                                          {% else %}
-                                                                              {% static 'empty-profile.jpg' %}
-                                                                          {% endif %}"
+                                            <img 
+                                                 alt="Group picture" 
+                                                 src="{{ chatgroup|get_group_photo:user }}"
                                                 >
-                                        {% endwith %}
                                     </span><br>
                                     <h6 class="display-4">{{ chatgroup|get_group_name:user }}</h6>
                                     <p class="lead">{{ chatgroup.bio|default_if_none:other_user_about }}</p>
@@ -168,12 +159,8 @@
                                                     <td class="col-2">
                                                         <span class="avatar avatar-sm rounded-circle ml-1">
                                                             <img 
-                                                                alt="Profile picture"
-                                                                src="{% if member.user.picture %}
-                                                                        {{ member.user.picture.url }}
-                                                                    {% else %}
-                                                                        {% static 'empty-profile.jpg' %}
-                                                                    {% endif %}"
+                                                                 alt="Profile picture"
+                                                                 src="{{ member.user.get_picture_url }}"
                                                                 >
                                                         </span>
                                                         {% if member.user == chatgroup.owner %}
@@ -478,13 +465,13 @@
                             `<li class="message 
                                     list-group-item 
                                     bg-gray"
-                             id="${data.message_id}"
-                            >
-                            <h5>
-                                <strong>${data.sender}</strong>
-                            </h5>
-                            <p class="text-light">${data.body}</p>
-                        </li>`
+                                 id="${data.message_id}"
+                                >
+                                <h5>
+                                    <strong>${data.sender}</strong>
+                                </h5>
+                                <p class="text-light">${data.body}</p>
+                            </li>`
                         );  
                         msgCard.scrollTop(msgCard.prop("scrollHeight"));
                         const seen_data = {
@@ -498,11 +485,13 @@
                     };
                     break;
                 case "seen":
-                    var message_id = data.message_id,
-                        message_author = data.sender;
+                    var message_author = data.sender;
                     if (username === message_author){
-                        $(`#unread_${message_id}`).hide();
-                        $(`#read_${message_id}`).show();
+                        for (let t=0; t < data.message_ids.length; t++) {
+                            var message_id = data.message_ids[t];
+                            $(`#unread_${message_id}`).hide();
+                            $(`#read_${message_id}`).show();
+                        }
                     }
                     break;
                 default:
