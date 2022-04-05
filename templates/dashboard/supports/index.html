@@ -129,9 +129,15 @@
                                     <div class="avatar-group">
                                         {% if class.student_class.all.exists %}
                                             {% for student in class|get_students_class_header %}
-                                                <a href="{{ student.get_absolute_url_supports }}" class="avatar avatar-sm text-gray" data-toggle="tooltip"
-                                                    data-original-title="{{ student.user.name }}">
-                                                    <img alt="profile picture" src="{{ student.user.picture.url }}" class="rounded-circle">
+                                                <a 
+                                                   href="{{ student.get_absolute_url_supports }}" 
+                                                   class="avatar avatar-sm text-gray" data-toggle="tooltip"
+                                                   data-original-title="{{ student.user.name }}">
+                                                    <img 
+                                                         alt="" 
+                                                         src="{{ student.user.get_picture_url }}" 
+                                                         class="rounded-circle"
+                                                        >
                                                 </a>
                                             {% endfor %}
                                         {% else %}
@@ -181,7 +187,9 @@
                             <tr>
                                 <th scope="row" class="name">
                                     <div class="media align-items-center">
-                                        <h1 class="text-dark mr-4"><a href="{{ teacher.get_absolute_url }}">{{ teacher.user.name|title }}</a></h1>
+                                        <h1 class="text-dark mr-4">
+                                            <a href="{{ teacher.get_absolute_url }}">{{ teacher.user.name|title }}</a>
+                                        </h1>
                                         <div class="media-body">
                                             <span class="mb-0 text-sm"></span>
                                         </div>

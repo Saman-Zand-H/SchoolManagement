@@ -32,11 +32,11 @@
                     <div class="col-lg-3 order-lg-2">
                         <div class="card-profile-image">
                             <a href="#">
-                                {% if user.picture %}
-                                    <img alt="Profile Picture" class="rounded-circle" src="{{ user.picture.url }}">
-                                {% else %}
-                                    <img alt="Profile Picture" class="rounded-circle" src="../../../static/empty-profile.jpg">
-                                {% endif %}
+                                    <img 
+                                         alt="Profile Picture" 
+                                         class="rounded-circle" 
+                                         src="{{ user.get_picture_url }}"
+                                        >
                             </a>
                         </div>
                     </div>

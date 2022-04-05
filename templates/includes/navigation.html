@@ -148,11 +148,7 @@
                         <div class="media align-items-center">
                             <span class="avatar avatar-sm rounded-circle">
                                 <img alt="Profile Picture" 
-                                     src={% if user.picture %}
-                                            "{{ user.picture.url }}"
-                                         {% else %}
-                                            "../../../static/empty-profile.jpg"
-                                         {% endif %}>
+                                     src="{{ user.get_picture_url }}">
                             </span>
                             <div class="media-body  ml-2  d-none d-lg-block">
                                 <span class="mb-0 text-sm  font-weight-bold">

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'channels',
     'channels_redis',
+    "seleniumlogin",
 
     # Local apps
     'users.apps.UsersConfig',
@@ -127,7 +128,10 @@ DATABASES = {
         'PASSWORD': env.str("DB_PASSWORD", "123456789"),
         'PORT': 5432,
         'HOST': env.str("DB_HOST", "db"),
-    }
+        'TEST': {
+            "NAME": os.path.join(BASE_DIR, "db_test.sqlite3"),
+        },
+    },
 }
 
 db_from_env = dj_database_url.config(conn_max_age=500)
@@ -334,3 +338,7 @@ ALGOLIA = {
     "SEARCH_API_KEY": ALGOLIA_SEARCH_KEY,
     "API_KEY": ALGOLIA_API_KEY,
 }
+
+
+# Selenium configurations
+SELENIUM_LOGIN_START_PAGE = "/accounts/login/"
