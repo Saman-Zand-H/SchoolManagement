@@ -10,6 +10,7 @@ class ChatPageIndex(AlgoliaIndex):
     fields = (
         "username",
         "name",
+        "get_user_type_display",
     )
     settings = {
         "searchableAttributes": [

@@ -164,8 +164,8 @@
                                 </div>
                             </div>
                             <small>
-                                {% if membership.chatgroup.is_marked_as_unread %}
-                                    <span class="badge badge-pill bg-gradient-cyan">Unread</span>
+                                {% if membership.is_unread %}
+                                    <span class="badge badge-pill bg-default text-light">Unread</span>
                                 {% endif %}
                                 {{ membership.chatgroup.message_chatgroup.last.date_written|date:"D" }}
                             </small>

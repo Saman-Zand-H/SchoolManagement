@@ -6,7 +6,7 @@ import json
 import logging
 from uuid import UUID
 
-from messenger.models import ChatGroup, Message
+from messenger.models import ChatGroup, Message, Member
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +77,8 @@ class MessengerConsumer(AsyncConsumer):
                     sender_distinct_group = f"activity_{msg_sender}_{self.group_id}"
                     
                     text_data_json["message_ids"] = await self.mark_message_as_read(msg_id)
+                    await self.set_last_read_message(msg_sender, msg_id)
+                    await self.set_last_read_message(self.sender, msg_id)
                     
                     await self.channel_layer.group_send(
                         sender_distinct_group,
@@ -87,6 +89,9 @@ class MessengerConsumer(AsyncConsumer):
                     )
 
     async def chat_message(self, event):
+        message_id = event["message"]["message_id"]
+        await self.set_last_read_message(
+            self.scope["user"].username, message_id)
         await self.send(
             {
                 "type": "websocket.send",
@@ -105,6 +110,11 @@ class MessengerConsumer(AsyncConsumer):
         return Message.objects.create(author=self.sender,
                                       body=message,
                                       chatgroup=chatgroup)
+        
+    @database_sync_to_async
+    def set_last_read_message(self, username, message_id):
+        return Member.objects.filter(user__username=username).update(
+            last_read_message=UUID(message_id))
 
     @database_sync_to_async
     def mark_message_as_read(self, message_id):
