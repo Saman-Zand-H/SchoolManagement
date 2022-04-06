@@ -25,12 +25,10 @@ def school_factory(db):
                        school_name,
                        first_name="name",
                        last_name="name",
-                       phone_number="01223334455",
                        password="test123456789"):
         user = get_user_model().objects.create_user(username=username,
                                                     first_name=first_name,
                                                     last_name=last_name,
-                                                    phone_number=phone_number,
                                                     password=password,
                                                     user_type="T")
         school = School.objects.create(name=school_name, support=user)
@@ -53,13 +51,11 @@ def student_factory(db):
                        student_class,
                        first_name="name",
                        last_name="name",
-                       phone_number="01223334458",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
-            phone_number=phone_number,
             password=password,
             user_type="S",
         )
@@ -76,13 +72,11 @@ def teacher_factory(db):
                        school,
                        first_name="name",
                        last_name="name",
-                       phone_number="01223334455",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
-            phone_number=phone_number,
             password=password,
             user_type="T",
         )

@@ -4,7 +4,9 @@
 {% load customtags %} 
 {% load i18n %}
 
-{% block title %} {{ subject.name|title }} - {{ subject.teacher.user.name|title }} {% endblock title %} 
+{% block title %} 
+    {{ subject.teacher.user.name|title }}: {{ subject.name|title }}
+{% endblock title %} 
 
 {% block content %}
 
@@ -16,20 +18,26 @@
                     <h6 class="h2 text-white d-inline-block mb-0">
                         {% trans 'Teacher:' %} {{ subject.teacher.user.name|title }}
                     </h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item">
-                                <a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
                             </li>
-                            
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a>
+                                <a href="{% url 'supports:home' %}">
+                                    {% trans 'Dashboard' %}
+                                </a>
                             </li>
-                            
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:subjects' %}">{% trans 'Subjects' %}</a>
+                                <a href="{% url 'supports:subjects' %}">
+                                    {% trans 'Subjects' %}
+                                </a>
                             </li>
-                            
                             <li class="breadcrumb-item active" aria-current="page">
                                 {{ subject.name|title }}
                             </li>
@@ -38,27 +46,39 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" 
+                    <button 
+                            type="button" 
                             data-toggle="modal" 
                             data-target="#deleteExam"
-                            class="btn btn-sm btn-danger text-white border-danger text-right">
+                            class="btn btn-sm btn-danger text-white border-danger text-right"
+                           >
                         <i class="fas fa-trash-alt"></i>
                         {% trans 'Delete' %}
                     </button>
                     <!-- Add Grades Modal -->
-                    <div class="modal fade" 
+                    <div 
+                         class="modal fade" 
                          id="deleteExam" 
                          tabindex="-1" 
                          role="dialog" 
                          aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
+                         aria-hidden="true"
+                        >
+                        <div 
+                             class="modal-dialog modal-dialog-centered" 
+                             role="document"
+                            >
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">
+                                    <h5 class="modal-title">
                                         {% trans 'Delete Course' %}
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button 
+                                            type="button" 
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            aria-label="Close"
+                                           >
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -69,8 +89,13 @@
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                         {% trans 'No' %}
                                     </button>
-                                    <a type="button" class="btn btn-danger text-white"
-                                        href="{% url 'supports:subjects-del' subject.pk %}">{% trans 'Yes' %}</a>
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input name="operation" value="dc" type="hidden">
+                                        <button type="submit" class="btn btn-danger">
+                                            {% trans 'Yes' %}
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -107,9 +132,11 @@
                                     <tr>    
                                         <th scope="row" class="name">
                                             <div class="media align-items-center">
-                                                <h1 class="text-dark mr-4"><a href="{{ class.get_absolute_url }}">
-                                                    {{ class.class_id }}
-                                                </a></h1>
+                                                <h1 class="text-dark mr-4">
+                                                    <a href="{{ class.get_absolute_url }}">
+                                                        {{ class.class_id }}
+                                                    </a>
+                                                </h1>
                                                 <div class="media-body">
                                                     <span class="mb-0 text-sm"></span>
                                                 </div>
@@ -122,10 +149,12 @@
                                             <div class="avatar-group">
                                                 {% if class.student_class.all %}
                                                     {% for student in class|get_students_class_header %}
-                                                        <a href="#" 
+                                                        <a 
+                                                           href="#" 
                                                            class="avatar avatar-sm" 
                                                            data-toggle="tooltip" 
-                                                           data-original-title="{{ student.user.name }}">
+                                                           data-original-title="{{ student.user.name }}"
+                                                          >
                                                             <img 
                                                                  alt="profile picture" 
                                                                  src="{{ student.user.get_picture_url }}" 
@@ -140,7 +169,8 @@
                                         </td>
                                         <td class="status">
                                             <span class="badge badge-dot mr-4">
-                                                <i class="bg-{{ class.get_average_grade_percent|set_average_grade_color }}"></i> 
+                                                <i class="bg-{{ class.get_average_grade_percent\
+                                                    |set_average_grade_color }}"></i> 
                                                 {{ class.get_average_grade_percent }}%
                                             </span>
                                         </td>

@@ -1,13 +1,11 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, ResetPasswordForm, AddEmailForm
-from phonenumber_field.formfields import PhoneNumberField
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user
+from django.utils.translation import gettext_lazy as _
 from django import forms
 
 import logging
 
-from .models import USER_TYPE_CHOICES, PhoneNumber
+from .models import USER_TYPE_CHOICES
 from mainapp.models import Class
 
 logger = logging.getLogger(__name__)
@@ -176,32 +174,6 @@ class CustomAddEmailForm(AddEmailForm):
                 "placeholder": _("e.g. example@example.com")
             }),
                                                 label=_("E-Mail Address"))
-
-
-class AddPhonenumberForm(forms.Form):
-    phone_number = PhoneNumberField(widget=forms.TextInput(
-        attrs={
-            "class": "form-control",
-            "placeholder": _("like") + " 09xxxxxxxxx"
-        }))
-
-    def clean(self):
-        super_clean = super().clean()
-        # By default this package separates numbers by whitespaces.
-        # Thus, we remove them.
-        unmodified_phone_number = str(
-            self.cleaned_data.get('phone_number')).split(" ")
-        self.cleaned_data['phone_number'] = "".join(unmodified_phone_number)
-        return super_clean
-
-
-class PhoneVerificationForm(forms.Form):
-    verification_code = forms.CharField(widget=forms.TextInput(
-        attrs={
-            "class": "form-control",
-            "placeholder": _("please enter the code sent to you")
-        }))
-
 
 class SupportStudentSignupForm(BaseSignupForm):
     student_class = forms.ModelChoiceField(

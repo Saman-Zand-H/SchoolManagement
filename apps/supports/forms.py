@@ -1,10 +1,22 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from mainapp.models import Class, Subject, Student
 from supports.models import School
 from teachers.models import Teacher
+
+
+class EditOperationType(forms.Form):
+    choices = (
+        ("uc", "Update class"),
+        ("dc", "Delete class"),
+        ("ut", "Update teacher"),
+        ("dt", "Delete teacher"),
+        ("dc", "Delete course"),
+        ("us", "Update student"),
+        ("ds", "Delete student"),
+    )
+    operation = forms.ChoiceField(choices=choices, required=False)
 
 
 class CreateSchoolForm(forms.ModelForm):
@@ -71,10 +83,6 @@ class CreateClassForm(EditClassForm):
         super().__init__(*args, **kwargs)
         self.fields["school"].required = False
         self.fields["subjects"].label = _("Courses")
-
-
-class ChangePhonenumber(forms.Form):
-    phone_number = forms.CharField(max_length=5)
 
 
 class ChangeTeacherDetails(forms.ModelForm):

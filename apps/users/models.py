@@ -3,7 +3,6 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.templatetags.static import static
 from django.utils import timezone
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_noop as _
 from algoliasearch_django import get_adapter
@@ -181,15 +180,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         if not self.email:
             self.email = None
         super().save(*args, **kwargs)
-
-
-class PhoneNumber(models.Model):
-    user = models.OneToOneField(CustomUser,
-                                on_delete=models.CASCADE,
-                                related_name="phonenumber_user")
-    verification_code = models.CharField(max_length=6, null=True, blank=True)
-    phonenumber = PhoneNumberField(blank=True, null=True)
-    verified = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.user.name()

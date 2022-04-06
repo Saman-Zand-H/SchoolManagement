@@ -24,9 +24,9 @@ class School(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         group, group_created = Group.objects.get_or_create(name="Principals")
         if group_created:
             perm = Permission.objects.filter(codename="support")[0]
             group.permissions.add(perm)
         self.support.groups.add(group)
+        super().save(*args, **kwargs)

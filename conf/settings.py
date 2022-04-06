@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # Third-party apps
-    'phonenumber_field',
     'debug_toolbar',
     'allauth',
     'allauth.account',
@@ -236,11 +235,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # DjDT confs
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
-
-# Phonenumber_field confs
-PHONENUMBER_DEFAULT_REGION = "IR"
-PHONENUMBER_DB_FORMAT = "NATIONAL"
-PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
 
 # Allauth confs
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'

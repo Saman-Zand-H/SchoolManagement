@@ -18,59 +18,78 @@
                     <h6 class="h2 text-white d-inline-block mb-0">
                         {% trans 'Class:' %} {{ class.class_id }}
                     </h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <nav  
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item">
-                                <a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
                             </li>
-                            
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a>
+                                <a href="{% url 'supports:home' %}">
+                                    {% trans 'Dashboard' %}
+                                </a>
                             </li>
-
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:classes' %}">{% trans 'Classes' %}</a>
+                                <a href="{% url 'supports:classes' %}">
+                                    {% trans 'Classes' %}
+                                </a>
                             </li>
-
                             <li class="breadcrumb-item active" aria-current="page">
                                 {{ class.class_id|title }}
-
                             </li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-lg-12 col-md-12 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" 
+                    <button 
+                            type="button" 
                             data-toggle="modal" 
                             data-target="#editClass" 
-                            class="btn btn-sm btn-neutral">
+                            class="btn btn-sm btn-neutral"
+                           >
                         <i class="fas fa-pen"></i>
                         {% trans 'Edit' %}
                     </button>
                     <!-- Modals Buttons -->
-                    <button type="button" data-toggle="modal" data-target="#deleteClass"
-                        class="btn btn-sm btn-danger text-white border-danger">
+                    <button  
+                            type="button" 
+                            data-toggle="modal" 
+                            data-target="#deleteClass"
+                            class="btn btn-sm btn-danger text-white border-danger"
+                           >
                         <i class="fas fa-trash-alt"></i>
                         {% trans 'Delete' %}
                     </button>
                     <!-- Add Grades Modal -->
-                    <div class="modal text-left fade" 
+                    <div 
+                         class="modal text-left fade" 
                          id="deleteClass" 
                          tabindex="-1" 
                          role="dialog" 
-                         aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
+                        >
+                        <div 
+                             class="modal-dialog modal-dialog-centered" 
+                             role="document"
+                            >
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">
+                                    <h5 
+                                        class="modal-title" 
+                                        id="exampleModalLabel"
+                                       >
                                         {% trans 'Delete Class' %}
                                     </h5>
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="close" 
                                             data-dismiss="modal" 
-                                            aria-label="Close">
+                                            aria-label="Close"
+                                           >
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -78,34 +97,45 @@
                                     {% trans 'Are You sure you want to delete this class PERMANENTLY?' %}
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="btn btn-secondary" 
-                                            data-dismiss="modal">{% trans 'No' %}
+                                            data-dismiss="modal"
+                                           >{% trans 'No' %}
                                     </button>
-                                    <a type="button" 
-                                       class="btn btn-danger text-white"
-                                       href="{% url 'supports:classes-del' class.pk %}">{% trans 'Yes' %}</a>
+                                    <form action="POST">
+                                        {% csrf_token %}
+                                        <input name="operation" value="dc" type="hidden">
+                                        <button type="submit" class="btn btn-danger">Yes</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- Add Grades Modal -->
-                    <div class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
+                    <div 
+                         class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
                          id="editClass" 
                          tabindex="-1" 
                          role="dialog"
                          aria-labelledby="exampleModalLabel" 
-                         aria-hidden="true">
+                         aria-hidden="true"
+                        >
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" 
-                                        id="exampleModalLabel">{% trans 'Edit this Class' %}
+                                    <h5 
+                                        class="modal-title" 
+                                        id="exampleModalLabel"
+                                       >
+                                       {% trans 'Edit this Class' %}
                                     </h5>
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="close" 
                                             data-dismiss="modal" 
-                                            aria-label="Close">
+                                            aria-label="Close"
+                                           >
                                             <span aria-hidden="true">
                                                 &times;
                                             </span>
@@ -113,12 +143,14 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="mt-2">
-                                        <hr>
                                         {% if form.errors or form.non_field_errros %}
+                                            <hr>
                                             <h3>{% trans 'Invalid Inputs:' %}</h3><br>
                                             {% for field in form %}
                                                 {% for error in field.errors %}
-                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                                    <p class="text-danger">
+                                                        - {{ field.label }}: {{ error }}
+                                                    </p>
                                                 {% endfor %}
                                             {% endfor %}
                                             {% for error in form.non_field_errorserrors %}
@@ -128,25 +160,35 @@
                                         {% endif %}
                                     </div>
                                     <form id="createClassForm" method="POST">
+                                        <input type="hidden" name="operation" value="rs">
                                         {% csrf_token %}
                                         <div class="my-4">
                                             {{ form.class_id.label }}
                                             {{ form.class_id }}
                                         </div>
-
                                         <div class="my-4">
                                             {{ form.subjects.label }}
                                             <div class="container-fluid mt-2">
                                                 <div class="row">
                                                     {% for subject in form.subjects %}
                                                         <div class="col-12">
-                                                            <div class="card border-0 bg-gradient-light text-dark text-center">
+                                                            <div 
+                                                                 class="card 
+                                                                        border-0 
+                                                                        bg-gradient-light 
+                                                                        text-dark 
+                                                                        text-center"
+                                                                >
                                                                 <label for="{{ subject.id_for_label }}">
-                                                                    <input class="form-control form-control-sm mt--3" 
+                                                                    <input 
+                                                                           class="form-control 
+                                                                                  form-control-sm 
+                                                                                  mt--3" 
                                                                            name="{{ form.subjects.html_name }}" 
                                                                            value="{{ subject.data.value }}" 
                                                                            id="{{ subject.id_for_label }}" 
-                                                                           type="checkbox">
+                                                                           type="checkbox"
+                                                                          >
                                                                     <div class="card-body">
                                                                         <div class="card-title">
                                                                             {{ subject.choice_label|title }}
@@ -162,14 +204,18 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="btn btn-secondary" 
-                                            data-dismiss="modal">
+                                            data-dismiss="modal"
+                                           >
                                             {% trans 'Close' %}
                                     </button>
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="btn btn-primary"
-                                            onclick="$('#createClassForm').submit()">
+                                            onclick="$('#createClassForm').submit()"
+                                           >
                                             {% trans 'Edit' %}
                                     </button>
                                 </div>
@@ -189,7 +235,10 @@
                 {% if class.subjects %}
                     {% for subject in class.subjects.all %}
                         <div class="col-lg-3 col-md-6">
-                            <div class="card border-0 bg-gradient-gray-dark">
+                            <div 
+                                 class="card border-0 
+                                        bg-gradient-gray-dark"
+                                >
                                 <a href="{{ subject.get_absolute_url }}" class="text-light">
                                     <div class="card-body">
                                         <div class="card-title">
@@ -197,7 +246,9 @@
                                         </div>
                                         <p class="card-text">
                                             {% trans 'Teacher:' %} 
-                                            <br><strong>{{ subject.teacher.user.name|title }}</strong><br>
+                                            <br><strong>
+                                                {{ subject.teacher.user.name|title }}
+                                            </strong><br>
                                         </p>
                                     </div>
                                 </a>
@@ -226,7 +277,12 @@
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
-                    <table class="table table-hover align-items-center table-flush">
+                    <table 
+                           class="table 
+                                  table-hover 
+                                  align-items-center 
+                                  table-flush"
+                          >
                         <thead class="thead-light">
                             <tr>
                                 <th></th>
@@ -241,9 +297,11 @@
                                         <td>{{ forloop.counter }}</td>
                                         <th scope="row" class="name">
                                             <div class="media align-items-center">
-                                                <h1 class="text-dark mr-4"><a href="{{ student.get_absolute_url_supports }}">
+                                                <h1 class="text-dark mr-4">
+                                                    <a href="{{ student.get_absolute_url_supports }}">
                                                     {{ student.user.name|title }}
-                                                </a></h1>
+                                                    </a>
+                                                </h1>
                                                 <div class="media-body">
                                                     <span class="mb-0 text-sm"></span>
                                                 </div>
@@ -253,10 +311,12 @@
                                             <div class="avatar-group">
                                                 {% if class.student_class %}
                                                     {% for student in class|get_students_class_header %}
-                                                    <a href="{{ student.get_absolute_url_supports }}" 
+                                                    <a 
+                                                       href="{{ student.get_absolute_url_supports }}" 
                                                        class="avatar avatar-sm" 
                                                        data-toggle="tooltip"
-                                                       data-original-title="{{ student.user.name }}">
+                                                       data-original-title="{{ student.user.name }}"
+                                                      >
                                                         <img 
                                                              alt="profile picture" 
                                                              src="{{ student.user.get_picture_url }}" 

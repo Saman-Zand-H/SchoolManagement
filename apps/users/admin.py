@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import CustomUser, PhoneNumber
+from .models import CustomUser
 
 
 @admin.register(CustomUser)
@@ -55,9 +55,3 @@ class CustomAdmin(UserAdmin):
     search_fields = ["name", "username", "email"]
     list_filter = ["user_type"]
     filter_horizontal = ["groups", "user_permissions"]
-
-
-@admin.register(PhoneNumber)
-class PhoneNumberAdmin(admin.ModelAdmin):
-    list_display = ["user", "phonenumber", "verified"]
-    search_fields = ["user", "phonenumber"]

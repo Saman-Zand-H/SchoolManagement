@@ -11,9 +11,8 @@ import pathlib
 from mainapp.models import Class, Subject, Student
 from supports.views import (CreateSchoolView, HomeView, ClassesView,
                             ClassesDetailView, SubjectsView,
-                            SubjectsDetailView, DeleteSubject, TeachersView,
-                            TeachersDetailView, DeleteTeacher, StudentsView,
-                            StudentsDetailView, DeleteStudent)
+                            SubjectsDetailView, TeachersView,
+                            TeachersDetailView, StudentsView)
 from supports.models import School
 from teachers.models import Teacher
 
@@ -24,12 +23,10 @@ def user_factory(db):
     def create_user(username,
                     first_name="name",
                     last_name="name",
-                    phone_number="01223334455",
                     password="test123456789"):
         user = get_user_model().objects.create_user(username=username,
                                                     first_name=first_name,
                                                     last_name=last_name,
-                                                    phone_number=phone_number,
                                                     password=password,
                                                     email=None,
                                                     user_type="SS")
@@ -44,13 +41,11 @@ def teacher_factory(db):
                        school,
                        first_name="Test",
                        last_name="name",
-                       phone_number="01223334455",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
-            phone_number=phone_number,
             password=password,
             user_type="T",
         )
@@ -81,13 +76,11 @@ def student_factory(db):
                        student_class,
                        first_name="name",
                        last_name="name",
-                       phone_number="01223334458",
                        password="test123456789"):
         user = get_user_model().objects.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
-            phone_number=phone_number,
             password=password,
             user_type="S",
         )
@@ -216,7 +209,7 @@ def test_create_class_successful(client, school_1, subject_1):
 
     response = client.post(url, {
         "class_id": "test_class",
-        "subjects": subject_1.pk
+        "subjects": subject_1.pk,
     })
     messages = [*get_messages(response.wsgi_request)]
     created_class = Class.objects.last()
@@ -265,7 +258,8 @@ def test_class_details(client, school_1, subject_1, subject_2, class_1):
 
     data = {
         "class_id": "test_class_alt",
-        "subjects": [subject_1.pk, subject_2.pk]
+        "subjects": [subject_1.pk, subject_2.pk],
+        "operation": "uc",
     }
     response = client.post(url, data)
     messages = [*get_messages(response.wsgi_request)]
@@ -281,8 +275,8 @@ def test_class_details(client, school_1, subject_1, subject_2, class_1):
     assert edited_class.subjects.count() == 2
     assert [subject_1, subject_2] == [*edited_class.subjects.all()]
 
-    url = reverse("supports:classes-del", kwargs={"pk": edited_class.pk})
-    response = client.get(url)
+    url = reverse("supports:classes-detail", kwargs={"pk": edited_class.pk})
+    response = client.post(url, {"operation": "dc"})
     messages = [*get_messages(response.wsgi_request)]
 
     assert response.status_code == 302
@@ -348,12 +342,8 @@ def test_subjects_detail(client, school_1, subject_1):
     assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/supports/subjects_detail.html")
 
-    url = reverse("supports:subjects-del", kwargs={"pk": subject_1.pk})
-    assert url == f"/support/courses/{subject_1.pk}/del/"
-    assert resolve(url).func.__name__ == DeleteSubject.__name__
-
     assert Subject.objects.count() == 1
-    response = client.get(url)
+    response = client.post(url, {"operation": "dc"})
     messages = [*get_messages(response.wsgi_request)]
 
     assert response.status_code == 302
@@ -385,8 +375,6 @@ def test_create_teacher_successful(client, school_1):
         "test123456",
         "password2":
         "test123456",
-        "phone_number":
-        "09226761449",
         "user_type":
         "T",
         "picture":
@@ -423,8 +411,6 @@ def test_create_teacher_unsuccessful(client, school_1):
         "test123456",
         "password2":
         "test123456",
-        "phone_number":
-        "09226761449",
         "user_type":
         "T",
         "picture":
@@ -457,7 +443,7 @@ def test_teachers_detail_successful(client, school_1, teacher_1):
     data = {
         "university": "TITS(Texas Institute of Technology and Science)",
         "degree": "PhD in Software Engineering",
-        "phone_number": "01336669988"
+        "operation": "ut",
     }
     response = client.post(url, data)
     messages = [*get_messages(response.wsgi_request)]
@@ -468,15 +454,10 @@ def test_teachers_detail_successful(client, school_1, teacher_1):
     assert str(messages[-1]) == "Changes saved successfully."
 
     assert edited_teacher.pk == teacher_1.pk
-    assert edited_teacher.user.phone_number == "01336669988"
     assert edited_teacher.degree == "PhD in Software Engineering"
     assert edited_teacher.university == "TITS(Texas Institute of Technology and Science)"
 
-    url = reverse("supports:teachers-del", kwargs={"pk": teacher_1.user.pk})
-    assert url == f"/support/teachers/{teacher_1.user.pk}/del/"
-    assert resolve(url).func.__name__ == DeleteTeacher.__name__
-
-    response = client.get(url)
+    response = client.post(url, {"operation": "dt"})
     messages = [*get_messages(response.wsgi_request)]
 
     assert response.status_code == 302
@@ -503,7 +484,6 @@ def test_create_student_successful(client, school_1, class_1):
         "last_name": "last_name",
         "password1": "test123456",
         "password2": "test123456",
-        "phone_number": "09226761449",
         "user_type": "S",
         "student_class": class_1.pk
     }
@@ -531,7 +511,6 @@ def test_create_student_unsuccessful(client, school_1):
         "last_name": "last_name",
         "password1": "test123456",
         "password2": "test123456",
-        "phone_number": "09226755461449",  # Invalid phonenumber
         "user_type": "S",
         "student_class": "TEST_CLASS"
     }  # Invalid class
@@ -544,45 +523,3 @@ def test_create_student_unsuccessful(client, school_1):
     assert str(messages[-1]) == "Provided inputs are invalid."
     assert created_student is None
     assert Student.objects.count() == 0
-
-
-def test_students_detail(client, school_1, student_1, class_2):
-    client.force_login(school_1.support)
-
-    url = reverse("supports:students-detail", kwargs={"pk": student_1.pk})
-    assert url == student_1.get_absolute_url_supports()
-    assert resolve(url).func.__name__ == StudentsDetailView.__name__
-
-    response = client.get(url)
-    assert response.status_code == 200
-    assertTemplateUsed(response, "dashboard/supports/students_detail.html")
-
-    response = client.post(url, {
-        "phone_number": "09998887744",
-        "student_class": class_2.pk
-    })
-    messages = [*get_messages(response.wsgi_request)]
-    edited_student = Student.objects.last()
-
-    assert response.status_code == 302
-    assertRedirects(response, url)
-    assert str(messages[-1]) == "Student updated successfully."
-
-    assert edited_student.pk == student_1.pk
-    assert edited_student.student_class == class_2
-    assert edited_student.user.phone_number == "09998887744"
-
-    url = reverse("supports:students-del",
-                  kwargs={"pk": edited_student.user.pk})
-    assert url == f"/support/students/{edited_student.user.pk}/del/"
-    assert resolve(url).func.__name__ == DeleteStudent.__name__
-
-    response = client.get(url)
-    messages = [*get_messages(response.wsgi_request)]
-    deleted_student = Student.objects.last()
-
-    assert response.status_code == 302
-    assertRedirects(response, reverse("supports:students"))
-    assert str(messages[-1]) == "Student deleted successfully."
-    assert Student.objects.count() == 0
-    assert deleted_student is None

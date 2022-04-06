@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model, get_user
 from django.views.generic import View, TemplateView
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect, get_list_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
@@ -10,10 +10,10 @@ from allauth.account.views import PasswordChangeView
 from allauth.account.forms import ChangePasswordForm
 from allauth.account.admin import EmailAddress
 
-from collections import deque
+from functools import partial
 import logging
 
-from .forms import (CreateSchoolForm, CreateClassForm, ChangePhonenumber,
+from .forms import (CreateSchoolForm, CreateClassForm, EditOperationType,
                     ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
                     StudentsClassForm)
 from mainapp.models import Class, Subject, Student, Article
@@ -26,43 +26,32 @@ from mainapp.mixins import PermissionAndLoginRequiredMixin
 logger = logging.getLogger(__name__)
 
 
-class _BaseDeleteUser(PermissionAndLoginRequiredMixin, View):
-    permission_required = "supports.support"
-
+class CreateSchoolView(LoginRequiredMixin, View):
+    template_name = "account/register_school.html"
+    context = dict()
+  
     def get(self, *args, **kwargs):
-        user = get_user_model().objects.get(pk=kwargs.get("pk"))
-        user.delete()
-
-
-class CreateSchoolView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self, *args, **kwargs):
-        return self.request.user.user_type == "SS"
-
-    def get(self, *args, **kwargs):
-        # Redirects to home if the user has a school already
         if not School.objects.filter(support=self.request.user).exists():
             form = CreateSchoolForm()
-            return render(self.request, "account/register_school.html",
-                          {"form": form})
-        else:
-            return redirect("home:home")
+            self.context["form"] = form
+            messages.warning(self.request, _("You have to register your school first."))
+            return render(self.request, self.template_name, self.context)
+        return redirect("home:home")
 
     def post(self, *args, **kwargs):
         if not School.objects.filter(support=self.request.user).exists():
-            school_form = CreateSchoolForm(self.request.POST)
-            if school_form.is_valid():
-                school_form_uncommitted = school_form.save(commit=False)
-                school_form_uncommitted.support = self.request.user
-                school_form.save()
+            form = CreateSchoolForm(self.request.POST)
+            if form.is_valid():
+                form = form.save(commit=False)
+                form.support = self.request.user
+                form.save()
                 messages.success(self.request,
                                  _("You registered successfully."))
                 return redirect("home:home")
-            else:
-                messages.error(self.request, _("Provided inputs are invalid."))
-                return render(self.request, "account/register_school.html",
-                              {"form": school_form})
-        else:
-            return redirect("home:home")
+            self.context["form"] = form
+            messages.error(self.request, _("Provided inputs are invalid."))
+            return render(self.request, self.template_name, self.context)
+        return redirect("home:home")
 
 
 create_school_view = CreateSchoolView.as_view()
@@ -87,40 +76,45 @@ home_view = HomeView.as_view()
 
 class ClassesView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/classes.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
-        school = School.objects.get(support=self.request.user)
-        classes = Class.objects.filter(school=school).distinct()
-        subjects_exist = Subject.objects.filter(
-            teacher__school=school).exists()
-        form = CreateClassForm(request=self.request)
-        self.context = {
-            "classes": classes,
-            "form": form,
-            "segment": load_template,
-            "subjects_exist": subjects_exist
-        }
-        return render(self.request, "dashboard/supports/classes.html",
-                      self.context)
+        load_template = self.request.path.split()[-1]
+        try:
+            school = School.objects.get(support=self.request.user)
+            classes = Class.objects.filter(school=school).distinct()
+            subjects_exist = Subject.objects.filter(
+                teacher__school=school).exists()
+            form = CreateClassForm(request=self.request)
+            self.context.update({
+                "classes": classes,
+                "form": form,
+                "segment": load_template,
+                "subjects_exist": subjects_exist
+            })
+            return render(self.request, self.template_name, self.context)
+        except School.DoesNotExist:
+            messages.error(self.request, _("You have to register your school first."))
+            return redirect("supports:create_school")
 
     def post(self, *args, **kwargs):
-        school = School.objects.get(support=self.request.user)
-        form = CreateClassForm(request=self.request, data=self.request.POST)
-        if form.is_valid():
-            form.instance.school = school
-            form.save()
-            messages.success(self.request, _("Class saved successfully."))
-            return redirect("supports:classes")
-        else:
-            self.context["form"] = form
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return render(self.request, "dashboard/supports/classes.html",
-                          self.context)
+        error_message = partial(messages.error, request=self.request)
+        try:
+            school = School.objects.get(support=self.request.user)
+            form = CreateClassForm(request=self.request, data=self.request.POST)
+            if form.is_valid():
+                form.instance.school = school
+                form.save()
+                messages.success(self.request, _("Class saved successfully."))
+                return redirect("supports:classes")
+            else:
+                self.context["form"] = form
+                error_message(message=_("Provided inputs are invalid."))
+                return render(self.request, self.template_name, self.context)
+        except School.DoesNotExist:
+            error_message(message=_("You have to register your school first."))
+            return redirect("supports:create_school")
 
 
 classes_view = ClassesView.as_view()
@@ -128,78 +122,72 @@ classes_view = ClassesView.as_view()
 
 class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/classes_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
-        class_instance = Class.objects.get(pk=kwargs.get("pk"))
+        load_template = self.request.path.split()[-1]
+        class_instance = get_object_or_404(Class, pk=kwargs.get("pk"))
         form = EditClassForm(instance=class_instance, request=self.request)
         self.context = {
             "class": class_instance,
             "form": form,
             "segment": load_template,
         }
-        return render(self.request, "dashboard/supports/classes_detail.html",
-                      self.context)
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        class_instance = Class.objects.get(pk=kwargs.get("pk"))
-        form = EditClassForm(instance=class_instance,
-                             request=self.request,
-                             data=self.request.POST)
-        if form.is_valid():
-            chosen_subjects = form.cleaned_data.get("subjects")
-            class_instance.subjects.remove(*class_instance.subjects.exclude(
-                pk__in=chosen_subjects))
-            form.save()
-            messages.success(self.request, _("Class updated successfully."))
-            return redirect("supports:classes-detail", pk=kwargs.get("pk"))
-        else:
-            self.context.update({"form": form, "class": class_instance})
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return render(self.request,
-                          "dashboard/supports/classes_detail.html",
-                          self.context)
+        operation_form = EditOperationType(self.request.POST)
+        if operation_form.is_valid():
+            operation = operation_form.cleaned_data.get("operation")
+            class_instance = get_object_or_404(Class, pk=kwargs.get("pk"))
+            match operation:
+                case "uc":
+                    form = EditClassForm(instance=class_instance,
+                                        request=self.request,
+                                        data=self.request.POST)
+                    if form.is_valid():
+                        chosen_subjects = form.cleaned_data.get("subjects")
+                        class_instance.subjects.remove(*class_instance.subjects.exclude(
+                        pk__in=chosen_subjects))
+                        form.save()
+                        messages.success(
+                            self.request, _("Class updated successfully."))
+                        return redirect("supports:classes-detail", pk=kwargs.get("pk"))
+                    self.context.update({
+                        "form": form, 
+                        "class": class_instance,
+                    })
+                    messages.error(self.request, _("Provided inputs are invalid."))
+                    return render(self.request, self.template_name, self.context)
+                case "dc":
+                    class_instance.delete()
+                    messages.success(self.request, _("Class deleted successfully."))
+                    return redirect("supports:classes")
+            return redirect("supports:classes")
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return redirect("supports:classes")
 
 
 classes_detail_view = ClassesDetailView.as_view()
 
 
-class DeleteClass(PermissionAndLoginRequiredMixin, View):
-    permission_required = "supports.support"
-
-    def get(self, *args, **kwargs):
-        chosen_class = Class.objects.get(pk=kwargs.get("pk"))
-        chosen_class.delete()
-        messages.success(self.request, _("Class deleted successfully."))
-        return redirect("supports:classes")
-
-
-delete_class_view = DeleteClass.as_view()
-
-
 class TeachersView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    template_name = "dashboard/supports/teachers.html"
+    context = dict()
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
-        school = School.objects.get(support=self.request.user)
+        load_template = self.request.path.split()[-1]
+        school = get_object_or_404(School, support=self.request.user)
         teachers = Teacher.objects.filter(school=school).distinct()
         form = BaseSignupForm()
-        self.context = {
+        self.context.update({
             "teachers": teachers,
             "form": form,
             "segment": load_template
-        }
-        return render(self.request, "dashboard/supports/teachers.html",
-                      self.context)
+        })
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
         form = BaseSignupForm(self.request.POST, self.request.FILES)
@@ -209,11 +197,9 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
             Teacher.objects.create(user=user, school=school)
             messages.success(self.request, _("Teacher created successfully."))
             return redirect("supports:teachers")
-        else:
-            self.context["form"] = form
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return render(self.request, "dashboard/supports/teachers.html",
-                          self.context)
+        self.context["form"] = form
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return render(self.request, self.template_name, self.context)
 
 
 teachers_view = TeachersView.as_view()
@@ -221,86 +207,73 @@ teachers_view = TeachersView.as_view()
 
 class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/teachers_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
-        teacher = Teacher.objects.get(pk=kwargs.get("pk"))
+        load_template = self.request.path.split()[-1]
+        teacher = get_object_or_404(Teacher, pk=kwargs.get("pk"))
         subjects = teacher.subject_teacher.all()
-        classes = Class.objects.filter(subjects__teacher=teacher).distinct()
+        classes = Class.objects.filter(
+            subjects__teacher=teacher).distinct()
         details_form = ChangeTeacherDetails(instance=teacher)
-        change_number_form = ChangePhonenumber(instance=teacher.user)
-        self.context = {
+        self.context.update({
             "classes": classes,
             "teacher": teacher,
             "subjects": subjects,
             "details_form": details_form,
-            "change_number_form": change_number_form,
             "segment": load_template,
-        }
-        return render(self.request, "dashboard/supports/teachers_detail.html",
-                      self.context)
+        })
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        teacher = Teacher.objects.get(pk=kwargs.get("pk"))
-        details_form = ChangeTeacherDetails(instance=teacher,
-                                            data=self.request.POST)
-        phone_number_form = ChangePhonenumber(instance=teacher.user,
-                                              data=self.request.POST)
-        if details_form.is_valid() and phone_number_form.is_valid():
-            deque(
-                map(lambda forms: forms.save(),
-                    [details_form, phone_number_form]))
-            messages.success(self.request, _("Changes saved successfully."))
-            return redirect("supports:teachers-detail", pk=kwargs.get("pk"))
-        else:
-            self.context["details_form"] = details_form
-            self.context["phonenumber_form"] = phone_number_form
-            messages.error(
-                self.request,
-                _("Invalid inputs detected. Consider that empty inputs are not allowed."
-                  ))
-            return render(self.request,
-                          "dashboard/supports/teachers_detail.html",
-                          self.context)
+        operation_form = EditOperationType(self.request.POST)
+        error_message = partial(messages.error, request=self.request)
+        success_message = partial(messages.success, request=self.request)
+        if operation_form.is_valid():
+            operation = operation_form.cleaned_data.get("operation")
+            match operation:
+                case "ut":
+                    teacher = get_object_or_404(Teacher, pk=kwargs.get("pk"))
+                    details_form = ChangeTeacherDetails(
+                        instance=teacher, data=self.request.POST)
+                    if details_form.is_valid():
+                        details_form.save()
+                        success_message(message=_("Changes saved successfully."))
+                        return redirect(
+                            "supports:teachers-detail", pk=kwargs.get("pk"))
+                    self.context["details_form"] = details_form
+                    error_message(message=_("Invalid inputs detected. Consider\
+                            that empty inputs are not allowed."
+                        ))
+                    return render(self.request, self.template_name, self.context)
+                case "dt":
+                    teacher = get_object_or_404(
+                        Teacher, pk=kwargs.get("pk"))
+                    teacher.user.delete()
+                    success_message(message=_("Teacher deleted successfully."))
+                    return redirect("supports:teachers")
+        error_message(message=_("Provided inputs are invalid."))
+        return redirect("supports:teachers")
 
 
 teachers_detail_view = TeachersDetailView.as_view()
 
 
-class DeleteTeacher(_BaseDeleteUser):
-    def get(self, *args, **kwargs):
-        super().get(*args, **kwargs)
-        messages.success(self.request, _("Teacher deleted successfully."))
-        return redirect("supports:teachers")
-
-
-delete_teacher_view = DeleteTeacher.as_view()
-
-
 class SubjectsView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/subjects.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
-        self.context = {
-            "subjects":
-            Subject.objects.filter(
+        load_template = self.request.path.split()[-1]
+        self.context.update({
+            "subjects": Subject.objects.filter(
                 teacher__school__support=self.request.user).distinct(),
-            "form":
-            CreateSubjectForm(request=self.request),
-            "segment":
-            load_template,
-        }
-        return render(self.request, "dashboard/supports/subjects.html",
-                      self.context)
+            "form": CreateSubjectForm(request=self.request),
+            "segment": load_template,
+        })
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
         subject_form = CreateSubjectForm(request=self.request,
@@ -309,11 +282,9 @@ class SubjectsView(PermissionAndLoginRequiredMixin, View):
             subject_form.save()
             messages.success(self.request, _("Course created successfully."))
             return redirect("supports:subjects")
-        else:
-            self.context["subject_form"] = subject_form
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return render(self.request, "dashboard/supports/subjects.html",
-                          self.context)
+        self.context["subject_form"] = subject_form
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return render(self.request, self.template_name, self.context)
 
 
 subjects_view = SubjectsView.as_view()
@@ -321,47 +292,42 @@ subjects_view = SubjectsView.as_view()
 
 class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    context = dict()
+    template_name = "dashboard/supports/subjects_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
+        load_template = self.request.path.split()[-1]
         subject = Subject.objects.get(pk=kwargs["pk"])
-        context = {
+        self.context.update({
             "classes": subject.class_subjects.all(),
             "subject": subject,
             "segment": load_template,
-        }
-        return render(self.request, "dashboard/supports/subjects_detail.html",
-                      context)
-
+        })
+        return render(self.request, self.template_name, self.context)
+    
+    def post(self, *args, **kwargs):
+        operation_form = EditOperationType(self.request.POST)
+        if operation_form.is_valid():
+            operation_type = operation_form.cleaned_data.get("operation")
+            match operation_type:
+                case "dc":
+                    subject = Subject.objects.get(pk=kwargs.get("pk"))
+                    subject.delete()
+                    messages.success(self.request, _("Course deleted successfully."))
+                    return redirect("supports:subjects")
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return redirect("supports:subjects")
 
 subjects_detail_view = SubjectsDetailView.as_view()
 
 
-class DeleteSubject(PermissionAndLoginRequiredMixin, View):
-    permission_required = "supports.support"
-
-    def get(self, *args, **kwargs):
-        subject = Subject.objects.get(pk=kwargs.get("pk"))
-        subject.delete()
-        messages.success(self.request, _("Course deleted successfully."))
-        return redirect("supports:subjects")
-
-
-delete_subject_view = DeleteSubject.as_view()
-
-
 class StudentsView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/students.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
+        load_template = self.request.path.split()[-1]
         students = Student.objects.filter(
             student_class__school__support=self.request.user).distinct()
         self.context = {
@@ -369,23 +335,20 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
             "students": students,
             "segment": load_template,
         }
-        return render(self.request, "dashboard/supports/students.html",
-                      self.context)
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
         form = SupportStudentSignupForm(self.request.POST, self.request.FILES)
         if form.is_valid():
             chosen_class_id = form.cleaned_data.get("student_class").id
-            chosen_class = Class.objects.get(pk=chosen_class_id)
+            chosen_class = get_object_or_404(Class, pk=chosen_class_id)
             user = form.save(self.request)
             Student.objects.create(user=user, student_class=chosen_class)
             messages.success(self.request, _("Student created successfully."))
             return redirect("supports:students")
-        else:
-            self.context["form"] = form
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return render(self.request, "dashboard/supports/students.html",
-                          self.context)
+        self.context["form"] = form
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return render(self.request, self.template_name, self.context)
 
 
 students_view = StudentsView.as_view()
@@ -393,95 +356,81 @@ students_view = StudentsView.as_view()
 
 class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    context = dict()
+    template_name = "dashboard/supports/students_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split("-1")[-1]
+        load_template = self.request.path.split()[-1]
         current_student = Student.objects.get(pk=kwargs.get("pk"))
-        self.context = {
-            "student_spec_form":
-            StudentsClassForm(instance=current_student, request=self.request),
-            "phonenumber_form":
-            ChangePhonenumber(instance=current_student.user),
-            "student":
-            current_student,
-            "segment":
-            load_template,
-        }
-        return render(self.request, "dashboard/supports/students_detail.html",
-                      self.context)
+        self.context.update({
+            "student_spec_form": StudentsClassForm(
+                instance=current_student, request=self.request),
+            "student": current_student,
+            "segment": load_template,
+        })
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        current_student = Student.objects.get(pk=kwargs.get("pk"))
-        student_spec_form = StudentsClassForm(instance=current_student,
-                                              request=self.request,
-                                              data=self.request.POST)
-        phone_number_form = ChangePhonenumber(instance=current_student.user,
-                                              data=self.request.POST)
-        if phone_number_form.is_valid() and student_spec_form.is_valid():
-            deque(
-                map(lambda forms: forms.save(),
-                    [student_spec_form, phone_number_form]))
-            messages.success(self.request, _("Student updated successfully."))
-            return redirect("supports:students-detail", pk=kwargs.get("pk"))
-        else:
-            self.context.update({
-                "student_spec_form": student_spec_form,
-                "phonenumber_form": phone_number_form,
-                "student": current_student,
-            })
-        return render(self.request, "dashboard/supports/students_detail.html",
-                      self.context)
+        operation_form = EditOperationType(self.request.POST)
+        if operation_form.is_valid():
+            operation_type = operation_form.cleaned_data.get("operation")
+            match operation_type:
+                case "us":
+                        current_student = get_object_or_404(Student, pk=kwargs.get("pk"))
+                        student_spec_form = StudentsClassForm(instance=current_student,
+                                                            request=self.request,
+                                                            data=self.request.POST)
+                        if student_spec_form.is_valid():
+                            student_spec_form.save()
+                            messages.success(self.request, _("Student updated successfully."))
+                            return redirect("supports:students-detail", pk=kwargs.get("pk"))
+                        self.context.update({
+                            "student_spec_form": student_spec_form,
+                            "student": current_student,
+                        })
+                        return render(self.request, self.template_name, self.context)
+                case "ds":
+                    get_object_or_404(get_user_model(), pk=kwargs.get("pk")).delete()
+                    messages.success(self.request, _("Student deleted successfully."))
+                    return redirect("supports:students")
+        messages.error(self.request, _("Provided inputs are invalid."))
+        return redirect("supports:students-detail", pk=kwargs.get("pk"))
 
 
 students_detail_view = StudentsDetailView.as_view()
 
 
-class DeleteStudent(_BaseDeleteUser):
-    def get(self, *args, **kwargs):
-        super().get(*args, **kwargs)
-        messages.success(self.request, _("Student deleted successfully."))
-        return redirect("supports:students")
-
-
-delete_student_view = DeleteStudent.as_view()
-
-
 class ProfileView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.context = dict()
+    template_name = "dashboard/supports/profile.html"
+    context = dict()
 
     def get(self, args, **kwargs):
-        load_template = [*filter(None, self.request.path.split('/'))][-1]
+        load_template = self.request.path.split()[-1]
         classes = Class.objects.filter(
             school__support=self.request.user).distinct()
         students = Student.objects.filter(student_class__in=classes)
         email_confirmed = EmailAddress.objects.filter(
             user=self.request.user).distinct()
-        self.context = {
+        self.context.update({
             "form": ChangePasswordForm(),
             "classes_count": classes.count(),
             "students_count": students.count(),
             "segment": load_template,
-        }
+        })
         if email_confirmed.exists():
             self.context["email_confirmed"] = email_confirmed[0].verified
-        return render(self.request, "dashboard/supports/profile.html",
-                      self.context)
+        return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
+        operation_form = EditOperationType(self.request.POST)
+        if operation_form.is_valid():
+            operation = operation_form.cleaned_data.get("operation")
         form = UserBioForm(self.request.POST)
         if form.is_valid():
             about = form.cleaned_data.get("about")
-            user = get_user(self.request)
-            user.about = about
-            user.save()
+            self.request.user.about = about
+            self.request.user.save()
             messages.success(self.request, _("Bio was updated successfully."))
             return redirect("supports:profile")
         else:
