@@ -14,11 +14,22 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Home' %}</h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        {% trans 'Home' %}
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Dashboard' %}</li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {% trans 'Dashboard' %}
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -31,7 +42,9 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'School' %}</h5>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">
+                                        {% trans 'School' %}
+                                    </h5>
                                     <span class="h2 font-weight-bold mb-0">{{ school }}</span>
                                 </div>
                                 <div class="col-auto">
@@ -49,8 +62,12 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Classes' %}</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ school.class_school.count }}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">
+                                        {% trans 'Classes' %}
+                                    </h5>
+                                    <span class="h2 font-weight-bold mb-0">
+                                        {{ school.class_school.count }}
+                                    </span>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
@@ -67,8 +84,15 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Teachers' %}</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ school.teacher_school.count }}</span>
+                                    <h5 
+                                        class="card-title text-uppercase 
+                                        text-muted mb-0"
+                                       >
+                                       {% trans 'Teachers' %}
+                                    </h5>
+                                    <span class="h2 font-weight-bold mb-0">
+                                        {{ school.teacher_school.count }}
+                                    </span>
                                 </div>
                                 <div class="col-auto">
                                     <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
@@ -92,7 +116,9 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-light text-uppercase ls-1 mb-1">{% trans 'Overview' %}</h6>
+                            <h6 class="text-light text-uppercase ls-1 mb-1">
+                                {% trans 'Overview' %}
+                            </h6>
                             <h5 class="h3 text-white mb-0">{% trans 'Classes' %}</h5>
                         </div>
                     </div>
@@ -113,7 +139,11 @@
                             <tr>
                                 <th scope="row" class="name">
                                     <div class="media align-items-center">
-                                        <h1 class="text-gray mr-4"><a href="{{ class.get_absolute_url }}">{{ class.class_id }}</a></h1>
+                                        <h1 class="text-gray mr-4">
+                                            <a href="{{ class.get_absolute_url }}">
+                                                {{ class.class_id }}
+                                            </a>
+                                        </h1>
                                         <div class="media-body">
                                             <span class="mb-0 text-sm"></span>
                                         </div>
@@ -147,14 +177,18 @@
                                 </td>
                                 <td class="status">
                                     <span class="badge badge-dot mr-4 text-gray">
-                                        <i class="bg-{{ class.get_average_grade_percent|set_average_grade_color }}"></i>
-                                        {{ class.get_average_grade_percent }}%
+                                        <i class="bg-{{ class.average_grade_percent|set_average_grade_color }}"></i>
+                                        {{ class.average_grade_percent }}%
                                     </span>
                                 </td>
                             </tr>
                             {% endfor %}
                             <tr>
-                                <td colspan="5" class="text-center"><a href="{% url 'supports:classes' %}"><strong>...</strong></a></td>
+                                <td colspan="5" class="text-center">
+                                    <a href="{% url 'supports:classes' %}">
+                                        <strong>...</strong>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -168,7 +202,9 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-dark text-uppercase ls-1 mb-1">{% trans 'Overview' %}</h6>
+                            <h6 class="text-dark text-uppercase ls-1 mb-1">
+                                {% trans 'Overview' %}
+                            </h6>
                             <h5 class="h3 text-dark mb-0">{% trans 'Teachers' %}</h5>
                         </div>
                     </div>
@@ -188,7 +224,9 @@
                                 <th scope="row" class="name">
                                     <div class="media align-items-center">
                                         <h1 class="text-dark mr-4">
-                                            <a href="{{ teacher.get_absolute_url }}">{{ teacher.user.name|title }}</a>
+                                            <a href="{{ teacher.get_absolute_url }}">
+                                                {{ teacher.user.name|title }}
+                                            </a>
                                         </h1>
                                         <div class="media-body">
                                             <span class="mb-0 text-sm"></span>
@@ -199,12 +237,16 @@
                                     {{ teacher.subject_teacher.count }}
                                 </td>
                                 <td class="budget text-dark">
-                                    {{ teacher.get_average_performance_six_months }}%
+                                    {{ teacher.average_percent_six_months }}%
                                 </td>
                             </tr>
                             {% endfor %}
                             <tr>
-                                <td colspan="5" class="text-center"><a href="{% url 'supports:teachers' %}"><strong>...</strong></a></td>
+                                <td colspan="5" class="text-center">
+                                    <a href="{% url 'supports:teachers' %}">
+                                        <strong>...</strong>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

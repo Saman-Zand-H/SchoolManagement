@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<div class="header bg-primary pb-6">
+<div class="header bg-gradient-dark pb-6">
     <div class="container-fluid">
         <div class="header-body">
             <div class="row align-items-center py-4">
@@ -169,9 +169,8 @@
                                         </td>
                                         <td class="status">
                                             <span class="badge badge-dot mr-4">
-                                                <i class="bg-{{ class.get_average_grade_percent\
-                                                    |set_average_grade_color }}"></i> 
-                                                {{ class.get_average_grade_percent }}%
+                                                <i class="bg-{{ class.average_grade_percent|set_average_grade_color }}"></i> 
+                                                {{ class.average_grade_percent }}%
                                             </span>
                                         </td>
                                         <td class="budget">

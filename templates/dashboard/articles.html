@@ -9,19 +9,26 @@
 {% block content %}
 
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header bg-gradient-info pb-6">
     <div class="container-fluid">
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Articles' %}</h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        {% trans 'Articles' %}
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">
-                                <i class="fas fa-home"></i></a>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{% url 'teachers:home' %}">Dashboard</a>
+                                <a href="{% url 'supports:home' %}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
                                 {% trans 'Articles' %}
@@ -30,7 +37,10 @@
                     </nav>
                 </div>
                 <div class="col-lg-12 col-md-12 col-5 text-right">
-                    <a href="{% url 'teachers:add-articles' %}" class="btn btn-sm btn-neutral my-1">
+                    <a 
+                       href="{% url 'home:add-article' %}" 
+                       class="btn btn-sm btn-neutral my-1"
+                      >
                         <i class="fas fa-plus"></i>
                         {% trans 'New' %}
                     </a>
@@ -48,21 +58,32 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="table-responsive">
-                            <table class="table table-hover table-dark align-items-center table-flush">
+                            <table 
+                                   class="table table-hover 
+                                          table-dark align-items-center table-flush"
+                                  >
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th scope="col" class="author">added by {{ article.author }}</th>
-                                        <th scope="col" class="timestamp">at {{ article.timestamp }}</th>
+                                        <th scope="col" class="author">
+                                            added by {{ article.author }}
+                                        </th>
+                                        <th scope="col" class="timestamp">
+                                            at {{ article.timestamp }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr style="height: 4rem;">
                                         <td>
-                                            <span class="font-weight-bolder article-title">{{ article.title|title }}</span>
+                                            <span class="font-weight-bolder article-title">
+                                                {{ article.title|title }}
+                                            </span>
                                         </td>
                                         <td>
                                             {% for category in article.categories %}
-                                                <span class="badge badge-warning article-category">{{ category }}</span>
+                                                <span class="badge badge-warning article-category">
+                                                    {{ category }}
+                                                </span>
                                             {% endfor %}
                                         </td>
                                     </tr>
@@ -72,10 +93,15 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" class="text-right link-to-article">
+                                        <td colspan="3" class="text-right">
                                             <div>
                                                 <span class="badge badge-lg badge-light">
-                                                    <a href="{% url 'teachers:article-detail' article.pk %}" class="text-blue">read this</a>
+                                                    <a 
+                                                       href="{% url 'home:article-detail' article.pk %}" 
+                                                       class="text-blue"
+                                                      >
+                                                      read this
+                                                    </a>
                                                 </span>
                                             </div>
                                         </td>
@@ -109,7 +135,11 @@
         },
     };
 </script>
-<script type="text/javascript" id="MathJax-script" 
-        async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+<script 
+        type="text/javascript" 
+        id="MathJax-script" 
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" 
+        async
+       >
 
 {% endblock %}

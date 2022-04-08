@@ -115,9 +115,9 @@
                         <a 
                             class="btn btn-default" 
                             {% if user.user_type == "SS" %} 
-                                href="{% url 'supports:profile' %}" 
+                                href="{% url 'profile' %}" 
                             {% elif user.user_type == "T" %} 
-                                href="{% url 'teachers:profile' %}" 
+                                href="{% url 'profile' %}" 
                             {% endif %}
                         >{% trans 'Profile Page' %}</a>
                     </div>

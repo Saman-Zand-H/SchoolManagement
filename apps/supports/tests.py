@@ -365,22 +365,15 @@ def test_create_teacher_successful(client, school_1):
 
     picture_path = pathlib.Path.cwd() / "static" / "empty-profile.jpg"
     data = {
-        "username":
-        "test_created_teacher",
-        "first_name":
-        "first_name",
-        "last_name":
-        "last_name",
-        "password1":
-        "test123456",
-        "password2":
-        "test123456",
-        "user_type":
-        "T",
-        "picture":
-        SimpleUploadedFile(name='empty-profile.jpg',
-                           content=open(picture_path, 'rb').read(),
-                           content_type='image/jpeg'),
+        "username": "test_created_teacher",
+        "first_name": "first_name",
+        "last_name": "last_name",
+        "password1": "test123456",
+        "password2": "test123456",
+        "user_type": "T",
+        "picture": SimpleUploadedFile(name='empty-profile.jpg',
+                                      content=open(picture_path, 'rb').read(),
+                                      content_type='image/jpeg'),
     }
     response = client.post(url, data)
     created_teacher = Teacher.objects.last()

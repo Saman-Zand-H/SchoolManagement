@@ -3,10 +3,16 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-<nav class="navbar navbar-top navbar-expand navbar-dark 
-            {{ nav_color|default:'bg-primary' }} border-bottom">
+<nav 
+     class="navbar navbar-top mb-2
+            navbar-expand navbar-dark 
+            {{ nav_color|default:'bg-primary' }} border-bottom"
+    >
     <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div 
+             class="collapse navbar-collapse" 
+             id="navbarSupportedContent"
+            >
             <!-- Navbar links -->
             <ul class="navbar-nav align-items-center  ml-md-auto ">
                 {% comment %} 
@@ -143,8 +149,14 @@
             </ul>
             <ul class="navbar-nav align-items-center ml-auto ml-md-0 ">
                 <li class="nav-item dropdown">
-                    <a class="nav-link pr-0" href="#" role="button" 
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a 
+                       class="nav-link pr-0" 
+                       href="#" 
+                       role="button" 
+                       data-toggle="dropdown" 
+                       aria-haspopup="true" 
+                       aria-expanded="false"
+                      >
                         <div class="media align-items-center">
                             <span class="avatar avatar-sm rounded-circle">
                                 <img alt="Profile Picture" 
@@ -157,14 +169,16 @@
                             </div>
                         </div>
                     </a>
-                    <div class="dropdown-menu 
-                                {% if LANGUAGE_CODE == 'fa' %} text-right {% endif %} 
-                                dropdown-menu-right">
+                    <div 
+                         class="dropdown-menu 
+                                {% if LANGUAGE_CODE == 'fa' %}text-right{% endif %} 
+                                dropdown-menu-right"
+                        >
                         <div class="dropdown-header noti-title">
                             <h6 class="text-overflow m-0">{% trans 'Welcome!' %}</h6>
                         </div>
                         {% if user.user_type == "T" %}
-                            <a href="{% url 'teachers:profile' %}" class="dropdown-item">
+                            <a href="{% url 'profile' %}" class="dropdown-item">
                                 <i class="ni ni-single-02"></i>
                                 <span>{% trans 'My profile' %}</span>
                             </a>
@@ -184,10 +198,12 @@
                 </li>
                 <li class="nav-item d-xl-none mx-2">
                     <!-- Sidenav toggler -->
-                    <div class="pr-3 sidenav-toggler sidenav-toggler-dark" 
+                    <div 
+                         class="pr-3 sidenav-toggler sidenav-toggler-dark" 
                          data-toggle="sidenav" 
                          data-action="sidenav-pinned" 
-                         data-target="#sidenav-main">
+                         data-target="#sidenav-main"
+                        >
                         <div class="sidenav-toggler-inner">
                             <i class="sidenav-toggler-line"></i>
                             <i class="sidenav-toggler-line"></i>

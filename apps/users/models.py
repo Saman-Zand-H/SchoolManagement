@@ -166,7 +166,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.picture.url if self.picture else static("empty-profile.jpg")
     
     @property
-    def school_name(self):
+    def school(self):
         match self.user_type:
             case "T":
                 queryset = self.teacher_user.school
@@ -174,7 +174,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                 queryset = self.student_user.student_class.school
             case "SS":
                 queryset = self.school_support
-        return [queryset.name]
+        return queryset
+    
+    @property
+    def school_name(self):
+        # Don't ask why I used this dummy format here. Instead,
+        # ask Algolia why they used a list() instead of a [* ]
+        return [self.school.name]
 
     def save(self, *args, **kwargs):
         if not self.email:

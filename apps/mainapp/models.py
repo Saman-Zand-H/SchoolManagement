@@ -9,11 +9,10 @@ from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField
 
 from datetime import date
+from dateutil.relativedelta import relativedelta
 from statistics import mean
-from decimal import Decimal
 from logging import getLogger
 
-from .helpers import loop_through_month_number
 from teachers.models import Teacher
 from supports.models import School
 
@@ -39,9 +38,9 @@ class Student(models.Model):
 
     def get_absolute_url_teachers(self):
         return reverse("teachers:students-detail", kwargs={"pk": self.pk})
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    
+    def clean(self):
+        super().clean()
         if self.user.user_type != "S":
             logger.error(
                 gettext_noop(
@@ -88,19 +87,16 @@ class Grade(models.Model):
     def __str__(self):
         return f"{self.student}, {self.exam.subject}"
 
-    def get_grade_percent(self) -> Decimal:
-        """
-        Returns the percentage grade.
-        """
-        return round((self.grade / self.exam.full_score) * 100, 2)
-
-    def save(self, *args, **kwargs) -> None:
+    @property
+    def grade_percent(self):
+        return round((self.grade / self.exam.full_score), 2) * 100
+    
+    def clean(self):
         if self.grade > self.exam.full_score:
-            raise ValidationError("The grade exceeds the full score",
+            raise ValidationError({"grade": _("Grade cannot be higher than full score.")}, 
                                   code="invalid_grade")
-        else:
-            super().save(*args, **kwargs)
-
+        super().clean()
+        
 
 class Exam(models.Model):
     subject = models.ForeignKey(Subject,
@@ -119,26 +115,23 @@ class Exam(models.Model):
         default=20,
     )
 
-    def get_average_grade(self):
-        """
-        Returns the average grade achieved.
-        """
+    @property
+    def average_grade(self):
         average_grade = self.grade_exam.all().aggregate(
             average_grade=Avg("grade"))["average_grade"]
         return round(average_grade or 0, 2)
 
-    def get_average_grade_percent(self):
-        """
-        Returns average percentage grade achieved.
-        """
-        return round((self.get_average_grade() / self.full_score) * 100 or 0,
-                     2)
+    @property
+    def average_grade_percent(self):
+        return round(
+            (self.average_grade / self.full_score) or 0, 2) * 100
 
     def __str__(self):
         return f"{self.teacher}, {self.subject}"
 
     def get_absolute_url(self):
-        return reverse("teachers:exams-detail", kwargs={"pk": self.pk})
+        return reverse(
+            "teachers:exams-detail", kwargs={"pk": self.pk})
 
 
 class Class(models.Model):
@@ -151,33 +144,26 @@ class Class(models.Model):
     def __str__(self):
         return self.class_id
 
-    def get_average_grade_percent(self) -> Decimal:
-        """
-        Return average percentage grade achieved by the students of a class.
-        """
-        average_percents = []
-        for exam in self.exam_class.all():
-            exam_average_grade = exam.get_average_grade_percent()
-            average_percents.append(exam_average_grade or 0)
+    @property
+    def average_grade_percent(self):
+        average_percents = [
+            exam.average_grade_percent for exam in self.exam_class.all()]
         return round(mean(average_percents or [0]), 2)
-
-    def get_average_percent_within_a_month(self, filter_params_list):
-        percents = []
-        filter_month = filter_params_list[1]
-        filter_year = filter_params_list[0]
+    
+    def _average_percent_during_a_month(self, date_time):
+        filter_month = date_time.month
+        filter_year = date_time.year
         exams = self.exam_class.filter(timestamp__month=filter_month,
                                        timestamp__year=filter_year)
-        for exam in exams:
-            exam_average_grade = exam.get_average_grade_percent()
-            percents.append(exam_average_grade)
+        percents = [exam.average_grade_percent for exam in exams]
         return round(mean(percents or [0]))
 
-    def get_performance_percent_eight_months(self):
+    def get_grade_percent_eight_months(self):
         percents = []
-        init_month = date.today().month - 4
-        for i in range(0, 8):
-            month = loop_through_month_number(init_month + i)
-            percent = self.get_average_percent_within_a_month(month)
+        init_month = date.today() - relativedelta(months=4)
+        for i in range(8):
+            month = init_month + relativedelta(months=i)
+            percent = self._average_percent_during_a_month(month)
             percents.append(percent)
         return percents
 
@@ -206,6 +192,9 @@ class Article(models.Model):
     categories = ArrayField(base_field=models.CharField(max_length=20), size=5)
     text = RichTextField()
     timestamp = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("home:article-detail", self.pk)
 
     def __str__(self):
         return f"{self.author}: {self.title}"

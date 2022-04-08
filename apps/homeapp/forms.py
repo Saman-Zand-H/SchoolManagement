@@ -1,5 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from django import forms
+from ckeditor.widgets import CKEditorWidget
+
+from mainapp.models import Article
 
 
 class SupportForm(forms.Form):
@@ -22,3 +25,27 @@ class SupportForm(forms.Form):
             "class": "form-control",
             "placeholder": _("here goes your text...."),
         }))
+
+
+class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        exclude = ['author', 'school']
+        widgets = {
+            "title":
+            forms.TextInput(attrs={
+                "class": "form-control",
+                "id": "article-title",
+            }),
+            "categories":
+            forms.TextInput(attrs={
+                "class": "form-control",
+                "id": "article-categories",
+            }),
+            "text":
+            CKEditorWidget(attrs={
+                "class": "form-control",
+                "id": "article-text",
+            },
+                extra_plugins="mathjax"),
+        }

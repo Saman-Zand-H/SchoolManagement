@@ -1,7 +1,9 @@
 from django.views.generic import TemplateView, View
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
@@ -12,8 +14,9 @@ import logging
 from typing import Any, Dict
 from smtplib import SMTPException
 
-from mainapp.models import School
-from .forms import SupportForm
+from mainapp.models import School, Article
+from .forms import SupportForm, ArticleForm
+from supports.forms import EditOperationType
 
 logger = logging.getLogger(__name__)
 
@@ -96,3 +99,87 @@ def set_language(request):
         return response
 
     return redirect("home:home")
+
+
+class ArticlesTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = "dashboard/articles.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        school = self.request.user.school
+        context["articles"] = Article.objects.filter(school=school)
+        context["segment"] = self.request.path.split("/")
+        context["nav_color"] = "bg-gradient-info"
+        return context
+
+
+articles_template_view = ArticlesTemplateView.as_view()
+
+
+class AddArticleView(LoginRequiredMixin, View):
+    template_name = "dashboard/add_article.html"
+    context = dict()
+
+    def get(self, *args, **kwargs):
+        self.context.update({
+            "segment": self.request.path.split("/"),
+            "form": ArticleForm(),
+            "nav_color": "bg-gradient-danger",
+        })
+        return render(self.request, self.template_name, self.context)
+
+    def post(self, *args, **kwargs):
+        form = ArticleForm(self.request.POST)
+        school = get_object_or_404(School, support=self.request.user)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.author = self.request.user
+            article.school = school
+            article.save()
+            messages.success(self.request,
+                             _("Article saved successfully."))
+            return redirect("home:article-detail", pk=article.pk)
+        else:
+            messages.error(self.request, _("Provided inputs are invalid."))
+        return redirect("home:articles")
+
+
+add_article_view = AddArticleView.as_view()
+
+
+class ArticleDetailView(LoginRequiredMixin, View):
+    template_name = "dashboard/article_detail.html"
+    context = dict()
+
+    def get(self, *args, **kwargs):
+        article = get_object_or_404(Article, pk=kwargs["pk"])
+        self.context.update({
+            "article": article,
+            "form": ArticleForm(instance=article),
+            "segment": self.request.path.split("/"),
+            "nav_color": "bg-gradient-info",
+        })
+        return render(self.request, self.template_name, self.context)
+
+    def post(self, *args, **kwargs):
+        operation_form = EditOperationType(self.request.POST)
+        if operation_form.is_valid():
+            operation = operation_form.cleaned_data.get("operation")
+            match operation:
+                case "da":
+                    article = get_object_or_404(Article, pk=kwargs["pk"])
+                    if (
+                        article.author == self.request.user
+                        or (
+                            self.author.school_name == self.request.user.school_name
+                            and self.request.user.has_perm("supports:support")
+                        )
+                    ):
+                        article.delete()
+                        messages.success(self.request, _(
+                            "Article deleted successfully."))
+                        return redirect("home:articles")
+                    raise PermissionDenied()
+
+
+article_detail_view = ArticleDetailView.as_view()

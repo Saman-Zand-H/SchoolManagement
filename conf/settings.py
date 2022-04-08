@@ -68,7 +68,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'channels',
     'channels_redis',
-    "seleniumlogin",
+    'seleniumlogin',
+    'django_filters',
 
     # Local apps
     'users.apps.UsersConfig',
@@ -218,6 +219,10 @@ LOGGING = {
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, os.path.join("staticfiles"))
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
 # Media files
 MEDIA_URL = '/media/'

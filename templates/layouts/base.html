@@ -40,7 +40,7 @@
 
         {% include "includes/navigation.html" %}
         <section class="{% if LANGUAGE_CODE != 'en' %}rtl text-right{% endif %}">
-            <div class="header {{ nav_color|default:'bg-primary' }} mb--3">
+            <div class="header {{ nav_color|default:'bg-primary' }} mb--3 mt--2">
                 {% if messages %}
                     {% for message in messages %}
                         {% if message.tags == "error" %}

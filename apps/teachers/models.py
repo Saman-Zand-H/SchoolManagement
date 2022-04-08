@@ -7,13 +7,12 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_noop as _
 
 from datetime import date
-from functools import partial
+from dateutil.relativedelta import relativedelta
 from operator import is_not
-from decimal import Decimal
+from functools import partial
 from statistics import mean
 from logging import getLogger
 
-from mainapp.helpers import loop_through_month_number
 from supports.models import School
 
 logger = getLogger(__name__)
@@ -39,39 +38,40 @@ class Teacher(models.Model):
     def get_absolute_url(self):
         return reverse("supports:teachers-detail", kwargs={"pk": self.pk})
 
-    def get_performance_percent_six_months(self):
+    @property
+    def percents_six_months(self):
         percents = []
-        init_month = date.today().month - 3
+        init_month = date.today() - relativedelta(months=3)
         for i in range(6):
-            year = loop_through_month_number(init_month + i)[0]
-            month = loop_through_month_number(init_month + i)[1]
+            timestamp = init_month + relativedelta(months=i)
             exams = self.exam_teacher.filter(
-                Q(timestamp__year=year) & Q(timestamp__month=month))
-            if exams.count() >= 1:
-                average_grade_uncleaned = [
-                    *map(lambda exam: float(exam.get_average_grade_percent()),
-                         exams)
-                ]
-                average_grade_cleaned = filter(partial(is_not, None),
-                                               average_grade_uncleaned)
-                average_grade = round(mean([*average_grade_cleaned] or [0]), 2)
+                Q(timestamp__year=timestamp.year) & Q(timestamp__month=timestamp.month))
+            if exams.exists():
+                average_percents = [float(exam.average_grade_percent) for exam in exams]
+                average_percent = round(mean(average_percents), 2)
             else:
-                average_grade = 0
-            percents.append(average_grade)
+                average_percent = None
+            percents.append(average_percent)
         return percents
 
-    def get_average_performance_six_months(self) -> Decimal:
-        """Returns a decimal representing the overall average performance."""
-        return round(mean(self.get_performance_percent_six_months() or [0]), 2)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    @property
+    def average_percent_six_months(self):
+        if self.percents_six_months is not None:
+            return round(mean(
+                [*filter(partial(is_not, None), self.percents_six_months)]), 2)
+        return 0
+    
+    def clean(self):
+        super().clean()
         if self.user.user_type != "T":
             logger.error(
                 _("A non-teacher typed user was being used as a teacher."))
             raise ValidationError(
                 _("{} is not a teacher. User must be typed as a teacher.").
                 format(self.user.name))
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         group, group_created = Group.objects.get_or_create(name="Teachers")
         if group_created:
             perm = Permission.objects.filter(codename="teacher")[0]

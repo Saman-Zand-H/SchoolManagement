@@ -14,11 +14,22 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Home' %}</h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        {% trans 'Home' %}
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Dashboard' %}</li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {% trans 'Dashboard' %}
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -31,11 +42,19 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'School' %}</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ teacher.school }}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">
+                                        {% trans 'School' %}
+                                    </h5>
+                                    <span class="h2 font-weight-bold mb-0">
+                                        {{ teacher.school }}
+                                    </span>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                    <div 
+                                         class="icon icon-shape 
+                                                bg-gradient-green text-white 
+                                                rounded-circle shadow"
+                                        >
                                         <i class="fas fa-school"></i>
                                     </div>
                                 </div>
@@ -49,11 +68,19 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Classes' %}</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ classes.count }}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">
+                                        {% trans 'Classes' %}
+                                    </h5>
+                                    <span class="h2 font-weight-bold mb-0">
+                                        {{ classes.count }}
+                                    </span>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                    <div 
+                                         class="icon icon-shape 
+                                                bg-gradient-red text-white 
+                                                rounded-circle shadow"
+                                        >
                                         <i class="fas fa-graduation-cap"></i>
                                     </div>
                                 </div>
@@ -67,11 +94,19 @@
                         <div class="card-body" style="height: 7.7rem;">
                             <div class="row">
                                 <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">{% trans 'Taken Exams' %}</h5>
-                                    <span class="h2 font-weight-bold mb-0">{{ teacher.exam_teacher.count }}</span>
+                                    <h5 class="card-title text-uppercase text-muted mb-0">
+                                        {% trans 'Taken Exams' %}
+                                    </h5>
+                                    <span class="h2 font-weight-bold mb-0">
+                                        {{ teacher.exam_teacher.count }}
+                                    </span>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                    <div 
+                                         class="icon icon-shape 
+                                                bg-gradient-orange text-white 
+                                                rounded-circle shadow"
+                                        >
                                         <i class="fas fa-book"></i>
                                     </div>
                                 </div>
@@ -92,30 +127,44 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-light text-uppercase ls-1 mb-1">{% trans 'Overview' %}</h6>
-                            <h5 class="h3 text-white mb-0">{% trans 'Average Performance' %}</h5>
+                            <h6 class="text-light text-uppercase ls-1 mb-1">
+                                {% trans 'Overview' %}
+                            </h6>
+                            <h5 class="h3 text-white mb-0">
+                                {% trans 'Average Performance' %}
+                            </h5>
                         </div>
                         <div class="col">
                             <ul class="nav nav-pills justify-content-end">
                                 {% if classes %}
                                     {% for class in classes %}
-                                        <li class="nav-item mr-2 mr-md-0" 
+                                        <li 
+                                            class="nav-item mr-2 mr-md-0" 
                                             data-toggle="chart" 
                                             data-target="#chart-sales-dark" 
                                             data-prefix="" 
                                             data-suffix="%" 
                                             data-update='{"data":{
-                                                "datasets":[{"data":{{ class.get_performance_percent_eight_months }}
+                                                "datasets":[{"data":{{ class.get_grade_percent_eight_months }}
                                                     , "label": "Average Performance"}]
-                                                , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
-                                            <a href="#" class="nav-link py-2 px-3 mx-md-1" data-toggle="tab" id="initialChart">
-                                                <span class="d-none d-block">{{ class.class_id }}</span>
+                                                , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'
+                                           >
+                                            <a 
+                                               href="#" 
+                                               class="nav-link py-2 px-3 mx-md-1" 
+                                               data-toggle="tab" 
+                                               id="initialChart"
+                                              >
+                                                <span class="d-none d-block">
+                                                    {{ class.class_id }}
+                                                </span>
                                                 <span class="d-md-none"></span>
                                             </a>
                                         </li>
                                     {% endfor %}
                                 {% else %}
-                                    <li class="nav-item mr-2 mr-md-0" 
+                                    <li 
+                                        class="nav-item mr-2 mr-md-0" 
                                         data-toggle="chart" 
                                         data-target="#chart-sales-dark" 
                                         data-prefix="" 
@@ -123,9 +172,17 @@
                                         data-update='{"data":{
                                             "datasets":[{"data":[0, 0, 0, 0, 0, 0, 0, 0]
                                                 , "label": "Average Performance"}]
-                                            , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'>
-                                        <a href="#" class="nav-link py-2 px-3" data-toggle="tab" id="initialChart">
-                                            <span class="d-none d-block">{% trans 'No Class' %}</span>
+                                            , "labels":[{{ eight_months_chart_labels|join:", " }}]}}'
+                                       >
+                                        <a 
+                                           href="#" 
+                                           class="nav-link py-2 px-3" 
+                                           data-toggle="tab" 
+                                           id="initialChart"
+                                          >
+                                            <span class="d-none d-block">
+                                                {% trans 'No Class' %}
+                                            </span>
                                             <span class="d-md-none"></span>
                                         </a>
                                     </li>
@@ -138,7 +195,10 @@
                     <!-- Chart -->
                     <div class="chart">
                         <!-- Chart wrapper -->
-                        <canvas id="chart-sales-dark" class="chart-canvas"></canvas>
+                        <canvas 
+                                id="chart-sales-dark" 
+                                class="chart-canvas"
+                               ></canvas>
                     </div>
                 </div>
             </div>
@@ -148,27 +208,39 @@
                 <div class="card-header bg-transparent">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h6 class="text-uppercase text-muted ls-1 mb-1">{% trans 'Overview' %}</h6>
-                            <h5 class="h3 mb-0">{% trans 'Total Performance' %}</h5>
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">
+                                {% trans 'Overview' %}
+                            </h6>
+                            <h5 class="h3 mb-0">
+                                {% trans 'Total Performance' %}
+                            </h5>
                             <ul class="nav nav-pills justify-content-end d-none">
                                 {% if classes %}
-                                    <li class="nav-item mr-2 mr-md-0 half-year-chart" 
-                                    data-toggle="chart" 
-                                    data-target="#chart-bars" 
-                                    data-update='{"data":{
-                                        "datasets":[{"data":{{ teacher.get_performance_percent_six_months }}
-                                            , "label": "Average Grade"}]
-                                        , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
-                                    data-update='{"data":{
-                                            "datasets":[{"data":[0, 0, 0, 0, 0, 0]
+                                    <li 
+                                        class="nav-item mr-2 mr-md-0 half-year-chart" 
+                                        data-toggle="chart" 
+                                        data-target="#chart-bars" 
+                                        data-update='{"data":{
+                                            "datasets":[{"data":{{ teacher.percents_six_months }}
                                                 , "label": "Average Grade"}]
                                             , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
-                                    data-prefix="" 
-                                    data-suffix="%">
-                                        <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab" id="initialBar"></a>
+                                        data-update='{"data":{
+                                                "datasets":[{"data":[0, 0, 0, 0, 0, 0]
+                                                    , "label": "Average Grade"}]
+                                                , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
+                                        data-prefix="" 
+                                        data-suffix="%"
+                                       >
+                                        <a 
+                                           href="#" 
+                                           class="nav-link py-2 px-3 active" 
+                                           data-toggle="tab" 
+                                           id="initialBar"
+                                          ></a>
                                     </li>
                                 {% else %}
-                                    <li class="nav-item mr-2 mr-md-0 half-year-chart" 
+                                    <li 
+                                        class="nav-item mr-2 mr-md-0 half-year-chart" 
                                         data-toggle="chart" 
                                         data-target="#chart-bars" 
                                         data-update='{"data":{
@@ -176,8 +248,14 @@
                                                 , "label": "Average Grade"}]
                                             , "labels":[{{ six_months_chart_labels|join:", " }}]}}' 
                                         data-prefix="" 
-                                        data-suffix="%">
-                                        <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab" id="initialBar"></a>
+                                        data-suffix="%"
+                                       >
+                                        <a 
+                                           href="#" 
+                                           class="nav-link py-2 px-3 active" 
+                                           data-toggle="tab" 
+                                           id="initialBar"
+                                          ></a>
                                     </li>
                                 {% endif %}
                             </ul>

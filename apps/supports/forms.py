@@ -15,6 +15,7 @@ class EditOperationType(forms.Form):
         ("dc", "Delete course"),
         ("us", "Update student"),
         ("ds", "Delete student"),
+        ("da", "Delete article"),
     )
     operation = forms.ChoiceField(choices=choices, required=False)
 

@@ -6,6 +6,14 @@ from decimal import Decimal
 from mainapp.models import Grade, Article
 
 
+class OperationType(forms.Form):
+    choices = (
+        ("de", "Delete exam"),
+        ("sg", "Set grades"),
+    )
+    operation = forms.ChoiceField(choices=choices, required=False)
+
+
 class ExamForm(forms.Form):
     subject = forms.CharField(required=False)
     exam_class = forms.IntegerField(required=False)

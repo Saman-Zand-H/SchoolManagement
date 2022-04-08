@@ -10,28 +10,30 @@
 
 {% block content %}
 
-<div class="header bg-primary pb-6">
+<div class="header bg-gradient-default pb-6">
     <div class="container-fluid">
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Grades' %}</h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        {% trans 'Grades' %}
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item">
                                 <a href="{% url 'home:home' %}">
                                     <i class="fas fa-home"></i>
                                 </a>
                             </li>
-
                             <li class="breadcrumb-item">
                                 <a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a>
                             </li>
-
                             <li class="breadcrumb-item">
                                 <a href="{% url 'teachers:exams' %}">{% trans 'Exams' %}</a>
                             </li>
-
                             <li class="breadcrumb-item active" aria-current="page">
                                 {% trans 'Grades' %}
                             </li>
@@ -40,11 +42,13 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-5 text-right">
                     <!-- Modals Buttons -->
-                    <button type="button" 
+                    <button 
+                            type="button" 
                             data-toggle="modal" 
                             data-target="#addGrades" 
-                            class="btn btn-sm btn-neutral">
-                        {% if exam.grade_exam.all %}
+                            class="btn btn-sm btn-neutral"
+                           >
+                        {% if exam.grade_exam.exists %}
                             <i class="fas fa-pen"></i>
                             {% trans 'Edit' %}
                         {% else %}
@@ -52,25 +56,39 @@
                             {% trans 'New' %}
                         {% endif %}
                     </button>
-                    <button type="button" 
+                    <button     
+                            type="button" 
                             data-toggle="modal" 
                             data-target="#deleteExam" 
-                            class="btn btn-sm btn-danger text-white border-danger">
+                            class="btn btn-sm btn-danger text-white border-danger"
+                           >
                        <i class="fas fa-trash-alt"></i>
                        {% trans 'Delete' %}
                     </button>
                     <!-- Add Grades Modal -->
-                    <div class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
+                    <div    
+                         class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
                          id="addGrades" 
                          tabindex="-1" 
                          role="dialog" 
                          aria-labelledby="exampleModalLabel" 
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
+                         aria-hidden="true"
+                        >
+                        <div 
+                             class="modal-dialog modal-dialog-centered" 
+                             role="document"
+                            >
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">{% trans 'Add Grades' %}</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <h5 class="modal-title">
+                                        {% trans 'Add Grades' %}
+                                    </h5>
+                                    <button 
+                                            type="button" 
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            aria-label="Close"
+                                           >
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -81,7 +99,9 @@
                                         {% for form in formset %}
                                             {% for field in form %}
                                                 {% for error in field.errors %}
-                                                    <p class="text-danger">- {{ field.label }}: {{ error }}</p>
+                                                    <p class="text-danger">
+                                                        - {{ field.label }}: {{ error }}
+                                                    </p>
                                                 {% endfor %}
                                             {% endfor %}
                                         {% endfor %}
@@ -102,7 +122,12 @@
                                                 <td>{% trans 'Grade' %}</td>
                                             </tr>
                                         </thead>
-                                        <form method="POST" action="{{ exam.get_absolute_url }}" id="submitGrades">
+                                        <form 
+                                              method="POST" 
+                                              action="{{ exam.get_absolute_url }}" 
+                                              id="submitGrades"
+                                             >
+                                            <input type="hidden" name="operation" value="sg">
                                             {{ formset.management_form }} 
                                             {% csrf_token %}
                                             <tbody>
@@ -116,21 +141,29 @@
                                                             <td>
                                                                 {{ form.id }}
                                                                 {{ form.grade }}
-                                                                <input type="hidden" 
+                                                                <input 
+                                                                       type="hidden" 
                                                                        name="{{ form.student.html_name }}" 
-                                                                       value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}">
-                                                                <input type="hidden" 
+                                                                       value="{{ exam.exam_class.student_class.all|return_student_pk:forloop.counter }}"
+                                                                      >
+                                                                <input 
+                                                                       type="hidden" 
                                                                        name="{{ form.exam.html_name }}" 
-                                                                       value="{{ exam.pk }}">
-                                                                <input type="hidden" 
+                                                                       value="{{ exam.pk }}"
+                                                                      >
+                                                                <input 
+                                                                       type="hidden" 
                                                                        name="{{ form.subject.html_name }}" 
-                                                                       value="{{ exam.subject.pk }}">
+                                                                       value="{{ exam.subject.pk }}"
+                                                                      >
                                                             </td>
                                                         </tr>
                                                     {% endfor %}
                                                     {% else %}
                                                     <tr>
-                                                        <td colspan="3" class="text-center">This class has no student yet.</td>
+                                                        <td colspan="3" class="text-center">
+                                                            This class has no student yet.
+                                                        </td>
                                                     </tr>
                                                 {% endif %}
                                             </tbody>
@@ -138,29 +171,47 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" 
+                                    <button 
+                                            type="button" 
                                             class="btn btn-secondary" 
-                                            data-dismiss="modal">{% trans 'Close' %}</button>
-                                    <button type="button" 
+                                            data-dismiss="modal"
+                                           >
+                                           {% trans 'Close' %}
+                                    </button>
+                                    <button 
+                                            type="button" 
                                             class="btn btn-primary" 
-                                            onclick="$('#submitGrades').submit()">{% trans 'Add' %}</button>
+                                            onclick="$('#submitGrades').submit()"
+                                           >
+                                           {% trans 'Add' %}
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
+                    <div 
+                         class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
                          id="deleteExam" 
                          tabindex="-1" 
                          role="dialog" 
                          aria-labelledby="exampleModalLabel" 
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
+                         aria-hidden="true"
+                        >
+                        <div 
+                             class="modal-dialog modal-dialog-centered" 
+                             role="document"
+                            >
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
                                         {% trans 'Delete Exam' %}
                                     </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button 
+                                            type="button" 
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            aria-label="Close"
+                                           >
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -173,11 +224,13 @@
                                             data-dismiss="modal">
                                         {% trans 'No' %}
                                     </button>
-                                    <a type="button" 
-                                       class="btn btn-danger text-white" 
-                                       href="{% url 'teachers:del-exam' exam.pk %}">
-                                       {% trans 'Yes' %}
-                                    </a>
+                                    <form action="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="operation" value="de">
+                                        <button type="submit" class="btn btn-danger">
+                                            {% trans 'Yes' %}
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -203,10 +256,22 @@
                         <thead class="thead-light">
                             <tr>
                                 <th scope="col" class="sort" data-sort="name"></th>
-                                <th scope="col" class="sort" data-sort="budget">{% trans 'Name' %}</th>
-                                <th scope="col" class="sort" data-sort="status">{% trans 'Grade' %}</th>
-                                <th scope="col">{% trans 'Student' %}</th>
-                                <th scope="col" class="sort" data-sort="completion">{% trans 'Performance' %}</th>
+                                <th scope="col" class="sort" data-sort="budget">
+                                    {% trans 'Name' %}
+                                </th>
+                                <th scope="col" class="sort" data-sort="status">
+                                    {% trans 'Grade' %}
+                                </th>
+                                <th scope="col">
+                                    {% trans 'Student' %}
+                                </th>
+                                <th 
+                                    scope="col" 
+                                    class="sort" 
+                                    data-sort="completion"
+                                   >
+                                   {% trans 'Performance' %}
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="list">
@@ -223,35 +288,39 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-dot mr-4">
-                                            <i class="bg-{{ grade.get_grade_percent|set_average_grade_color }}"></i>
+                                            <i class="bg-{{ grade.grade_percent|set_average_grade_color }}"></i>
                                             <span class="status">{{ grade.grade }}</span>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="avatar-group">
-                                            <a href="{{ grade.student.get_absolute_url_teachers }}" 
+                                            <a 
+                                               href="{{ grade.student.get_absolute_url_teachers }}" 
                                                class="avatar avatar-sm rounded-circle" 
                                                data-toggle="tooltip" 
-                                               data-original-title="{{ grade.student.user.name }}">
+                                               data-original-title="{{ grade.student.user.name }}"
+                                              >
                                                 <img 
                                                      alt="Image placeholder" 
                                                      src="{{ grade.student.user.get_picture_url }}"
                                                     >
-                                                >
                                             </a>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <span class="completion mr-2">{{ grade.get_grade_percent }}%</span>
+                                            <span class="completion mr-2">{{ grade.grade_percent }}%</span>
                                             <div>
                                                 <div class="progress">
-                                                    <div class="progress-bar bg-{{ grade.get_grade_percent|set_average_grade_color }}" 
+                                                    <div 
+                                                         class="progress-bar bg-{{ grade.grade_percent|set_average_grade_color }}" 
                                                          role="progressbar" 
                                                          aria-valuenow="60" 
                                                          aria-valuemin="0" 
                                                          aria-valuemax="100" 
-                                                         style="width: {{ grade.get_grade_percent }}%;"></div>
+                                                         style="width: {{ grade.grade_percent }}%;"
+                                                        >
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -260,7 +329,9 @@
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="5" class="text-center"><b>{% trans 'No grade is submitted yet.' %}</b></td>
+                                    <td colspan="5" class="text-center">
+                                        <b>{% trans 'No grade is submitted yet.' %}</b>
+                                    </td>
                                 </tr>
                             {% endif %}
                         </tbody>

@@ -1,14 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user_model, get_user
-from django.views.generic import View, TemplateView
-from django.shortcuts import get_object_or_404, render, redirect, get_list_or_404
+from django.contrib.auth import get_user_model
+from django.views.generic import View
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
-from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
-from allauth.account.views import PasswordChangeView
-from allauth.account.forms import ChangePasswordForm
-from allauth.account.admin import EmailAddress
 
 from functools import partial
 import logging
@@ -16,11 +11,10 @@ import logging
 from .forms import (CreateSchoolForm, CreateClassForm, EditOperationType,
                     ChangeTeacherDetails, EditClassForm, CreateSubjectForm,
                     StudentsClassForm)
-from mainapp.models import Class, Subject, Student, Article
+from mainapp.models import Class, Subject, Student
 from .models import School
 from teachers.models import Teacher
-from teachers.forms import ArticleForm
-from users.forms import BaseSignupForm, SupportStudentSignupForm, UserBioForm
+from users.forms import BaseSignupForm, SupportStudentSignupForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 logger = logging.getLogger(__name__)
@@ -80,7 +74,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/classes.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         try:
             school = School.objects.get(support=self.request.user)
             classes = Class.objects.filter(school=school).distinct()
@@ -91,7 +85,8 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
                 "classes": classes,
                 "form": form,
                 "segment": load_template,
-                "subjects_exist": subjects_exist
+                "subjects_exist": subjects_exist,
+                "nav_color": "bg-gradient-yellow",
             })
             return render(self.request, self.template_name, self.context)
         except School.DoesNotExist:
@@ -126,13 +121,14 @@ class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/classes_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         class_instance = get_object_or_404(Class, pk=kwargs.get("pk"))
         form = EditClassForm(instance=class_instance, request=self.request)
         self.context = {
             "class": class_instance,
             "form": form,
             "segment": load_template,
+            "nav_color": "bg-gradient-yellow",
         }
         return render(self.request, self.template_name, self.context)
 
@@ -178,14 +174,15 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
     context = dict()
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         school = get_object_or_404(School, support=self.request.user)
         teachers = Teacher.objects.filter(school=school).distinct()
         form = BaseSignupForm()
         self.context.update({
             "teachers": teachers,
             "form": form,
-            "segment": load_template
+            "segment": load_template,
+            "nav_color": "bg-gradient-green"
         })
         return render(self.request, self.template_name, self.context)
 
@@ -211,7 +208,7 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/teachers_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         teacher = get_object_or_404(Teacher, pk=kwargs.get("pk"))
         subjects = teacher.subject_teacher.all()
         classes = Class.objects.filter(
@@ -223,6 +220,7 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
             "subjects": subjects,
             "details_form": details_form,
             "segment": load_template,
+            "nav_color": "bg-gradient-green",
         })
         return render(self.request, self.template_name, self.context)
 
@@ -266,12 +264,13 @@ class SubjectsView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/subjects.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         self.context.update({
             "subjects": Subject.objects.filter(
                 teacher__school__support=self.request.user).distinct(),
             "form": CreateSubjectForm(request=self.request),
             "segment": load_template,
+            "nav_color": "bg-gradient-dark"
         })
         return render(self.request, self.template_name, self.context)
 
@@ -296,12 +295,13 @@ class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/subjects_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         subject = Subject.objects.get(pk=kwargs["pk"])
         self.context.update({
             "classes": subject.class_subjects.all(),
             "subject": subject,
             "segment": load_template,
+            "nav_color": "bg-gradient-dark",
         })
         return render(self.request, self.template_name, self.context)
     
@@ -327,13 +327,14 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/students.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         students = Student.objects.filter(
             student_class__school__support=self.request.user).distinct()
         self.context = {
             "form": SupportStudentSignupForm(request=self.request),
             "students": students,
             "segment": load_template,
+            "nav_color": "bg-gradient-default"
         }
         return render(self.request, self.template_name, self.context)
 
@@ -360,13 +361,14 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
     template_name = "dashboard/supports/students_detail.html"
 
     def get(self, *args, **kwargs):
-        load_template = self.request.path.split()[-1]
+        load_template = self.request.path.split("/")
         current_student = Student.objects.get(pk=kwargs.get("pk"))
         self.context.update({
             "student_spec_form": StudentsClassForm(
                 instance=current_student, request=self.request),
             "student": current_student,
             "segment": load_template,
+            "nav_color": "bg-gradient-default"
         })
         return render(self.request, self.template_name, self.context)
 
@@ -398,145 +400,3 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
 
 
 students_detail_view = StudentsDetailView.as_view()
-
-
-class ProfileView(PermissionAndLoginRequiredMixin, View):
-    permission_required = "supports.support"
-    template_name = "dashboard/supports/profile.html"
-    context = dict()
-
-    def get(self, args, **kwargs):
-        load_template = self.request.path.split()[-1]
-        classes = Class.objects.filter(
-            school__support=self.request.user).distinct()
-        students = Student.objects.filter(student_class__in=classes)
-        email_confirmed = EmailAddress.objects.filter(
-            user=self.request.user).distinct()
-        self.context.update({
-            "form": ChangePasswordForm(),
-            "classes_count": classes.count(),
-            "students_count": students.count(),
-            "segment": load_template,
-        })
-        if email_confirmed.exists():
-            self.context["email_confirmed"] = email_confirmed[0].verified
-        return render(self.request, self.template_name, self.context)
-
-    def post(self, *args, **kwargs):
-        operation_form = EditOperationType(self.request.POST)
-        if operation_form.is_valid():
-            operation = operation_form.cleaned_data.get("operation")
-        form = UserBioForm(self.request.POST)
-        if form.is_valid():
-            about = form.cleaned_data.get("about")
-            self.request.user.about = about
-            self.request.user.save()
-            messages.success(self.request, _("Bio was updated successfully."))
-            return redirect("supports:profile")
-        else:
-            messages.error(self.request, _("Provided inputs are invalid."))
-            self.context["form"] = form
-            return render(self.request, "dashboard/supports/profile.html",
-                          self.context)
-
-
-profile_view = ProfileView.as_view()
-
-
-class CustomPasswordChangeView(PermissionAndLoginRequiredMixin,
-                               PasswordChangeView):
-    permission_required = "supports.support"
-    template_name = "dashboard/supports/profile.html"
-    success_url = reverse_lazy("supports:profile")
-
-    def render_to_response(self, context, **response_kwargs):
-        classes = Class.objects.filter(school__support=self.request.user)
-        students = Student.objects.filter(student_class__in=classes).distinct()
-        context["classes_count"] = classes.count()
-        context["students_count"] = students.count()
-
-        if not self.request.user.has_usable_password():
-            return redirect("supports:profile")
-        return super().render_to_response(context, **response_kwargs)
-
-
-password_change_view = CustomPasswordChangeView.as_view()
-
-
-class ArticlesTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = "dashboard/supports/articles.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        school = School.objects.get(support=self.request.user)
-        context["articles"] = Article.objects.filter(school=school)
-        context["segment"] = self.request.path.split("/")
-        return context
-
-
-articles_template_view = ArticlesTemplateView.as_view()
-
-
-class AddArticleView(LoginRequiredMixin, View):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.template = "dashboard/supports/add_article.html"
-        self.context = dict()
-
-    def get(self, *args, **kwargs):
-        self.context.update({
-            "segment": self.request.path.split("/"),
-            "form": ArticleForm(),
-            "nav_color": "bg-gradient-danger",
-        })
-        return render(self.request, self.template, self.context)
-
-    def post(self, *args, **kwargs):
-        form = ArticleForm(self.request.POST)
-        user = get_user(self.request)
-        school = School.objects.get(support=self.request.user)
-        if form.is_valid():
-            unsaved_article = form.save(commit=False)
-            unsaved_article.author = user
-            unsaved_article.school = school
-            unsaved_article.save()
-            messages.success(self.request,
-                             _("Article submitted successfully."))
-            return redirect("teachers:articles")
-        else:
-            messages.error(self.request, _("Provided inputs are invalid."))
-            return redirect("teachers:articles")
-
-
-add_article_view = AddArticleView.as_view()
-
-
-class ArticleDetailView(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        self.template = "dashboard/supports/article_detail.html"
-        self.context = dict()
-
-    def get(self, *args, **kwargs):
-        article = Article.objects.get(pk=kwargs["pk"])
-        self.context.update({
-            "article": article,
-            "form": ArticleForm(instance=article),
-            "segment": self.request.path.split("/")
-        })
-        return render(self.request, self.template, self.context)
-
-
-article_detail_view = ArticleDetailView.as_view()
-
-
-class DeleteArticleView(LoginRequiredMixin, View):
-    def get(self, *args, **kwargs):
-        article = Article.objects.get(pk=kwargs["pk"])
-        if article.author == self.request.user:
-            article.delete()
-            return redirect("teachers:articles")
-        else:
-            raise PermissionDenied()
-
-
-delete_article_view = DeleteArticleView.as_view()

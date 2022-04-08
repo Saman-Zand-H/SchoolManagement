@@ -4,13 +4,12 @@ from django.contrib.messages import get_messages
 from django.utils.translation import activate
 
 import pytest
-from pytest_django.asserts import assertTemplateUsed, assertRedirects, assertRaisesMessage
+from pytest_django.asserts import assertTemplateUsed, assertRedirects
 from datetime import date
 
-from teachers.views import (DashboardView, ExamsListView, SetGradesView,
-                            DeleteExamView, ClassesView, StudentsView,
-                            StudentsDetailView, ProfileView,
-                            CustomPasswordChangeView)
+from teachers.views import (DashboardView, ExamsListView, 
+                            ClassesView, StudentsView,
+                            StudentsDetailView, ExamDetailView)
 from mainapp.models import Class, Subject, Exam, Student, Grade
 from supports.models import School
 from teachers.models import Teacher
@@ -236,7 +235,7 @@ def test_set_exam_grades_successful(client, teacher_1, class_1, subject_1,
 
     url = reverse("teachers:exams-detail", kwargs={"pk": exam.pk})
     assert url == exam.get_absolute_url()
-    assert resolve(url).func.__name__ == SetGradesView.__name__
+    assert resolve(url).func.__name__ == ExamDetailView.__name__
     response = client.get(url)
     assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/teachers/grades.html")
@@ -250,7 +249,8 @@ def test_set_exam_grades_successful(client, teacher_1, class_1, subject_1,
         "form-0-id": '',
         "form-0-grade": 0.0,
         "form-0-student": student_1.pk,
-        "form-0-exam": exam.pk
+        "form-0-exam": exam.pk,
+        "operation": "sg",
     }
     response = client.post(url, data)
     grade = Grade.objects.last()
@@ -277,6 +277,7 @@ def test_set_exam_grades_unsuccessful(client, teacher_1, exam_1, student_1):
 
     assert exam.grade_exam.count() == 0
     data = {
+        "operation": "sg",
         "form-TOTAL_FORMS": 1,
         "form-INITIAL_FORMS": 0,
         "form-MIN_NUM_FORMS": 0,
@@ -284,7 +285,7 @@ def test_set_exam_grades_unsuccessful(client, teacher_1, exam_1, student_1):
         "form-0-id": '',
         "form-0-grade": 21.0,  # Invalid input
         "form-0-student": student_1.pk,
-        "form-0-exam": exam.pk
+        "form-0-exam": exam.pk,
     }
     response = client.post(url, data)
     messages = [*get_messages(response.wsgi_request)]
@@ -308,16 +309,14 @@ def test_delete_exam(client, teacher_1, student_1, exam_1):
         "form-0-id": '',
         "form-0-grade": 0.0,
         "form-0-student": student_1.pk,
-        "form-0-exam": exam_1.pk
+        "form-0-exam": exam_1.pk,
+        "operation": "sg",
     }
     client.post(url, data)
     assert Grade.objects.count() == 1
+    
+    response = client.post(url, {"operation": "de"})
 
-    url = reverse("teachers:del-exam", kwargs={"pk": exam_1.pk})
-    assert url == f"/teacher/exams/{exam_1.pk}/del/"
-    assert resolve(url).func.__name__ == DeleteExamView.__name__
-
-    response = client.get(url)
     messages = [*get_messages(response.wsgi_request)]
 
     assert response.status_code == 302
@@ -357,44 +356,3 @@ def test_students_page(client, teacher_1, student_1):
     assert response.status_code == 200
     assert resolve(url).func.__name__ == StudentsDetailView.__name__
     assertTemplateUsed(response, "dashboard/teachers/students_detail.html")
-
-
-def test_profile_page(client, teacher_1):
-    client.force_login(teacher_1.user)
-
-    url = reverse("teachers:profile")
-    assert url == "/teacher/profile/"
-    assert resolve(url).func.__name__ == ProfileView.__name__
-
-    response = client.get(url)
-    assert response.status_code == 200
-    assertTemplateUsed(response, "dashboard/teachers/profile.html")
-
-    assert get_user(client).about == ""
-    response = client.post(url, {"about": "Hello from my Django world!"})
-    messages = [*get_messages(response.wsgi_request)]
-
-    assert response.status_code == 302
-    assertRedirects(response, url)
-    assert str(messages[-1]) == "Bio updated successfully."
-    assert get_user(client).about == "Hello from my Django world!"
-
-
-def test_change_password_successful(client, teacher_1):
-    client.force_login(teacher_1.user)
-
-    url = reverse("teachers:change-password")
-    assert url == "/teacher/profile/change-password/"
-    assert resolve(url).func.__name__ == CustomPasswordChangeView.__name__
-
-    data = {
-        "oldpassword": "test123456789",
-        "password1": "test123456",
-        "password2": "test123456"
-    }
-    response = client.post(url, data)
-    messages = [*get_messages(response.wsgi_request)]
-
-    assert response.status_code == 302
-    assertRedirects(response, reverse("teachers:profile"))
-    assert str(messages[-1]) == "Password successfully changed."
