@@ -1,3 +1,4 @@
+from functools import partial
 from django.views.generic import TemplateView, View
 from django.utils.translation import gettext as _
 from django.utils.translation import activate
@@ -14,8 +15,9 @@ import logging
 from typing import Any, Dict
 from smtplib import SMTPException
 
-from mainapp.models import School, Article
-from .forms import SupportForm, ArticleForm
+from mainapp.models import School, Article, Assignment
+from mainapp.mixins import PermissionAndLoginRequiredMixin
+from .forms import SupportForm, ArticleForm, AssignmentForm, OperationType
 from supports.forms import EditOperationType
 
 logger = logging.getLogger(__name__)
@@ -37,7 +39,7 @@ homepageview = HomePageView.as_view()
 
 class SupportView(View):
     def get(self, *args, **kwargs):
-        return render(self.request, "dashboard/support.html", {
+        return render(self.request, "accounts/support.html", {
             "form": SupportForm(),
             "segment": "support-page"
         })
@@ -102,7 +104,7 @@ def set_language(request):
 
 
 class ArticlesTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = "dashboard/articles.html"
+    template_name = "dashboard/articles/articles.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,7 +119,7 @@ articles_template_view = ArticlesTemplateView.as_view()
 
 
 class AddArticleView(LoginRequiredMixin, View):
-    template_name = "dashboard/add_article.html"
+    template_name = "dashboard/articles/add_article.html"
     context = dict()
 
     def get(self, *args, **kwargs):
@@ -148,7 +150,7 @@ add_article_view = AddArticleView.as_view()
 
 
 class ArticleDetailView(LoginRequiredMixin, View):
-    template_name = "dashboard/article_detail.html"
+    template_name = "dashboard/articles/article_detail.html"
     context = dict()
 
     def get(self, *args, **kwargs):
@@ -183,3 +185,88 @@ class ArticleDetailView(LoginRequiredMixin, View):
 
 
 article_detail_view = ArticleDetailView.as_view()
+
+
+class AssignmentsView(LoginRequiredMixin, View):
+    template_name = "dashboard/assignments/assignments.html"
+    context = dict()
+    
+    def get(self, *args, **kwargs):
+        assignment_instances = Assignment.objects.filter(
+            assignment_class__school=self.request.user.school).distinct()
+        self.context.update({
+            "nav_color": "bg-gradient-indigo",
+            "assignments": assignment_instances.order_by("-deadline"),
+            "segment": self.request.path.split("/"),
+        })
+        return render(self.request, self.template_name, self.context)
+
+
+assignments_view = AssignmentsView.as_view()
+
+
+class AddAssignmentView(PermissionAndLoginRequiredMixin, View):
+    permission_required = "teachers.teacher"
+    template_name = "dashboard/assignments/add_assignment.html"
+    context = dict()
+    
+    def get(self, *args, **kwargs):
+        self.context.update({
+            "nav_color": "bg-gradient-indigo",
+            "form": AssignmentForm(request=self.request),
+            "segment": self.request.path.split("/"),
+        })
+        return render(self.request, self.template_name, self.context)
+    
+    def post(self, *args, **kwargs):
+        form = AssignmentForm(data=self.request.POST, request=self.request)
+        if form.is_valid():
+            instance = form.save()
+            messages.success(self.request, _("Assignment saved successfully."))
+            return redirect(instance.get_absolute_url())
+        messages.error(self.request, _("Provided inputs are invalid."))
+        self.context.update({"form": form})
+        return render(self.request, self.template_name, self.context)
+            
+
+
+add_assignment_view = AddAssignmentView.as_view()
+
+
+class AssignmentDetailView(LoginRequiredMixin, View):
+    template_name = "dashboard/assignments/assignments_detail.html"
+    context = dict()
+    
+    def get(self, *args, **kwargs):
+        assignment = get_object_or_404(Assignment, pk=kwargs["pk"])
+        self.context.update({
+            "assignment": assignment.reversed(),
+            "form": AssignmentForm(request=self.request, instance=assignment),
+            "nav_color": "bg-gradient-indigo",
+            "segment": self.request.path.split("/"),
+        })
+        return render(self.request, self.template_name, self.context)
+    
+    def post(self, *args, **kwargs):
+        operation_form = OperationType(self.request.POST)
+        success_message = partial(messages.success, request=self.request)
+        error_message = partial(messages.error, request=self.request)
+        if operation_form.is_valid():
+            operation = operation_form.cleaned_data.get("operation")
+            match operation:
+                case "ea":
+                    assignment = get_object_or_404(Assignment, pk=kwargs["pk"])
+                    if assignment.subject.teacher.user == self.request.user:
+                        a_form = AssignmentForm(
+                            request=self.request, data=self.request.POST, instance=assignment)
+                        if a_form.is_valid():
+                            a_form.save()
+                            success_message(message=_("Assignment updated successfully."))
+                            return redirect(assignment.get_absolute_url())
+                        error_message(message=_("Provided inputs are invalid."))
+                        self.context.update({"form": a_form})
+                        return render(self.request, self.template_name, self.context)
+                    raise PermissionDenied("You are not the teacher of this assignment.")
+    
+    
+assignment_detail_view = AssignmentDetailView.as_view()

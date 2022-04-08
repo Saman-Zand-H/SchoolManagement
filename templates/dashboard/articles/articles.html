@@ -36,15 +36,17 @@
                         </ol>
                     </nav>
                 </div>
-                <div class="col-lg-12 col-md-12 col-5 text-right">
-                    <a 
-                       href="{% url 'home:add-article' %}" 
-                       class="btn btn-sm btn-neutral my-1"
-                      >
-                        <i class="fas fa-plus"></i>
-                        {% trans 'New' %}
-                    </a>
-                </div>
+                {% if user.user_type != "S" %}
+                    <div class="col-lg-12 col-md-12 col-5 text-right">
+                        <a 
+                        href="{% url 'home:add-article' %}" 
+                        class="btn btn-sm btn-neutral my-1"
+                        >
+                            <i class="fas fa-plus"></i>
+                            {% trans 'New' %}
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

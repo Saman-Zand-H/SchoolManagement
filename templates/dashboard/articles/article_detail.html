@@ -11,7 +11,7 @@
 {% block content %}
 
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header bg-gradient-info pb-6">
     <div class="container-fluid">
         <div class="header-body">
             <div class="row align-items-center py-4">
@@ -30,7 +30,7 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:home' %}">Dashboard</a>
+                                <a href="{{ user.get_dashboard_url }}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'home:articles' %}">Articles</a>

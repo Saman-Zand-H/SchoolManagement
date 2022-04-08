@@ -1,5 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import LoginForm, SignupForm, ResetPasswordForm, AddEmailForm
+from allauth.account.forms import (LoginForm, SignupForm, 
+                                   ResetPasswordForm, AddEmailForm)
 from django.utils.translation import gettext_lazy as _
 from django import forms
 
@@ -95,7 +96,7 @@ class BaseSignupForm(SignupForm):
 
     def save(self, request):
         user = super().save(request)
-        if self.cleaned_data.get("picture"):
+        if self.cleaned_data.get("picture") is not None:
             user.picture = self.cleaned_data.get("picture")
         user.user_type = self.cleaned_data.get("user_type")
         user.first_name = self.cleaned_data.get("first_name")
@@ -116,11 +117,7 @@ class CustomSignUpAdapter(DefaultAccountAdapter):
 
 class CustomLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
-        self.error_messages.update({
-            "students_not_allowed":
-            "Sorry. We don't support students currently.",
-        })
-        super(CustomLoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["login"] = forms.CharField(
             max_length=20,
             min_length=2,
@@ -140,18 +137,6 @@ class CustomLoginForm(LoginForm):
             }),
         )
 
-    def clean(self):
-        super().clean()
-        if self.user:
-            if self.user.user_type == "S":
-                logger.info(
-                    f"A student with id {self.user.username} was trying to sign in."
-                )
-                raise forms.ValidationError(
-                    self.error_messages["students_not_allowed"],
-                    code="students_not_allowed")
-        return self.cleaned_data
-
 
 class CustomPasswordResetForm(ResetPasswordForm):
     def __init__(self, *args, **kwargs):
@@ -168,12 +153,13 @@ class CustomPasswordResetForm(ResetPasswordForm):
 class CustomAddEmailForm(AddEmailForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["email"] = forms.EmailField(widget=forms.EmailInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": _("e.g. example@example.com")
-            }),
-                                                label=_("E-Mail Address"))
+        self.fields["email"] = forms.EmailField(
+            widget=forms.EmailInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": _("e.g. example@example.com")
+                }),
+            label=_("E-Mail Address"))
 
 class SupportStudentSignupForm(BaseSignupForm):
     student_class = forms.ModelChoiceField(
@@ -182,11 +168,12 @@ class SupportStudentSignupForm(BaseSignupForm):
     )
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
-        if request is not None:
+        request = kwargs.pop("request")
+        if hasattr(request, "user"):
             self.fields["student_class"].queryset = Class.objects.filter(
-                school__support=request.user)
+                school__support=getattr(request.user, "school"))
+        raise 
 
 
 class UserBioForm(forms.Form):

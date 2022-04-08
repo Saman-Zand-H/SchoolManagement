@@ -25,8 +25,8 @@ logger = getLogger(__name__)
 
 
 def get_charts_labels_ready():
-    eight_months_chart_time = date.today() - relativedelta(months=3)
-    six_months_chart_time = date.today() - relativedelta(months=2)
+    eight_months_chart_time = date.today() - relativedelta(months=4)
+    six_months_chart_time = date.today() - relativedelta(months=3)
     eight_months_chart_months = [
         eight_months_chart_time + relativedelta(months=i) for i in range(8)]
     six_months_chart_months = [

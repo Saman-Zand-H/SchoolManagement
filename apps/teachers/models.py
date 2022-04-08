@@ -50,16 +50,26 @@ class Teacher(models.Model):
                 average_percents = [float(exam.average_grade_percent) for exam in exams]
                 average_percent = round(mean(average_percents), 2)
             else:
-                average_percent = None
+                average_percent = 0
             percents.append(average_percent)
         return percents
 
     @property
     def average_percent_six_months(self):
-        if self.percents_six_months is not None:
-            return round(mean(
-                [*filter(partial(is_not, None), self.percents_six_months)]), 2)
-        return 0
+        percents = []
+        init_month = date.today() - relativedelta(months=3)
+        for i in range(6):
+            timestamp = init_month + relativedelta(months=i)
+            exams = self.exam_teacher.filter(
+                Q(timestamp__year=timestamp.year) & Q(timestamp__month=timestamp.month))
+            if exams.exists():
+                average_percents = [
+                    float(exam.average_grade_percent) for exam in exams]
+                average_percent = round(mean(average_percents), 2)
+            else:
+                average_percent = None
+            percents.append(average_percent)
+        return mean(percents) if percents else 0
     
     def clean(self):
         super().clean()

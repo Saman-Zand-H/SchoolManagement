@@ -1,6 +1,7 @@
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.templatetags.static import static
+from django.urls import reverse
 from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -140,6 +141,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["user_type"]
 
     objects = CustomManager()
+    
+    class Meta:
+        verbose_name = "User Model"
+        verbose_name_plural = "User Model"
 
     def get_absolute_url(self):
         return f"/users/{self.pk}/"
@@ -149,13 +154,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     @classmethod
     def get_index_name(cls):
-        return get_adapter(cls).index_name
+        return getattr(get_adapter(cls), "index_name")
 
     def __str__(self):
         return self.username
     
     def is_not_principal(self):
         return self.user_type != "SS"
+    
+    def get_dashboard_url(self):
+        match self.user_type:
+            case "T":
+                return reverse("teachers:home")
+            case "SS":
+                return reverse("supports:home")
+            case "S":
+                return reverse("students:home")
     
     @property
     def owned_groups(self):

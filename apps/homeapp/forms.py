@@ -2,7 +2,15 @@ from django.utils.translation import gettext_lazy as _
 from django import forms
 from ckeditor.widgets import CKEditorWidget
 
-from mainapp.models import Article
+from mainapp.models import Article, Assignment, Subject, Class
+
+
+class OperationType(forms.Form):
+    choices = (
+        ("ea", "Edit assignment"),
+        
+    )
+    operation = forms.ChoiceField(choices=choices, required=False)
 
 
 class SupportForm(forms.Form):
@@ -49,3 +57,22 @@ class ArticleForm(forms.ModelForm):
             },
                 extra_plugins="mathjax"),
         }
+
+
+class AssignmentForm(forms.ModelForm):
+    class Meta:
+        model = Assignment
+        exclude = ["timestamp"]
+        widgets = {
+            "deadline": forms.DateInput(attrs={
+                "class": "datepicker",
+            })
+        }
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = getattr(request, "user")
+        self.fields.get("assignment_class").queryset = Class.objects.filter(
+            subjects__teacher__user=user)
+        self.fields.get("subject").queryset = Subject.objects.filter(
+            teacher__user=user)

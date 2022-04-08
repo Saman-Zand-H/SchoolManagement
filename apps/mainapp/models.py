@@ -4,7 +4,6 @@ from django.db.models import Avg
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import gettext_noop
 from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField
 
@@ -32,6 +31,9 @@ class Student(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    def __repr__(self):
+        return f"<Student: {self.user.username}>"
 
     def get_absolute_url_supports(self):
         return reverse("supports:students-detail", kwargs={"pk": self.pk})
@@ -39,16 +41,34 @@ class Student(models.Model):
     def get_absolute_url_teachers(self):
         return reverse("teachers:students-detail", kwargs={"pk": self.pk})
     
+    @property
+    def average_grade_percent(self):
+        return mean([
+            grade.grade_percent for grade 
+            in self.grade_user.all()
+        ]) if self.grade_user.exists() else 0
+    
+    def _average_grade_percent_during_a_month(self, date_time):
+        filter_month = date_time.month
+        filter_year = date_time.year
+        grades = self.grade_user.filter(exam__timestamp__month=filter_month,
+                                       exam__timestamp__year=filter_year)
+        percents = [grade.grade_percent for grade in grades]
+        return round(mean(percents)) if grades.exists() else 0
+    
+    def average_grade_percent_during_eigth_months(self): 
+        init_date = date.today() - relativedelta(months=4)
+        percents = []
+        for i in range(8):
+            month = init_date + relativedelta(months=i)
+            percent = self._average_grade_percent_during_a_month(month)
+            percents.append(percent)
+        return percents
+        
     def clean(self):
         super().clean()
         if self.user.user_type != "S":
-            logger.error(
-                gettext_noop(
-                    "A non-student typed user was being used as a student."))
-            raise ValidationError(
-                gettext_noop(
-                    "{} is not a student. User must be typed as a student.").
-                format(self.user.name))
+            raise ValidationError({"user": "User is not a student."})
 
 
 class Subject(models.Model):
@@ -59,6 +79,9 @@ class Subject(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.teacher}"
+    
+    def __repr__(self):
+        return f"<Subject: ({self.teacher.user.username}-{self.name})>"
 
     def get_absolute_url(self):
         return reverse("supports:subjects-detail", kwargs={"pk": self.pk})
@@ -86,6 +109,9 @@ class Grade(models.Model):
 
     def __str__(self):
         return f"{self.student}, {self.exam.subject}"
+    
+    def __repr__(self):
+        return f"<Grade: {self.student.user.username}>"
 
     @property
     def grade_percent(self):
@@ -129,6 +155,9 @@ class Exam(models.Model):
     def __str__(self):
         return f"{self.teacher}, {self.subject}"
 
+    def __repr__(self):
+        return f"<Exam: ({self.teacher.user.username}-{self.subject.name})>"
+
     def get_absolute_url(self):
         return reverse(
             "teachers:exams-detail", kwargs={"pk": self.pk})
@@ -143,6 +172,9 @@ class Class(models.Model):
 
     def __str__(self):
         return self.class_id
+    
+    def __repr__(self):
+        return f"<Class: {self.class_id}>"
 
     @property
     def average_grade_percent(self):
@@ -198,3 +230,42 @@ class Article(models.Model):
 
     def __str__(self):
         return f"{self.author}: {self.title}"
+    
+    def __repr__(self):
+        return f"<Article: ({self.title}-{self.author.username})>"
+
+
+class Assignment(models.Model):
+    assignment_class = models.ForeignKey(
+        Class,
+        on_delete=models.CASCADE,
+        related_name="assignment_class",
+    )
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE,
+        related_name="assignment_subject",
+    )
+    body = RichTextField()
+    deadline = models.DateField()
+    timestamp = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.assignment_class.class_id}-{self.subject.name}"
+    
+    def __repr__(self):
+        return f"<Assignment: \
+            ({self.assignment_class.class_id}-{self.subject.name})>"
+            
+    def reversed(self):
+        return self.objects.order_by('-deadline')
+            
+    def get_absolute_url(self):
+        return reverse("home:assignment-detail", kwargs={"pk": self.pk})
+    
+            
+    def clean(self):
+        super().clean()
+        if not self.subject in self.assignment_class.subjects.all():
+            raise ValidationError({"subject": _("Subject must be in class.")},
+                                  code="invalid_subject")
