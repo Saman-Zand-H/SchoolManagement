@@ -67,9 +67,9 @@ class Teacher(models.Model):
                     float(exam.average_grade_percent) for exam in exams]
                 average_percent = round(mean(average_percents), 2)
             else:
-                average_percent = None
+                continue
             percents.append(average_percent)
-        return mean(percents) if percents else 0
+        return mean(percents or [0])
     
     def clean(self):
         super().clean()

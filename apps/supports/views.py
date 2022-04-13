@@ -14,7 +14,7 @@ from .forms import (CreateSchoolForm, CreateClassForm, EditOperationType,
 from mainapp.models import Class, Subject, Student
 from .models import School
 from teachers.models import Teacher
-from users.forms import BaseSignupForm, SupportStudentSignupForm
+from users.forms import SupportSignupForm, SupportStudentSignupForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 logger = logging.getLogger(__name__)
@@ -177,7 +177,7 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("/")
         school = get_object_or_404(School, support=self.request.user)
         teachers = Teacher.objects.filter(school=school).distinct()
-        form = BaseSignupForm()
+        form = SupportSignupForm(self.request, initial={"user_type": "SS"})
         self.context.update({
             "teachers": teachers,
             "form": form,
@@ -187,7 +187,7 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
         return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        form = BaseSignupForm(self.request.POST, self.request.FILES)
+        form = SupportSignupForm(self.request, self.request.POST, self.request.FILES)
         if form.is_valid():
             school = School.objects.get(support=self.request.user)
             user = form.save(self.request)
@@ -195,6 +195,8 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
             messages.success(self.request, _("Teacher created successfully."))
             return redirect("supports:teachers")
         self.context["form"] = form
+        logger.error(f"An error occurred while {self.request.user.username} was"
+                     f" trying to create a teacher: {form.errors}")
         messages.error(self.request, _("Provided inputs are invalid."))
         return render(self.request, self.template_name, self.context)
 
@@ -240,10 +242,12 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
                         success_message(message=_("Changes saved successfully."))
                         return redirect(
                             "supports:teachers-detail", pk=kwargs.get("pk"))
+                    logger.error(f"An error occurred while {self.request.user.username}"
+                                  " was trying to edit teacher details: {details_form.errors}")
                     self.context["details_form"] = details_form
-                    error_message(message=_("Invalid inputs detected. Consider\
-                            that empty inputs are not allowed."
-                        ))
+                    error_message(message=_("Invalid inputs detected. Consider"
+                                            "that empty inputs are not allowed."
+                    ))
                     return render(self.request, self.template_name, self.context)
                 case "dt":
                     teacher = get_object_or_404(
@@ -339,7 +343,9 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
         return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        form = SupportStudentSignupForm(self.request.POST, self.request.FILES)
+        form = SupportStudentSignupForm(data=self.request.POST, 
+                                        files=self.request.FILES, 
+                                        request=self.request)
         if form.is_valid():
             chosen_class_id = form.cleaned_data.get("student_class").id
             chosen_class = get_object_or_404(Class, pk=chosen_class_id)
@@ -348,6 +354,8 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
             messages.success(self.request, _("Student created successfully."))
             return redirect("supports:students")
         self.context["form"] = form
+        logger.error(f"An error occured when user {self.request.user.username}"
+                     f" tried to sign up a student: {form.errors}")
         messages.error(self.request, _("Provided inputs are invalid."))
         return render(self.request, self.template_name, self.context)
 

@@ -157,7 +157,7 @@ class ChatsTest(ChannelsLiveServerTestCase):
         ).get_property("textContent")
 
     def _is_marked_as_read(self, driver, message_id):
-        time.sleep(3)
+        time.sleep(5)
         mark = driver.find_element_by_id(f"read_{message_id}")
         un_mark = driver.find_element_by_id(f"unread_{message_id}")
         return mark.is_displayed() and not un_mark.is_displayed()

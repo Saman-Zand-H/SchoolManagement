@@ -29,7 +29,8 @@
                 <div class="col-1 offset-2">
                     <span class="avatar avatar-sm rounded-circle">
                         <img 
-                             alt="Profile Picture" 
+                             alt="Profile Picture"
+                             style="width: 36px; height: 36px;" 
                              src="{{ chatgroup|get_group_photo:user }}"
                             >
                     </span>
@@ -58,6 +59,7 @@
                                     <span class="avatar avatar-lg rounded-circle border border-dark">
                                             <img 
                                                  alt="Group picture" 
+                                                 style="width: 56px; height: 56px;"
                                                  src="{{ chatgroup|get_group_photo:user }}"
                                                 >
                                     </span><br>
@@ -160,6 +162,7 @@
                                                         <span class="avatar avatar-sm rounded-circle ml-1">
                                                             <img 
                                                                  alt="Profile picture"
+                                                                 style="width: 36px; height: 36px;"
                                                                  src="{{ member.user.get_picture_url }}"
                                                                 >
                                                         </span>
@@ -242,10 +245,8 @@
                             {% else %}
                                 <h5>{{ message.author.name }}</h5>
                             {% endif %}
-                            
                             <small>{{ message.date_written }}</small>
                             <p class="text-lighter">{{ message.body }}</p>
-
                             {% if message.author == user %}
                                 <div class="text-right">
                                     <small class="small">
@@ -445,6 +446,7 @@
                                 <h5 class="text-success">
                                     <strong>YOU</strong>
                                 </h5>
+                                <small>${data.date_written}</small>
                                 <p class="text-light">${data.body}</p>
                                 <div class="text-right">
                                     <small class="small">
@@ -470,6 +472,7 @@
                                 <h5>
                                     <strong>${data.sender}</strong>
                                 </h5>
+                                <small>${data.date_written}</small>
                                 <p class="text-light">${data.body}</p>
                             </li>`
                         );  

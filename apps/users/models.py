@@ -130,15 +130,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         upload_to="media",
         validators=[validate_file_size])
     about = models.TextField(blank=True, default="")
-    is_superuser = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False, blank=True)
+    is_staff = models.BooleanField(default=False, blank=True)
+    is_active = models.BooleanField(default=True, blank=True)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS = ["user_type"]
+    REQUIRED_FIELDS = ["user_type", "first_name", "last_name"]
 
     objects = CustomManager()
     
@@ -177,7 +177,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     @property
     def get_picture_url(self):
-        return self.picture.url if self.picture else static("empty-profile.jpg")
+        return self.picture.url if self.picture else static(
+            "assets/img/icons/empty-profile.jpg")
     
     @property
     def school(self):

@@ -93,10 +93,10 @@ class ChatPageView(LoginRequiredMixin, View):
         
     def get(self, *args, **kwargs):
         loadTemplate = self.request.path.split()[-1]
-        chatgroup = ChatGroup.objects.get(group_id=self.kwargs["group_id"])
+        chatgroup = get_object_or_404(ChatGroup, group_id=self.kwargs["group_id"])
         other_user = None
         # if the room is a private message room, show the other
-        # endpoint's bio 
+        # endpoint user's bio 
         if chatgroup.is_pm:
             other_user = chatgroup.member_chatgroup.exclude(
                 user=self.request.user).first().user.about

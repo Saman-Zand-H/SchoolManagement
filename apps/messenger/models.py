@@ -18,8 +18,7 @@ def generate_group_id(length=12):
 class ChatGroup(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     photo = models.ImageField(
-        upload_to="media",
-        default="empty-profile.jpg",
+        null=True,
         blank=True,
         validators=[validate_file_size, validate_file_extension],
     )
@@ -69,7 +68,7 @@ class ChatGroup(models.Model):
             return the_other_member.user.get_picture_url
         else:
             return self.photo.url if self.photo else static(
-                "empty-profile.jpg")
+                "assets/img/icons/empty-profile.jpg")
 
     def is_marked_as_unread(self):
         if self.message_chatgroup.filter(seen=False).exists():

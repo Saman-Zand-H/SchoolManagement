@@ -11,130 +11,135 @@
 
 <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white mt-3">
     <div class="list-group list-group-flush border-bottom scrollarea">
-        <li class="list-group-item text-right">
-            {% if is_support %}
-                <button 
-                        type="button" 
-                        data-toggle="modal" 
-                        data-target="#new-group" 
-                        class="btn btn-outline-dark"
-                        id="create-group-modal-button"
-                    >
-                    <i class="fas fa-plus"></i> Start a new group
-                </button>
-                <!-- New Grop Modal -->
-                <div 
-                     class="modal fade"
-                     id="new-group"
-                     tabindex="-1"
-                     role="dialog"
-                    >
-                    <div 
-                         class="modal-dialog modal-dialog-centered" 
-                         role="document"
-                        >
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">
-                                    {% trans "Start a new group" %}
-                                </h5>
-                                <button 
-                                        type="button" 
-                                        class="close" 
-                                        data-dismiss="modal" 
-                                        aria-label="Close"
-                                       >
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="mt-2 mb-4 mx-auto text-left">
-                                <form method="post" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    {{ group_form|crispy }}
-                                    <input name="conversation_type" value="group" type="hidden">
-                                    <button 
-                                            class="btn btn-success" 
-                                            type="submit" 
-                                            id="create-group-button"
-                                           >
-                                        Create
-                                    </button>
-                                </form>
+        <li class="list-group-item align-content-start">
+            <div class="row">
+                {% if is_support %}
+                    <div class="col-3 offset-5 offset-lg-6">
+                        <button 
+                                type="button" 
+                                data-toggle="modal" 
+                                data-target="#new-group" 
+                                class="btn btn-outline-dark"
+                                id="create-group-modal-button"
+                            >
+                            <i class="fas fa-plus"></i> Start a group
+                        </button>
+                        <!-- New Grop Modal -->
+                        <div 
+                            class="modal fade"
+                            id="new-group"
+                            tabindex="-1"
+                            role="dialog"
+                            >
+                            <div 
+                                class="modal-dialog modal-dialog-centered" 
+                                role="document"
+                                >
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">
+                                            {% trans "Start a new group" %}
+                                        </h5>
+                                        <button 
+                                                type="button" 
+                                                class="close" 
+                                                data-dismiss="modal" 
+                                                aria-label="Close"
+                                            >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2 mb-4 mx-auto text-left">
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            {{ group_form|crispy }}
+                                            <input name="conversation_type" value="group" type="hidden">
+                                            <button 
+                                                    class="btn btn-success" 
+                                                    type="submit" 
+                                                    id="create-group-button"
+                                                   >
+                                                Create
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
-            <button 
-                    type="button" 
-                    data-toggle="modal" 
-                    data-target="#new-conversation" 
-                    class="btn btn-outline-dark"
-                    id="create-conversation-modal-button"
-                >
-                <i class="fas fa-plus"></i> Start a new conversation
-            </button>
-            <!-- New Conversation Modal -->
-            <div 
-                 class="modal fade"
-                 id="new-conversation"
-                 tabindex="-1"
-                 role="dialog"
-                >
-                <div 
-                     class="modal-dialog modal-dialog-centered" 
-                     role="document"
-                    >
-                    <div class="modal-content w-75 mx-auto" id="modal-content-conversation">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                {% trans "Start a new conversation" %}
-                            </h5>
-                            <button 
-                                    type="button" 
-                                    class="close" 
-                                    data-dismiss="modal" 
-                                    aria-label="Close"
-                                   >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="mt-2 mb-4 mx-auto text-left">
-                            <input 
-                                   type="text" 
-                                   class="form-control" 
-                                   id="search-username" 
-                                   autocorrect="false"
-                                   autocomplete="off"
-                                   spellcheck="false"
-                                   placeholder="enter the user's username..."
-                                  >
-                            <form method="post">
-                                {% csrf_token %}
-                                <input name="conversation_type" value="pm" type="hidden">
-                                <div class="text-center text-danger">
-                                    <small id="no-hits"></small>
+                {% endif %}
+                <div class="col-3">
+                    <button 
+                            type="button" 
+                            data-toggle="modal" 
+                            data-target="#new-conversation" 
+                            class="btn btn-outline-dark"
+                            id="create-conversation-modal-button"
+                        >
+                        <i class="fas fa-plus"></i> Start a conversation
+                    </button>
+                    <div 
+                        class="modal fade"
+                        id="new-conversation"
+                        tabindex="-1"
+                        role="dialog"
+                        >
+                        <div 
+                            class="modal-dialog modal-dialog-centered" 
+                            role="document"
+                            >
+                            <div class="modal-content w-75 mx-auto" id="modal-content-conversation">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        {% trans "Start a new conversation" %}
+                                    </h5>
+                                    <button 
+                                            type="button" 
+                                            class="close" 
+                                            data-dismiss="modal" 
+                                            aria-label="Close"
+                                        >
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                                <div class="table-responsive my-3">
-                                    <table class="table align-items-center" id="hits-table">
-                                        <thead class="thead-light" d="hits-thead">
-                                            <tr>
-                                                <th class="col-1"></th>
-                                                <th>Name</th>
-                                                <th>Username</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="hits"></tbody>
-                                    </table>
+                                <div class="mt-2 mb-4 mx-auto text-left">
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="search-username" 
+                                        autocorrect="false"
+                                        autocomplete="off"
+                                        spellcheck="false"
+                                        placeholder="enter the user's username..."
+                                        >
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input name="conversation_type" value="pm" type="hidden">
+                                        <div class="text-center text-danger">
+                                            <small id="no-hits"></small>
+                                        </div>
+                                        <div class="table-responsive my-3">
+                                            <table class="table align-items-center" id="hits-table">
+                                                <thead class="thead-light" d="hits-thead">
+                                                    <tr>
+                                                        <th class="col-1"></th>
+                                                        <th>Name</th>
+                                                        <th>Username</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="hits"></tbody>
+                                            </table>
+                                        </div>
+                                        <button 
+                                                class="btn btn-success" 
+                                                id="create-conversation-button" 
+                                                type="submit"
+                                            >
+                                            Start
+                                        </button>
+                                    </form>
                                 </div>
-                                <button 
-                                        class="btn btn-success" 
-                                        id="create-conversation-button" 
-                                        type="submit"
-                                       >
-                                    Start
-                                </button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,6 +159,7 @@
                                 <span class="avatar avatar-sm rounded-circle">
                                     <img 
                                          alt="Profile Picture" 
+                                         style="width: 36px; height: 36px;"
                                          src="{{ membership.chatgroup|get_group_photo:user }}"
                                     >
                                 </span>

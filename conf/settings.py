@@ -202,7 +202,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'formatter': 'console',
-            'filename': 'logger.log'
+            'filename': 'logs/app/app.log'
         }
     },
     'loggers': {
@@ -226,7 +226,8 @@ STATICFILES_FINDERS = (
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(CORE_DIR, "media")
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -316,12 +317,13 @@ CKEDITOR_CONFIGS = {
 
 
 # Channels
+REDIS_HOST = env.str("REDIS_HOST", "redis_server")
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [
-                ("redis_server", 6379),
+                (REDIS_HOST, 6379),
             ],
         },
     },

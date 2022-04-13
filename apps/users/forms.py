@@ -1,3 +1,4 @@
+from random import choices
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import (LoginForm, SignupForm, 
                                    ResetPasswordForm, AddEmailForm)
@@ -6,8 +7,8 @@ from django import forms
 
 import logging
 
-from .models import USER_TYPE_CHOICES
 from mainapp.models import Class
+
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,11 @@ def validate_file_size(file):
 
 
 class BaseSignupForm(SignupForm):
+    USER_TYPE_CHOICES = (
+        ("S", "student"),
+        ("T", "teacher"),
+        ("SS", "support staff"),
+    )
     first_name = forms.CharField(
         max_length=254,
         min_length=2,
@@ -46,7 +52,6 @@ class BaseSignupForm(SignupForm):
             "class": "form-control",
             "placeholder": _("enter your last name"),
         }))
-    user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES, required=False)
     picture = forms.ImageField(
         required=False,
         label=_("Avatar Picture"),
@@ -54,65 +59,49 @@ class BaseSignupForm(SignupForm):
         widget=forms.ClearableFileInput(attrs={
             "class": "form-control",
         }))
-
-    def __init__(self, *args, **kwargs):
+    user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES,
+                                  widget=forms.HiddenInput,
+                                  required=False)
+    
+    def __init__(self,request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"] = forms.CharField(
-            max_length=20,
-            min_length=2,
-            label=_("ID"),
-            widget=forms.TextInput(attrs={
-                "class": "form-control",
-                "placeholder": _("User ID"),
-            }),
-        )
+        self.request = request
+        self.fields["username"].widget = forms.TextInput(attrs={
+            "placeholder": _("enter your username"),
+            "class": "form-control",
+            "id": "username",
+        })
+        self.fields["password1"].widget = forms.PasswordInput(attrs={
+            "placeholder": _("enter your password"),
+            "class": "form-control",
+            "id": "password1",
+        })
+        self.fields["password2"].widget = forms.PasswordInput(attrs={
+            "placeholder": _("enter your password again"),
+            "class": "form-control",
+            "id": "password2",
+        })
         self.fields["email"] = forms.EmailField(
             widget=forms.EmailInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": _("e.g. example@example.com"),
                 }),
+            
             label=_("E-Mail Address"),
             required=False,
         )
-        self.fields["password1"] = forms.CharField(
-            max_length=20,
-            min_length=2,
-            label=_("Password"),
-            widget=forms.PasswordInput(attrs={
-                "class": "form-control",
-                "placeholder": _("Password"),
-            }),
-        )
-        self.fields["password2"] = forms.CharField(
-            max_length=20,
-            min_length=2,
-            label=_("Confirm Password"),
-            widget=forms.PasswordInput(attrs={
-                "class": "form-control",
-                "placeholder": _("Confirm Password"),
-            }),
-        )
-
-    def save(self, request):
-        user = super().save(request)
-        if self.cleaned_data.get("picture") is not None:
-            user.picture = self.cleaned_data.get("picture")
-        user.user_type = self.cleaned_data.get("user_type")
-        user.first_name = self.cleaned_data.get("first_name")
-        user.last_name = self.cleaned_data.get("last_name")
-        user.save()
-        return user
-
+    
 
 class CustomSignUpAdapter(DefaultAccountAdapter):
-    def clean_username(self, username, shallow=False):
-        try:
-            super().clean_username(username, shallow=shallow)
-        except forms.ValidationError:
-            raise forms.ValidationError(_("This ID already exists."),
-                                        code="indistinct_username")
-        return username
+    
+    def save_user(self, request, user, form, commit=True):
+        from allauth.account.utils import user_field
+        data = form.cleaned_data
+        user_field(user, "picture", data.get("picture"))
+        user_field(user, "user_type", data.get("user_type"))
+        user = super().save_user(request, user, form, commit)
+        return user
 
 
 class CustomLoginForm(LoginForm):
@@ -167,13 +156,26 @@ class SupportStudentSignupForm(BaseSignupForm):
         to_field_name="id",
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        request = kwargs.pop("request")
-        if hasattr(request, "user"):
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(request, *args, **kwargs)
+        if self.request is not None:
             self.fields["student_class"].queryset = Class.objects.filter(
-                school__support=getattr(request.user, "school"))
-        raise 
+                school=self.request.user.school)
+        else:
+            self.fields["student_class"].queryset = Class.objects.none() 
+            
+    def clean(self):
+        if self.cleaned_data.get("user_type") != "S":
+            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+        return super().clean()
+
+
+class SupportSignupForm(BaseSignupForm):    
+    
+    def clean(self):
+        if self.cleaned_data.get("user_type") != "SS":
+            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+        return super().clean()
 
 
 class UserBioForm(forms.Form):

@@ -1,4 +1,4 @@
 .env
 todo.txt
 .dockerignore
-logger.log
+logs/*

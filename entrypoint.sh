@@ -14,7 +14,8 @@ fi
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput 
 python manage.py compilemessages
-
-# gunicorn conf.wsgi -b 0.0.0.0:80
+python manage.py algolia_applysettings
+python manage.py algolia_reindex
+daphne -b 0.0.0.0 -p 8000 conf.asgi:application
 
 exec "$@"

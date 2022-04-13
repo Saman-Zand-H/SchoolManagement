@@ -63,6 +63,7 @@ class MessengerConsumer(AsyncConsumer):
                         "sender_username": self.sender.username,
                         "type": "msg",
                         "message_id": message.message_id.hex,
+                        "date_written": message.date_written.strftime("%B %d, %Y, %I:%M %p"),
                     })
                     await self.channel_layer.group_send(
                         self.group_name, 

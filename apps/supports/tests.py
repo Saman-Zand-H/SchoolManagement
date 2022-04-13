@@ -5,10 +5,11 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 import pytest
 from pytest_django.asserts import (assertRedirects, assertTemplateNotUsed,
-                                   assertTemplateUsed)
+                                   assertTemplateUsed, assertFormError)
 import pathlib
 
 from mainapp.models import Class, Subject, Student
+from users.forms import SupportStudentSignupForm
 from supports.views import (CreateSchoolView, HomeView, ClassesView,
                             ClassesDetailView, SubjectsView,
                             SubjectsDetailView, TeachersView,
@@ -363,7 +364,8 @@ def test_create_teacher_successful(client, school_1):
     assert response.status_code == 200
     assertTemplateUsed(response, "dashboard/supports/teachers.html")
 
-    picture_path = pathlib.Path.cwd() / "static" / "empty-profile.jpg"
+    picture_path = pathlib.Path.cwd() / "static" /\
+        "assets" / "img" / "icons" / "empty-profile.jpg"
     data = {
         "username": "test_created_teacher",
         "first_name": "first_name",
@@ -371,9 +373,7 @@ def test_create_teacher_successful(client, school_1):
         "password1": "test123456",
         "password2": "test123456",
         "user_type": "T",
-        "picture": SimpleUploadedFile(name='empty-profile.jpg',
-                                      content=open(picture_path, 'rb').read(),
-                                      content_type='image/jpeg'),
+        "profile_picture": picture_path,
     }
     response = client.post(url, data)
     created_teacher = Teacher.objects.last()

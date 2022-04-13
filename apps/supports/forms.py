@@ -53,14 +53,17 @@ class EditClassForm(forms.ModelForm):
                     "placeholder": _("A unique identifier for class"),
                 }),
         )
+        
         if self.request is not None:
+            user = getattr(self.request, "user")
             self.fields["subjects"] = forms.ModelMultipleChoiceField(
                 widget=forms.CheckboxSelectMultiple(),
                 required=False,
                 label=_("Courses"),
                 queryset=Subject.objects.filter(
-                    teacher__school__support=self.request.user),
-                to_field_name="pk")
+                    teacher__school__support=user).distinct(),
+                to_field_name="pk",
+            )
         else:
             self.fields["subjects"] = forms.ModelMultipleChoiceField(
                 queryset=Subject.objects.none(),
@@ -106,14 +109,15 @@ class SelectClassesForm(forms.Form):
         Class.objects.all(),
         to_field_name="id",
         widget=forms.CheckboxSelectMultiple(),
-        label=_("Classes"))
+        label=_("Classes"),
+    )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request", None)
+        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if self.request is not None:
             self.fields["classes"].queryset = Class.objects.filter(
-                school__support=self.request.user)
+                school__support=self.request.user).distinct()
 
 
 class CreateSubjectForm(forms.ModelForm):
@@ -122,11 +126,11 @@ class CreateSubjectForm(forms.ModelForm):
         fields = ("name", "teacher")
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request", None)
+        self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
         if self.request is not None:
             self.fields["teacher"] = forms.ModelChoiceField(
-                Teacher.objects.filter(school__support=self.request.user),
+                Teacher.objects.filter(school__support=self.request.user).distinct(),
                 widget=forms.Select(attrs={"class": "form-control"}))
         else:
             self.fields["teacher"] = forms.ModelChoiceField(
