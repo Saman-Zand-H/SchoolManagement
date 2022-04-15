@@ -203,13 +203,13 @@
 
 {% verbatim %}
     <script type="text/template" id="hit-template">
-        <tr id="userrow_{{{ _highlightResult.username.value }}}">
+        <tr id="userrow_{{{ username }}}">
             <td class="col-1">
                 <input 
                        type="radio" 
                        name="target_user" 
-                       id="select_{{{ _highlightResult.username.value }}}"
-                       value="{{{ _highlightResult.username.value }}}"
+                       id="select_{{{ username }}}"
+                       value="{{{ username }}}"
                       >
             </td>
             <td>{{{ _highlightResult.name.value }}}</td>

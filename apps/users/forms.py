@@ -170,6 +170,13 @@ class SupportStudentSignupForm(BaseSignupForm):
         return super().clean()
 
 
+class SupportTeacherSignupForm(BaseSignupForm):
+    
+    def clean(self):
+        if self.cleaned_data.get("user_type") != "T":
+            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+        return super().clean()
+
 class SupportSignupForm(BaseSignupForm):    
     
     def clean(self):

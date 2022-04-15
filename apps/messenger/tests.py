@@ -6,17 +6,82 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from seleniumlogin import force_login
-
+from django.test import  TestCase
+from django.contrib.messages import get_messages
 from django.contrib.auth import get_user_model
-from django.urls import reverse
+from django.urls import reverse, resolve
 import time
 
 from supports.models import School
 from teachers.models import Teacher
 from messenger.models import ChatGroup, Member, Message
+from messenger.views import ChatsListView
+from messenger.forms import ConversationForm
 
 
-class ChatsTest(ChannelsLiveServerTestCase):
+class TestViews(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(
+            username="test1_user",
+            password="test123456",
+            user_type="SS",
+            first_name="test",
+            last_name="user",
+        )
+        self.school_1 = School.objects.create(name="Test", support=user)
+        super().setUp()
+        
+    def test_chats_list_view(self):
+        self.client.force_login(self.school_1.support)
+        
+        url = reverse("messenger:home")
+        self.assertEqual(url, "/messenger/")
+        self.assertEqual(resolve(url).func.__name__, ChatsListView.__name__)
+        
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertDictContainsSubset({"nav_color": "bg-dark"}, response.context)
+        self.assertTemplateUsed(response, "dashboard/messenger/chats_list.html")
+        self.assertTemplateNotUsed(response, "dashboard/messenger/chat_page.html")
+        
+    def test_create_group_successfully(self):
+        self.client.force_login(self.school_1.support)
+        
+        self.assertEqual(ChatGroup.objects.count(), 0)
+        url = reverse("messenger:home")
+        data = {
+            "conversation_type": "group",
+            "name": "Test Group",
+            "owner": self.school_1.support,
+            "bio": "This is a test group",
+        }
+        response = self.client.post(url, data)
+        messages = [*get_messages(response.wsgi_request)]
+        
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, ChatGroup.objects.last().get_absolute_url())
+        self.assertEqual(str(messages[-1]), "Group created successfully.")
+        self.assertEqual(ChatGroup.objects.count(), 1)
+        self.assertEqual(ChatGroup.objects.last().name, "Test Group")
+        
+    def test_create_group_unsuccessfully(self):
+        self.client.force_login(self.school_1.support)
+        
+        url = reverse("messenger:home")
+        data = {
+            "conversation_type": "chatgroup",   # wrong type
+            "name": "Test Group",
+            "owner": self.school_1.support,
+        }
+        response = self.client.post(url, data)
+        messages = [*get_messages(response.wsgi_request)]
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(str(messages[-1]), "Invalid input provided.")
+        self.assertEqual(ChatGroup.objects.count(), 0)
+
+
+class TestConsumers(ChannelsLiveServerTestCase):
     serve_static = True
 
     # === SetUp ===
@@ -85,11 +150,11 @@ class ChatsTest(ChannelsLiveServerTestCase):
                                  password=password,
                                  user_type="SS")
         School.objects.create(name=school_name, support=user)
-        return user
+        return 
 
     def _create_teacher(self,
                         driver,
-                        school=School.objects.first(),
+                        school=School.objects.last(),
                         username="test",
                         password="123456789",
                         first_name="test",
@@ -112,9 +177,7 @@ class ChatsTest(ChannelsLiveServerTestCase):
             name (_str_): name of the group
         """
         self._create_principal_user()
-        conversations_url = self.live_server_url + reverse(
-            "messenger:conversations-list")
-        driver.get(conversations_url)
+        driver.get(self.live_server_url + reverse("messenger:home"))
         create_group_modal_button = driver.find_element_by_id(
             "create-group-modal-button")
         create_group_modal_button.click()
@@ -133,7 +196,7 @@ class ChatsTest(ChannelsLiveServerTestCase):
             member, _ = Member.objects.get_or_create(user=member_user,
                                                      chatgroup=chatgroup)
             driver.get(self.live_server_url +
-                       reverse("messenger:conversations-list"))
+                       reverse("messenger:home"))
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.ID, f"group-{group_id}"), ),
                 "The group hasn't been added to user's conversations list",
@@ -157,7 +220,7 @@ class ChatsTest(ChannelsLiveServerTestCase):
         ).get_property("textContent")
 
     def _is_marked_as_read(self, driver, message_id):
-        time.sleep(5)
+        time.sleep(3)
         mark = driver.find_element_by_id(f"read_{message_id}")
         un_mark = driver.find_element_by_id(f"unread_{message_id}")
         return mark.is_displayed() and not un_mark.is_displayed()
@@ -168,6 +231,7 @@ class ChatsTest(ChannelsLiveServerTestCase):
         # Create a chat group, navigate to it and send a message
         # by the first browser
         chatgroup = self._create_a_group(self.driver)
+        owner_school = chatgroup.owner.school
         chatgroup_url = self.live_server_url + chatgroup.get_absolute_url()
         self.driver.get(chatgroup_url)
         self._post_message(self.driver)
@@ -178,8 +242,11 @@ class ChatsTest(ChannelsLiveServerTestCase):
         # Open another browser, so that you can login with another
         # account and see if the message exists
         driver2 = self._create_driver()
-        other_user = self._create_teacher(driver2, username="test_teacher")
-        self._add_member_to_group_and_redirect(driver2, other_user,
+        other_user = self._create_teacher(driver2, 
+                                          username="test_teacher", 
+                                          school=owner_school)
+        self._add_member_to_group_and_redirect(driver2, 
+                                               other_user,
                                                chatgroup.group_id)
         last_message = self._last_message(driver2)
         self.assertIn("Test message", last_message)

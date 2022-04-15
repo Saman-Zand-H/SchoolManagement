@@ -18,7 +18,10 @@
                     <h6 class="h2 text-white d-inline-block mb-0">
                         {% trans 'Classes' %}
                     </h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                             <li class="breadcrumb-item">
                                 <a href="{% url 'home:home' %}">
@@ -49,8 +52,8 @@
                 </div>
                 <div class="table-responsive">
                     <div>
-                        <table class="table align-items-center table-dark">
-                            <thead class="thead-dark">
+                        <table class="table align-items-center">
+                            <thead class="thead-light">
                                 <tr>
                                     <th scope="col">
                                         {% trans 'Class ID' %}
@@ -73,7 +76,7 @@
                                         <tr>
                                             <th scope="row" class="name">
                                                 <div class="media align-items-center">
-                                                    <h1 class="text-neutral mr-4">
+                                                    <h1 class="text-dark mr-4">
                                                         {{ class.class_id }}
                                                     </h1>
                                                     <div class="media-body">
@@ -102,7 +105,7 @@
                                                             </a>
                                                         {% endfor %}
                                                     {% else %}
-                                                        <h3 class="text-white">
+                                                        <h3 class="text-dark">
                                                             {% trans 'No student found in this class.' %}
                                                         </h3>
                                                     {% endif %}

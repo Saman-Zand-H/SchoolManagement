@@ -3,7 +3,7 @@ version: "3.9"
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 conf.asgi:application
     volumes:
       - .:/usr/src/app/
     ports:
@@ -26,10 +26,6 @@ services:
       - 6379:6379
     volumes:
       - redis_data:/var/lib/redis/data/
-  adminer:
-    image: adminer:latest
-    ports:
-      - 8080:8080
 
 volumes:
   postgres_data:

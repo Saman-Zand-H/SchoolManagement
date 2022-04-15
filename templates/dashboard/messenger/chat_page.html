@@ -10,17 +10,25 @@
 
 {% block content %}
 
-<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white mt-3">
+<div 
+     class="d-flex flex-column 
+            align-items-stretch flex-shrink-0 
+            bg-white mt-3"
+    >
     <div class="list-group list-group-flush">
         <li class="list-group-item">
             <div class="row">
                 <div class="col-1">
-                    <a href="{% url 'messenger:conversations-list' %}">
+                    <a href="{% url 'messenger:home' %}">
                         <i class="fas fa-2x fa-angle-left text-dark"></i>
                     </a>
                 </div>
                 <div class="col-4 offset-4 pt-1">
-                    <button class="btn btn-outline-dark" data-toggle="modal" data-target="#group-details">
+                    <button 
+                            class="btn btn-outline-dark" 
+                            data-toggle="modal" 
+                            data-target="#group-details"
+                           >
                         <strong>
                             {{ chatgroup|get_group_name:user|truncatechars:30 }}
                         </strong>
@@ -302,7 +310,11 @@
             <tr>
                 <td class="col-1">
                     <input type="hidden" value="add" name="request_type">
-                    <input type="radio" value="{{{ _highlightResult.username.value }}}" name="member">
+                    <input 
+                           type="radio" 
+                           value="{{{ objectID }}}" 
+                           name="member"
+                          >
                 </td>
                 <td class="col-3">{{{ _highlightResult.get_user_type_display.value }}}</td>
                 <td>{{{ _highlightResult.username.value }}}</td>
@@ -368,18 +380,18 @@
               msgCard = $("#msg-card");
 
         {% if chatgroup.owner == user %}
-            var groupNameField = $("#group-photo-field");
+            var groupPhotoField = $("#group-photo-field");
             var discardBtn = $("#discard-photo");
-            if (groupNameField.val()) {
+            if (groupPhotoField.val()) {
                 discardBtn.show();
             }
-            groupNameField.change(function(e) {
+            groupPhotoField.change(function(e) {
                 if (groupNameField.val()){
                     discardBtn.show();
                 };
             });
             discardBtn.click(function(e) {
-                groupNameField.val("");
+                groupPhotoField.val("");
                 discardBtn.hide();
             });
         {% endif %}
@@ -391,19 +403,16 @@
             {% if last_message %}
                 var message_id = "{{ last_message.message_id.hex }}",
                     read_mark = $(`#read_${message_id}`),
-                    message_sender = "{{ last_message.author }}";
+                    message_sender = "{{ last_message.author.username }}",
                     unread_mark = $(`#unread_${message_id}`);
                 unread_mark.hide();
                 read_mark.show();
-                socket.send(
-                    JSON.stringify(
-                        {
-                            "type": "seen",
-                            "message_id": message_id,
-                            "sender": message_sender,
-                        },
-                    ),
-                );
+                data = {
+                    "type": "seen",
+                    "sender": message_sender,
+                    "message_id": message_id,
+                };
+                socket.send(JSON.stringify(data));
             {% endif %}
         };
 

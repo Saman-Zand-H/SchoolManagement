@@ -23,7 +23,7 @@ logout_view = CustomLogoutView.as_view()
 
 
 class ProfileView(LoginRequiredMixin, View):
-    template_name = "dashboard/profile.html"
+    template_name = "account/profile.html"
     context = dict()
 
     def get(self, args, **kwargs):
@@ -59,7 +59,7 @@ profile_view = ProfileView.as_view()
 class CustomPasswordChangeView(LoginRequiredMixin,
                                PasswordChangeView):
     permission_required = "supports.support"
-    template_name = "dashboard/profile.html"
+    template_name = "account/profile.html"
     success_url = reverse_lazy("profile")
 
     def render_to_response(self, context, **response_kwargs):

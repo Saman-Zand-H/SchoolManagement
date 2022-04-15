@@ -40,39 +40,43 @@
                         </ol>
                     </nav>
                 </div>
-                <div class="col-lg-12 col-md-12 col-5 text-right">
-                    <!-- Modals Buttons -->
-                    <button 
-                            type="button" 
-                            data-toggle="modal" 
-                            data-target="#addGrades" 
-                            class="btn btn-sm btn-neutral"
-                           >
-                        {% if exam.grade_exam.exists %}
-                            <i class="fas fa-pen"></i>
-                            {% trans 'Edit' %}
-                        {% else %}
-                            <i class="fas fa-plus"></i>
-                            {% trans 'New' %}
-                        {% endif %}
-                    </button>
-                    <button     
-                            type="button" 
-                            data-toggle="modal" 
-                            data-target="#deleteExam" 
-                            class="btn btn-sm btn-danger text-white border-danger"
-                           >
-                       <i class="fas fa-trash-alt"></i>
-                       {% trans 'Delete' %}
-                    </button>
+                <div class="col-lg-12 col-md-12 col-5">
+                    <div class="row">
+                        <div class="col-1 col-sm offset-lg-9">
+                            <!-- Modals Buttons -->
+                            <button 
+                                    type="button" 
+                                    data-toggle="modal" 
+                                    data-target="#addGrades" 
+                                    class="btn btn-sm btn-neutral"
+                                   >
+                                {% if exam.grade_exam.exists %}
+                                    <i class="fas fa-pen"></i>
+                                    {% trans 'Edit' %}
+                                {% else %}
+                                    <i class="fas fa-plus"></i>
+                                    {% trans 'New' %}
+                                {% endif %}
+                            </button>
+                        </div>
+                        <div class="col-2 col-sm">
+                            <button     
+                                    type="button" 
+                                    data-toggle="modal" 
+                                    data-target="#deleteExam" 
+                                    class="btn btn-sm btn-danger text-white border-danger"
+                                   >
+                            <i class="fas fa-trash-alt"></i>
+                            {% trans 'Delete' %}
+                            </button>
+                        </div>
+                    </div>
                     <!-- Add Grades Modal -->
                     <div    
-                         class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
+                         class="modal fade" 
                          id="addGrades" 
                          tabindex="-1" 
                          role="dialog" 
-                         aria-labelledby="exampleModalLabel" 
-                         aria-hidden="true"
                         >
                         <div 
                              class="modal-dialog modal-dialog-centered" 

@@ -1,6 +1,7 @@
 from channels.consumer import AsyncConsumer
 from channels.exceptions import StopConsumer
 from channels.db import database_sync_to_async
+from django.db.models import Q
 
 import json
 import logging
@@ -54,24 +55,26 @@ class MessengerConsumer(AsyncConsumer):
             match message_type:
                 case "msg":
                     chatgroup = await self.get_chatgroup(self.group_id)
-                    message = await self.create_message(
-                        text_data_json["body"],
-                        chatgroup,
-                    )
-                    text_data_json.update({
-                        "sender": self.sender.name(),
-                        "sender_username": self.sender.username,
-                        "type": "msg",
-                        "message_id": message.message_id.hex,
-                        "date_written": message.date_written.strftime("%B %d, %Y, %I:%M %p"),
-                    })
-                    await self.channel_layer.group_send(
-                        self.group_name, 
-                        {
-                            "type": "chat_message",
-                            "message": text_data_json,
-                        },
-                    )
+                    if chatgroup is not None:
+                        message = await self.create_message(
+                            text_data_json["body"],
+                            chatgroup,
+                        )
+                        text_data_json.update({
+                            "sender": self.sender.name(),
+                            "sender_username": self.sender.username,
+                            "type": "msg",
+                            "message_id": message.message_id.hex,
+                            "date_written": message.date_written.strftime(
+                                "%B %d, %Y, %I:%M %p"),
+                        })
+                        await self.channel_layer.group_send(
+                            self.group_name, 
+                            {
+                                "type": "chat_message",
+                                "message": text_data_json,
+                            },
+                        )
                 case "seen":
                     msg_id = text_data_json["message_id"]
                     msg_sender = text_data_json["sender"]
@@ -123,7 +126,7 @@ class MessengerConsumer(AsyncConsumer):
             message = Message.objects.get(
                 message_id=UUID(message_id.strip()))
             messages_qs = Message.objects.filter(
-                date_written__lte=message.date_written, seen=False)
+                Q(date_written__lte=message.date_written) & Q(seen=False))
             messages_qs_ids = [message.message_id.hex for message in messages_qs]
             messages_qs.update(seen=True)
             return messages_qs_ids

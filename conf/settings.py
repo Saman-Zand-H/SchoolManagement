@@ -341,5 +341,5 @@ ALGOLIA = {
 }
 
 
-# Selenium configurations
+# Selenium-force-login configurations
 SELENIUM_LOGIN_START_PAGE = "/accounts/login/"

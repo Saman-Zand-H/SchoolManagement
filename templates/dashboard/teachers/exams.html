@@ -44,34 +44,36 @@
                         </ol>
                     </nav>
                 </div>
-                <div class="col-lg-12 col-md-12 col-5 text-right">
-                    <button 
-                            type="button" 
-                            data-toggle="modal" 
-                            data-target="#newExam" 
-                            class="btn btn-sm btn-neutral my-1"
-                           >
-                        <i class="fas fa-plus"></i>
-                        {% trans 'New' %}
-                    </button>
-                    <button 
-                            type="button" 
-                            data-toggle="modal" 
-                            data-target="#filterExams" 
-                            class="btn btn-sm btn-warning my-1"
-                           >
-                        <i class="fas fa-filter"></i>
-                        {% trans 'Filters' %}
-                    </button>
-
+                <div class="col-lg-12 col-md-12 col-5">
+                    <div class="row">
+                        <div class="col-1 col-sm offset-lg-9">
+                            <button 
+                                    type="button" 
+                                    data-toggle="modal" 
+                                    data-target="#newExam" 
+                                    class="btn btn-sm btn-neutral my-1"
+                                   >
+                                <i class="fas fa-plus"></i>
+                                {% trans 'New' %}
+                            </button>
+                        </div>
+                        <div class="col-1 col-sm">
+                            <button 
+                                    type="button" 
+                                    data-toggle="modal" 
+                                    data-target="#filterExams" 
+                                    class="btn btn-sm btn-warning my-1"
+                                   >
+                                <i class="fas fa-filter"></i>
+                                {% trans 'Filters' %}
+                            </button>
+                        </div>
+                    </div>
                     <div 
-                         class="modal fade 
-                                {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %}" 
+                         class="modal fade" 
                          id="newExam" 
                          tabindex="-1" 
                          role="dialog" 
-                         aria-labelledby="exampleModalLabel" 
-                         aria-hidden="true"
                         >
                         <div 
                              class="modal-dialog modal-dialog-centered" 

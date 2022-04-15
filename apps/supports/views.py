@@ -14,7 +14,7 @@ from .forms import (CreateSchoolForm, CreateClassForm, EditOperationType,
 from mainapp.models import Class, Subject, Student
 from .models import School
 from teachers.models import Teacher
-from users.forms import SupportSignupForm, SupportStudentSignupForm
+from users.forms import SupportTeacherSignupForm, SupportStudentSignupForm
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class HomeView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
 
     def get(self, *args, **kwargs):
-        school = School.objects.get(support=self.request.user)
+        school = get_object_or_404(School, support=self.request.user)
         context = {
             "school": school,
             "classes": school.class_school.all()[:4],
@@ -177,7 +177,7 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("/")
         school = get_object_or_404(School, support=self.request.user)
         teachers = Teacher.objects.filter(school=school).distinct()
-        form = SupportSignupForm(self.request, initial={"user_type": "SS"})
+        form = SupportTeacherSignupForm(self.request, initial={"user_type": "SS"})
         self.context.update({
             "teachers": teachers,
             "form": form,
@@ -187,9 +187,12 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
         return render(self.request, self.template_name, self.context)
 
     def post(self, *args, **kwargs):
-        form = SupportSignupForm(self.request, self.request.POST, self.request.FILES)
+        form = SupportTeacherSignupForm(self.request, 
+                                        self.request.POST, 
+                                        self.request.FILES)
         if form.is_valid():
-            school = School.objects.get(support=self.request.user)
+            school = get_object_or_404(School, 
+                                       support=self.request.user)
             user = form.save(self.request)
             Teacher.objects.create(user=user, school=school)
             messages.success(self.request, _("Teacher created successfully."))
@@ -300,7 +303,7 @@ class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
 
     def get(self, *args, **kwargs):
         load_template = self.request.path.split("/")
-        subject = Subject.objects.get(pk=kwargs["pk"])
+        subject = get_object_or_404(Subject, pk=kwargs["pk"])
         self.context.update({
             "classes": subject.class_subjects.all(),
             "subject": subject,
@@ -315,7 +318,7 @@ class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
             operation_type = operation_form.cleaned_data.get("operation")
             match operation_type:
                 case "dc":
-                    subject = Subject.objects.get(pk=kwargs.get("pk"))
+                    subject = get_object_or_404(Subject, pk=kwargs.get("pk"))
                     subject.delete()
                     messages.success(self.request, _("Course deleted successfully."))
                     return redirect("supports:subjects")
@@ -370,7 +373,7 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
 
     def get(self, *args, **kwargs):
         load_template = self.request.path.split("/")
-        current_student = Student.objects.get(pk=kwargs.get("pk"))
+        current_student = get_object_or_404(Student, pk=kwargs.get("pk"))
         self.context.update({
             "student_spec_form": StudentsClassForm(
                 instance=current_student, request=self.request),

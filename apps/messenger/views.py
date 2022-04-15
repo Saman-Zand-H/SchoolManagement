@@ -4,9 +4,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext
+from django.urls import reverse
 from django.conf import settings
-
 from functools import partial
 from logging import getLogger
 
@@ -36,32 +36,45 @@ class ChatsListView(LoginRequiredMixin, View):
         })
         if is_support:
             self.context["group_form"] = GroupForm()
-        return render(self.request, self.template_name, self.context)
+        return render(self.request, 
+                      self.template_name, 
+                      self.context)
 
     def post(self, *args, **kwargs):
+        logger.debug(f"{reverse('messenger:home')} - {self.request.user.username}    "
+                      "POST: {self.request.POST}")
         conversation_form = ConversationForm(self.request.POST)
-        success_message = partial(messages.success, request=self.request)
-        error_message = partial(messages.error, request=self.request)
+        success_message = partial(messages.success, 
+                                  request=self.request)
+        error_message = partial(messages.error, 
+                                request=self.request)
         if conversation_form.is_valid():
-            conversation_type = conversation_form.cleaned_data.get("conversation_type")
+            conversation_type = conversation_form.cleaned_data.get(
+                "conversation_type")
             match conversation_type:
                 case "group":
                     if self.request.user.has_perm("supports.support"):
                         form = GroupForm(self.request.POST, self.request.FILES)
                         if form.is_valid():
                             form = form.save(commit=False)
-                            group_id = form.group_id
                             form.owner = self.request.user
                             form.is_pm = False
                             form.save()
+                            group = get_object_or_404(
+                                ChatGroup, group_id=form.group_id)
                             Member.objects.create(
                                 user=self.request.user, 
-                                chatgroup=ChatGroup.objects.get(group_id=group_id),
+                                chatgroup=group,
                             )
-                            success_message(message=_("Group created successfully"))
-                            return redirect("messenger:chat-page", group_id=group_id)
-                        error_message(message=_("Invalid input provided."))
-                        return render(self.request, self.template_name, self.context)
+                            success_message(
+                                message=gettext("Group created successfully."))
+                            return redirect("messenger:chat-page", 
+                                            group_id=group.group_id)
+                        error_message(
+                            message=gettext("Invalid input provided."))
+                        return render(self.request, 
+                                      self.template_name, 
+                                      self.context)
                     raise PermissionDenied()
                 case "pm":
                     target_user = get_object_or_404(
@@ -76,10 +89,15 @@ class ChatsListView(LoginRequiredMixin, View):
                     if created:
                         Member.objects.get_or_create(user=self.request.user, 
                                                      chatgroup=chatgroup)
-                        Member.objects.get_or_create(user=target_user, chatgroup=chatgroup)
-                        success_message(message=_("Conversation created successfully."))
-                    return redirect("messenger:chat-page", group_id=chatgroup.group_id)
-        error_message(message=_("Invalid input provided."))
+                        Member.objects.get_or_create(user=target_user, 
+                                                     chatgroup=chatgroup)
+                        success_message(message=gettext("Conversation created successfully."))
+                    return redirect("messenger:chat-page", 
+                                    group_id=chatgroup.group_id)
+                case _:
+                    error_message(message=gettext("Invalid parameter provided."))
+        self.context["form"] = conversation_form
+        error_message(message=gettext("Invalid input provided."))
         return render(self.request, self.template_name, self.context)
         
     
@@ -93,9 +111,10 @@ class ChatPageView(LoginRequiredMixin, View):
         
     def get(self, *args, **kwargs):
         loadTemplate = self.request.path.split()[-1]
-        chatgroup = get_object_or_404(ChatGroup, group_id=self.kwargs["group_id"])
+        chatgroup = get_object_or_404(ChatGroup, 
+                                      group_id=self.kwargs.get("group_id"))
         other_user = None
-        # if the room is a private message room, show the other
+        # If the room is a private message room, show the other
         # endpoint user's bio 
         if chatgroup.is_pm:
             other_user = chatgroup.member_chatgroup.exclude(
@@ -113,19 +132,30 @@ class ChatPageView(LoginRequiredMixin, View):
             "school_name": self.request.user.school_name[0],
             "other_user_about": other_user,
         })
-        return render(self.request, self.template_name, self.context)
+        return render(self.request, 
+                      self.template_name, 
+                      self.context)
     
     def post(self, *args, **kwargs):
-        error_message = partial(messages.error, request=self.request)
-        success_message = partial(messages.success, request=self.request)
-        chatgroup = get_object_or_404(ChatGroup, group_id=self.kwargs["group_id"])
+        logger.debug(f"{reverse('messenger:chat-page', self.kwargs['group_id'])} "
+                      "- {self.request.user.username}   POST: {self.request.POST}")
+        error_message = partial(messages.error, 
+        request=self.request)
+        success_message = partial(messages.success, 
+        request=self.request)
+        chatgroup = get_object_or_404(ChatGroup, 
+                                      group_id=self.kwargs.get("group_id"))
         if chatgroup in self.request.user.owned_groups:
-            form = GroupForm(self.request.POST, self.request.FILES, instance=chatgroup)
+            form = GroupForm(self.request.POST, 
+                             self.request.FILES, 
+                             instance=chatgroup)
             if form.is_valid():
                 form.save()
-                success_message(message=_("Group updated successfully"))
+                success_message(
+                    message=gettext("Group updated successfully"))
             else:
-                error_message(message=_("invalid inputs provided."))
+                error_message(
+                    message=gettext("invalid inputs provided."))
             return redirect("messenger:chat-page", group_id=chatgroup.group_id)
         raise PermissionDenied("The use is not the owner of this group.")
    
@@ -135,46 +165,60 @@ chat_page_view = ChatPageView.as_view()
 
 class MembersView(LoginRequiredMixin, View):
     def post(self, *args, **kwargs):
-        error_message = partial(messages.error, request=self.request)
-        success_message = partial(messages.success, request=self.request)
+        logger.debug(f"{reverse('messenger:manage-members', self.kwargs.get('group_id'))} "
+                      "- {self.request.user.username})   POST: {self.reqest.POST}")
+        error_message = partial(messages.error, 
+                                request=self.request)
+        success_message = partial(messages.success, 
+                                request=self.request)
         form = MembersForm(self.request.POST)
         if form.is_valid():
-            username = form.cleaned_data["member"]
-            request_type = form.cleaned_data["request_type"]
+            username = form.cleaned_data.get("member")
+            request_type = form.cleaned_data.get("request_type")
             user = get_object_or_404(get_user_model(), 
                                      username=username)
             chatgroup = get_object_or_404(ChatGroup, 
-                                          group_id=self.kwargs["group_id"])
+                                          group_id=self.kwargs.get("group_id"))
             match request_type:
                 case "add":
                     instance, created = Member.objects.get_or_create(
                         user=user, chatgroup=chatgroup)
                     if created:
-                        success_message(message=_("User added successfully."))
+                        success_message(
+                            message=gettext("User added successfully."))
                 case "delete":
-                    member_qs = Member.objects.filter(user=user, chatgroup=chatgroup)
+                    member_qs = Member.objects.filter(user=user, 
+                                                      chatgroup=chatgroup)
                     # Merely delete the member instance if the user is not the 
                     # owner. If the user is the owner, delete the group
                     if member_qs.exists():
                         member_qs.delete()
-                        success_message(message=_("Member deleted successfully."))
+                        success_message(
+                            message=gettext("Member deleted successfully."))
                     else:
-                        error_message(message=_("This user isn't a member of this group.")) 
+                        error_message(
+                            message=gettext("This user isn't a member of this group.")) 
                 case "leave":
-                    member_qs = Member.objects.filter(user=user, chatgroup=chatgroup)
+                    member_qs = Member.objects.filter(user=user, 
+                                                      chatgroup=chatgroup)
                     if member_qs.exists():
                         member_qs.delete()
                         if self.request.user == chatgroup.owner:
                             chatgroup.delete()
-                            success_message(message=_("Group deleted successfully."))
+                            success_message(
+                                message=gettext("Group deleted successfully."))
                         else:
-                            success_message(message=_("You left the group successfully."))
+                            success_message(
+                                message=gettext("You left the group successfully."))
                     else:
-                        error_message(message=_("This user isn't a member of this group."))
-                    return redirect("messenger:conversations-list")
+                        error_message(
+                            message=gettext("This user isn't a member of this group."))
+                    return redirect("messenger:home")
+                case _:
+                    error_message(message=gettext("Invalid parameter provided."))
         else:
-            error_message(message=_("Invalid inputs provided."))
-        return redirect("messenger:chat-page", group_id=kwargs["group_id"])
+            error_message(message=gettext("Invalid inputs provided."))
+        return redirect("messenger:chat-page", group_id=kwargs.get("group_id"))
                 
 
 members_view = MembersView.as_view()
