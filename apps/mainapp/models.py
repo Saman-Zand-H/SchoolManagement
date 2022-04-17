@@ -151,6 +151,10 @@ class Exam(models.Model):
     def average_grade_percent(self):
         return round(
             (self.average_grade / self.full_score) or 0, 2) * 100
+        
+    @property
+    def school(self):
+        return self.exam_class.school.name
 
     def __str__(self):
         return f"{self.teacher}, {self.subject}"
@@ -256,6 +260,10 @@ class Assignment(models.Model):
     def __repr__(self):
         return f"<Assignment: \
             ({self.assignment_class.class_id}-{self.subject.name})>"
+            
+    @property
+    def school(self):
+        return self.assignment_class.school
             
     def reversed(self):
         return self.objects.order_by('-deadline')

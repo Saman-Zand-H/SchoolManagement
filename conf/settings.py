@@ -70,6 +70,11 @@ INSTALLED_APPS = [
     'channels_redis',
     'seleniumlogin',
     'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 
     # Local apps
     'users.apps.UsersConfig',
@@ -79,6 +84,7 @@ INSTALLED_APPS = [
     'students',
     'supports',
     'messenger',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -271,10 +277,6 @@ ADMINS = [
     ('Saman', 'tnsperuse@gmail.com'),
 ]
 
-# OTP SMS confs
-OTPSMS_USERNAME = env.str("OTPSMS_USERNAME")
-OTPSMS_PASSWORD = env.str("OTPSMS_PASSWORD")
-
 # CKEditor configuration
 CKEDITOR_UPLOAD_PATH = 'media/ckeditor/'
 CKEDITOR_IMAGE_BACKEND = "ckeditor_uploader.backends.PillowBackend"
@@ -340,6 +342,19 @@ ALGOLIA = {
     "API_KEY": ALGOLIA_API_KEY,
 }
 
+# DRF configurations
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ],
+}
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'takhteWhiteboard-token'
+JWT_AUTH_REFRESH_COOKIE = 'takhteWhiteboard-refresh-token'
 
 # Selenium-force-login configurations
 SELENIUM_LOGIN_START_PAGE = "/accounts/login/"

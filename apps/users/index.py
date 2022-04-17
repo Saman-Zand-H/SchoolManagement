@@ -6,7 +6,7 @@ from .models import CustomUser
 
 @register(CustomUser)
 class ChatPageIndex(AlgoliaIndex):
-    tags = "school_name"
+    tags = "school_name_tag"
     fields = (
         "username",
         "name",

@@ -192,7 +192,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return queryset
     
     @property
-    def school_name(self):
+    def school_name_tag(self):
         # Don't ask why I used this dummy format here. Instead,
         # ask Algolia why they used a list() instead of a [* ]
         return [self.school.name]

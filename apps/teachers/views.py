@@ -10,7 +10,6 @@ from django.utils.translation import gettext as _
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from typing import Any
 from functools import partial
 from logging import getLogger
 
