@@ -82,8 +82,7 @@ class ArticlesSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="api:articles-detail")
     author = serializers.StringRelatedField()
     school = serializers.StringRelatedField()
-    categories = serializers.ListSerializer(child=serializers.CharField(), 
-                                            allow_empty=True)
+    categories = serializers.ListField(child=serializers.CharField())
     
     class Meta:
         model = Article

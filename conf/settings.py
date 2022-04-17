@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'drf_yasg',
 
     # Local apps
     'users.apps.UsersConfig',

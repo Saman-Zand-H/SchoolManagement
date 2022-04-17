@@ -3,10 +3,22 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler404, handler403, handler500
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Takhte Whiteboard API",
+        description="A web app for managing the chores of your school.",
+        default_version="v1",
+        contact=openapi.Contact(name="Saman Zand", email="tnsperuse@gmail.com"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
+
 
 urlpatterns = [
     # Admin
@@ -45,6 +57,13 @@ urlpatterns = [
     path(
         route="api-auth/",
         view=include("rest_framework.urls"),
+    ),
+    path(
+        route="api/docs/",
+        view=schema_view.with_ui(
+            "redoc",
+        ),
+        name="schema-redoc",
     ),
 
     # Local Apps
