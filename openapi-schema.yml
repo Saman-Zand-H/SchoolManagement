@@ -970,4 +970,3 @@ components:
         email:
           type: string
           format: email
-[0m

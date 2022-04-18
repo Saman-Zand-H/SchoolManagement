@@ -261,10 +261,6 @@ class Assignment(models.Model):
         return f"<Assignment: \
             ({self.assignment_class.class_id}-{self.subject.name})>"
             
-    @property
-    def school(self):
-        return self.assignment_class.school
-            
     def reversed(self):
         return self.objects.order_by('-deadline')
             

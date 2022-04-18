@@ -1,0 +1,31 @@
+[
+    {
+        "model": "auth.permission",
+        "pk": 128,
+        "fields": {
+            "name": "has permission to create in api",
+            "content_type": 19,
+            "codename": "create_api"
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "Teachers",
+            "permissions": [
+                73
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 2,
+        "fields": {
+            "name": "Principals",
+            "permissions": [
+                78
+            ]
+        }
+    }
+]

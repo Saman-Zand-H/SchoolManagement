@@ -37,8 +37,14 @@
     <link href="{% static 'assets/css/gsdk.css' %}" rel="stylesheet" />
     <link href="{% static 'assets/css/demo.css' %}" rel="stylesheet" />
 
-    <script src="{% static 'assets/js/jquery/jquery-1.10.2.js' %}" type="text/javascript"></script>
-    <script src="{% static 'assets/js/jquery-ui-1.10.4.custom.min.js' %}" type="text/javascript"></script>
+    <script 
+            src="{% static 'assets/js/jquery/jquery-1.10.2.js' %}" 
+            type="text/javascript"
+           ></script>
+    <script 
+            src="{% static 'assets/js/jquery-ui-1.10.4.custom.min.js' %}" 
+            type="text/javascript"
+           ></script>
 
     <!--     Font Awesome     -->
     <link 
@@ -189,6 +195,37 @@
                                     </a>
                                 </li>
                             {% endif %}
+                            <li>
+                                <a
+                                   href="#"
+                                   class="btn btn-round 
+                                          btn-success btn-fill 
+                                          border-dark dropdown-toggle"
+                                   data-toggle="dropdown"
+                                  >
+                                    API
+                                    <b class="caret"></b>
+                                </a> 
+                                <ul class="dropdown-menu text-center">
+                                    <li role="presentation">
+                                        <a 
+                                           href="{% url 'api:api-root' %}" 
+                                           role="menuitem" 
+                                           tabindex="-1"
+                                          >
+                                            Browsable API
+                                        </a>
+                                    <li role="presentation">
+                                        <a 
+                                           href="{% url 'schema-redoc' %}" 
+                                           role="menuitem" 
+                                           tabindex="-1"
+                                          >
+                                            API Docs
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
 
                     </div>

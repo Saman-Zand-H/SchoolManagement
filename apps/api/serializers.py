@@ -3,17 +3,11 @@ from django.contrib.auth import  get_user_model
 
 from mainapp.models import Student, Class, Exam, Grade, Article, Assignment
 from supports.models import School
-
-
-class SchoolSerializer(serializers.Serializer):
-    class Meta:
-        model = School
-        fields = ["name",]
+from teachers.models import Teacher
 
 
 class UsersSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="api:users-detail")
-    school = SchoolSerializer()
     
     class Meta:
         model = get_user_model()
@@ -23,7 +17,6 @@ class UsersSerializer(serializers.ModelSerializer):
             "last_name", 
             "email", 
             "get_user_type_display",
-            "school",
             "url",
         ]
         
@@ -36,6 +29,15 @@ class StudentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ["user", "student_class", "url"]
+        
+
+class TeachersSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name="api:teachers-detail")
+    user = UsersSerializer()
+    
+    class Meta:
+        model = Teacher
+        fields = ["user", "url", "university", "degree"]
 
 
 class ClassesSerializer(serializers.ModelSerializer):
@@ -107,7 +109,6 @@ class AssignmentsSerializer(serializers.ModelSerializer):
         fields = [
             "url",
             "assignment_class",
-            "school",
             "subject",
             "body",
             "deadline",

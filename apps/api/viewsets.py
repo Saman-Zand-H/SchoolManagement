@@ -7,13 +7,15 @@ from .serializers import (StudentsSerializer,
                           ClassesSerializer, 
                           ExamsSerializer,
                           ArticlesSerializer,
-                          AssignmentsSerializer)
+                          AssignmentsSerializer,
+                          TeachersSerializer)
 from .permissions import CanCreate
 from mainapp.models import (Student, 
                             Class, 
                             Exam, 
                             Article, 
                             Assignment)
+from teachers.models import Teacher
 
 
 class StudentsViewSet(ReadOnlyModelViewSet):
@@ -25,13 +27,32 @@ class StudentsViewSet(ReadOnlyModelViewSet):
             match self.request.user.user_type:
                 case "T":
                     return Student.objects.filter(
-                        student_class__subjects__teacher__user=self.request.user)
+                        student_class__subjects__teacher__user=self.request.user
+                    ).distinct()
                 case "SS":
                     return Student.objects.filter(
                         student_class__school__support=self.request.user)
                 case "S":
-                    return Student.objects.filter(user=self.request.user)
+                    student_class = Student.objects.get(
+                        user__username=self.request.user.username).student_class
+                    return Student.objects.filter(student_class=student_class)
         return Student.objects.none()
+
+
+class TeachersViewSet(ReadOnlyModelViewSet):
+    permission = (CanCreate, IsAuthenticated)
+    serializer_class = TeachersSerializer
+    
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            match self.request.user.user_type:
+                case "T" | "SS":
+                    return Teacher.objects.filter(
+                        school=self.request.user.school)
+                case "S":
+                    return Teacher.objects.filter(
+                        subject_teacher__class_subjects=self.request.user.student_user.student_class
+                    ).distinct()
 
 
 class UsersViewSet(ReadOnlyModelViewSet):
@@ -47,8 +68,9 @@ class UsersViewSet(ReadOnlyModelViewSet):
             match self.request.user.user_type:
                 case "T":
                     students = get_user_model().objects.filter(
-                        student_user__student_class__subjects__teacher__school=school)
-                    return teachers | students | principal
+                        student_user__student_class__subjects__teacher__school=school
+                    ).distinct()
+                    return teachers.union(students, principal)
                 case "SS":
                     students = get_user_model().objects.filter(
                         student_user__student_class__school=school)
@@ -129,4 +151,5 @@ class AssignmentsViewSet(ReadOnlyModelViewSet):
                         assignment_class=self.request.user.student_user.student_class)
                 case "T":
                     return Assignment.objects.filter(
-                        assignment_class__subjects__teacher__user=self.request.user)
+                        assignment_class__subjects__teacher__user=self.request.user
+                    ).distinct()

@@ -1,0 +1,296 @@
+[
+    {
+        "model": "users.customuser",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$nScMWaG1ErrUh5h8pTw37a$lSN1O34Gew1kD2JWQ9pgMy/I8B/UC/b7jdH0eFtEUZ8=",
+            "username": "saman",
+            "email": null,
+            "first_name": "saman",
+            "last_name": "zand",
+            "user_type": "SS",
+            "picture": "",
+            "about": "",
+            "is_superuser": true,
+            "is_staff": true,
+            "is_active": true,
+            "last_login": "2022-04-18T16:58:37.991Z",
+            "date_joined": "2021-11-06T08:19:30.236Z",
+            "groups": [
+                1
+            ],
+            "user_permissions": [
+                78
+            ]
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$7CeqHfcn3ZUWFzz4Qes2Un$DtHjSgH5T4kHnIe62pg7x2F7+86flZiqGwS1Ze4Yvek=",
+            "username": "test",
+            "email": null,
+            "first_name": "testsets",
+            "last_name": "saman",
+            "user_type": "T",
+            "picture": "media/kali-trail.png",
+            "about": "Saman",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "last_login": "2022-04-17T15:40:48.717Z",
+            "date_joined": "2021-11-06T09:32:52.553Z",
+            "groups": [
+                1
+            ],
+            "user_permissions": [
+                78
+            ]
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$u1BPgtQk6BuTLlvuH4nY07$CyuiggWL0KXE/KtCOsmAgV0UDcSLnXFlFgdMdBczxLI=",
+            "username": "student",
+            "email": null,
+            "first_name": "student",
+            "last_name": "test",
+            "user_type": "S",
+            "picture": "",
+            "about": "",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "last_login": "2022-04-17T16:15:59.757Z",
+            "date_joined": "2022-03-31T13:58:17.001Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 4,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$WXDetbWcWi9LPvhsJWZmuD$Ik6ApczfDctsRVm37xnL11iOWz5GAUp1wE0nrZzNn9Q=",
+            "username": "test_s",
+            "email": null,
+            "first_name": "Test",
+            "last_name": "Stuu",
+            "user_type": "S",
+            "picture": "",
+            "about": "",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "last_login": null,
+            "date_joined": "2022-04-16T15:00:39.793Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 5,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$s61Jc6VxjMnuUmkdEHGzX0$7QJpgWb4poaWQvipWpYXrKTYotB54N738S3GyAL87io=",
+            "username": "test_supoort",
+            "email": null,
+            "first_name": "test",
+            "last_name": "supppp",
+            "user_type": "T",
+            "picture": "",
+            "about": "",
+            "is_superuser": false,
+            "is_staff": false,
+            "is_active": true,
+            "last_login": null,
+            "date_joined": "2022-03-31T15:07:28.846Z",
+            "groups": [],
+            "user_permissions": [
+                78
+            ]
+        }
+    },
+    {
+        "model": "supports.school",
+        "pk": 1,
+        "fields": {
+            "name": "Test School",
+            "support": 1
+        }
+    },
+    {
+        "model": "teachers.teacher",
+        "pk": 1,
+        "fields": {
+            "user": 2,
+            "school": 1,
+            "degree": "",
+            "university": ""
+        }
+    },
+    {
+        "model": "teachers.teacher",
+        "pk": 2,
+        "fields": {
+            "user": 5,
+            "school": 1,
+            "degree": "",
+            "university": ""
+        }
+    },
+    {
+        "model": "mainapp.subject",
+        "pk": 1,
+        "fields": {
+            "name": "Math",
+            "teacher": 1
+        }
+    },
+    {
+        "model": "mainapp.subject",
+        "pk": 2,
+        "fields": {
+            "name": "Biology",
+            "teacher": 1
+        }
+    },
+    {
+        "model": "mainapp.subject",
+        "pk": 3,
+        "fields": {
+            "name": "Biology",
+            "teacher": 2
+        }
+    },
+    {
+        "model": "mainapp.class",
+        "pk": 1,
+        "fields": {
+            "class_id": "1101",
+            "school": 1,
+            "subjects": [
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "mainapp.class",
+        "pk": 2,
+        "fields": {
+            "class_id": "101",
+            "school": 1,
+            "subjects": [
+                3
+            ]
+        }
+    },
+    {
+        "model": "mainapp.student",
+        "pk": 1,
+        "fields": {
+            "user": 3,
+            "student_class": 1
+        }
+    },
+    {
+        "model": "mainapp.student",
+        "pk": 2,
+        "fields": {
+            "user": 4,
+            "student_class": 2
+        }
+    },
+    {
+        "model": "mainapp.exam",
+        "pk": 1,
+        "fields": {
+            "subject": 3,
+            "teacher": 2,
+            "exam_class": 2,
+            "timestamp": "2022-04-18",
+            "full_score": "20.00"
+        }
+    },
+    {
+        "model": "mainapp.exam",
+        "pk": 2,
+        "fields": {
+            "subject": 1,
+            "teacher": 1,
+            "exam_class": 1,
+            "timestamp": "2022-04-18",
+            "full_score": "20.00"
+        }
+    },
+    {
+        "model": "mainapp.grade",
+        "pk": 1,
+        "fields": {
+            "student": 1,
+            "grade": "11.50",
+            "exam": 1
+        }
+    },
+    {
+        "model": "mainapp.article",
+        "pk": 1,
+        "fields": {
+            "author": 1,
+            "school": 1,
+            "title": "This is a test",
+            "categories": "[\"Math\", \"Discrete Mathematics\", \"Fermat's Theorem\"]",
+            "text": "<p><span class=\"math-tex\">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</span></p>",
+            "timestamp": "2022-04-08T11:38:12.216Z"
+        }
+    },
+    {
+        "model": "mainapp.article",
+        "pk": 2,
+        "fields": {
+            "author": 2,
+            "school": 1,
+            "title": "This is a test again",
+            "categories": "[\"Math\", \"Fermat's Theorem\"]",
+            "text": "<p>How are you doing?</p>",
+            "timestamp": "2022-04-08T11:38:12.216Z"
+        }
+    },
+    {
+        "model": "mainapp.assignment",
+        "pk": 1,
+        "fields": {
+            "assignment_class": 1,
+            "subject": 1,
+            "body": "<p>hello there</p>",
+            "deadline": "2022-04-18",
+            "timestamp": "2022-04-18T16:59:54.532Z"
+        }
+    },
+    {
+        "model": "mainapp.assignment",
+        "pk": 2,
+        "fields": {
+            "assignment_class": 1,
+            "subject": 2,
+            "body": "<p>hello there</p>",
+            "deadline": "2022-04-18",
+            "timestamp": "2022-04-18T16:59:54.532Z"
+        }
+    },
+    {
+        "model": "mainapp.assignment",
+        "pk": 3,
+        "fields": {
+            "assignment_class": 2,
+            "subject": 3,
+            "body": "<p>hello there</p>",
+            "deadline": "2022-04-18",
+            "timestamp": "2022-04-18T16:59:54.532Z"
+        }
+    }
+]
