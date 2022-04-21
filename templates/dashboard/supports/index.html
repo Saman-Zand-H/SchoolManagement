@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Dashboard' %} {% endblock title %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Home' %}
+                        Home
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,7 +28,7 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Dashboard' %}
+                                Dashboard
                             </li>
                         </ol>
                     </nav>
@@ -43,12 +43,16 @@
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">
-                                        {% trans 'School' %}
+                                        School
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">{{ school }}</span>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                    <div 
+                                         class="icon icon-shape 
+                                                bg-gradient-green text-white 
+                                                rounded-circle shadow"
+                                        >
                                         <i class="fas fa-school"></i>
                                     </div>
                                 </div>
@@ -63,7 +67,7 @@
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">
-                                        {% trans 'Classes' %}
+                                        Classes
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">
                                         {{ school.class_school.count }}
@@ -88,7 +92,7 @@
                                         class="card-title text-uppercase 
                                         text-muted mb-0"
                                        >
-                                       {% trans 'Teachers' %}
+                                        Teachers
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">
                                         {{ school.teacher_school.count }}
@@ -117,9 +121,9 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h6 class="text-light text-uppercase ls-1 mb-1">
-                                {% trans 'Overview' %}
+                                Overview
                             </h6>
-                            <h5 class="h3 text-white mb-0">{% trans 'Classes' %}</h5>
+                            <h5 class="h3 text-white mb-0">Classes</h5>
                         </div>
                     </div>
                 </div>
@@ -127,11 +131,11 @@
                     <table class="table table-hover align-items-center table-flush">
                         <thead class="thead-dark">
                             <tr>
-                                <th>{% trans 'Class ID' %}</th>
-                                <th>{% trans 'Courses Count' %}</th>
-                                <th>{% trans 'Students Count' %}</th>
-                                <th>{% trans 'Students' %}</th>
-                                <th>{% trans 'Performance' %}</th>
+                                <th>Class ID</th>
+                                <th>Courses Count</th>
+                                <th>Students Count</th>
+                                <th>Students</th>
+                                <th>Performance</th>
                             </tr>
                         </thead>
                         <tbody class="list">
@@ -171,7 +175,7 @@
                                                 </a>
                                             {% endfor %}
                                         {% else %}
-                                            <h3 class="text-gray">{% trans 'No student in this class' %}</h3>
+                                            <h3 class="text-gray">No student in this class</h3>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -203,9 +207,9 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h6 class="text-dark text-uppercase ls-1 mb-1">
-                                {% trans 'Overview' %}
+                                Overview
                             </h6>
-                            <h5 class="h3 text-dark mb-0">{% trans 'Teachers' %}</h5>
+                            <h5 class="h3 text-dark mb-0">Teachers</h5>
                         </div>
                     </div>
                 </div>
@@ -213,9 +217,9 @@
                     <table class="table table-hover align-items-center table-flush">
                         <thead class="thead-light">
                             <tr>
-                                <th>{% trans 'Name' %}</th>
-                                <th>{% trans 'Courses Count' %}</th>
-                                <th>{% trans 'Performance' %}</th>
+                                <th>Name</th>
+                                <th>Courses Count</th>
+                                <th>Performance</th>
                             </tr>
                         </thead>
                         <tbody class="list">

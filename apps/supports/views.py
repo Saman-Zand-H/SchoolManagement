@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.views.generic import View
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-from django.utils.translation import gettext as _
 
 from functools import partial
 import logging
@@ -28,7 +27,7 @@ class CreateSchoolView(LoginRequiredMixin, View):
         if not School.objects.filter(support=self.request.user).exists():
             form = CreateSchoolForm()
             self.context["form"] = form
-            messages.warning(self.request, _("You have to register your school first."))
+            messages.warning(self.request, "You have to register your school first.")
             return render(self.request, self.template_name, self.context)
         return redirect("home:home")
 
@@ -40,10 +39,10 @@ class CreateSchoolView(LoginRequiredMixin, View):
                 form.support = self.request.user
                 form.save()
                 messages.success(self.request,
-                                 _("You registered successfully."))
+                                 "You registered successfully.")
                 return redirect("home:home")
             self.context["form"] = form
-            messages.error(self.request, _("Provided inputs are invalid."))
+            messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, self.template_name, self.context)
         return redirect("home:home")
 
@@ -90,7 +89,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
             })
             return render(self.request, self.template_name, self.context)
         except School.DoesNotExist:
-            messages.error(self.request, _("You have to register your school first."))
+            messages.error(self.request, "You have to register your school first.")
             return redirect("supports:create_school")
 
     def post(self, *args, **kwargs):
@@ -101,14 +100,14 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
             if form.is_valid():
                 form.instance.school = school
                 form.save()
-                messages.success(self.request, _("Class saved successfully."))
+                messages.success(self.request, "Class saved successfully.")
                 return redirect("supports:classes")
             else:
                 self.context["form"] = form
-                error_message(message=_("Provided inputs are invalid."))
+                error_message(message="Provided inputs are invalid.")
                 return render(self.request, self.template_name, self.context)
         except School.DoesNotExist:
-            error_message(message=_("You have to register your school first."))
+            error_message(message="You have to register your school first.")
             return redirect("supports:create_school")
 
 
@@ -148,20 +147,20 @@ class ClassesDetailView(PermissionAndLoginRequiredMixin, View):
                         pk__in=chosen_subjects))
                         form.save()
                         messages.success(
-                            self.request, _("Class updated successfully."))
+                            self.request, "Class updated successfully.")
                         return redirect("supports:classes-detail", pk=kwargs.get("pk"))
                     self.context.update({
                         "form": form, 
                         "class": class_instance,
                     })
-                    messages.error(self.request, _("Provided inputs are invalid."))
+                    messages.error(self.request, "Provided inputs are invalid.")
                     return render(self.request, self.template_name, self.context)
                 case "dc":
                     class_instance.delete()
-                    messages.success(self.request, _("Class deleted successfully."))
+                    messages.success(self.request, "Class deleted successfully.")
                     return redirect("supports:classes")
             return redirect("supports:classes")
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return redirect("supports:classes")
 
 
@@ -195,12 +194,12 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
                                        support=self.request.user)
             user = form.save(self.request)
             Teacher.objects.create(user=user, school=school)
-            messages.success(self.request, _("Teacher created successfully."))
+            messages.success(self.request, "Teacher created successfully.")
             return redirect("supports:teachers")
         self.context["form"] = form
         logger.error(f"An error occurred while {self.request.user.username} was"
                      f" trying to create a teacher: {form.errors}")
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return render(self.request, self.template_name, self.context)
 
 
@@ -242,23 +241,23 @@ class TeachersDetailView(PermissionAndLoginRequiredMixin, View):
                         instance=teacher, data=self.request.POST)
                     if details_form.is_valid():
                         details_form.save()
-                        success_message(message=_("Changes saved successfully."))
+                        success_message(message="Changes saved successfully.")
                         return redirect(
                             "supports:teachers-detail", pk=kwargs.get("pk"))
                     logger.error(f"An error occurred while {self.request.user.username}"
                                   " was trying to edit teacher details: {details_form.errors}")
                     self.context["details_form"] = details_form
-                    error_message(message=_("Invalid inputs detected. Consider"
+                    error_message(message="Invalid inputs detected. Consider "
                                             "that empty inputs are not allowed."
-                    ))
+                    )
                     return render(self.request, self.template_name, self.context)
                 case "dt":
                     teacher = get_object_or_404(
                         Teacher, pk=kwargs.get("pk"))
                     teacher.user.delete()
-                    success_message(message=_("Teacher deleted successfully."))
+                    success_message(message="Teacher deleted successfully.")
                     return redirect("supports:teachers")
-        error_message(message=_("Provided inputs are invalid."))
+        error_message(message="Provided inputs are invalid.")
         return redirect("supports:teachers")
 
 
@@ -286,10 +285,10 @@ class SubjectsView(PermissionAndLoginRequiredMixin, View):
                                          data=self.request.POST)
         if subject_form.is_valid():
             subject_form.save()
-            messages.success(self.request, _("Course created successfully."))
+            messages.success(self.request, "Course created successfully.")
             return redirect("supports:subjects")
         self.context["subject_form"] = subject_form
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return render(self.request, self.template_name, self.context)
 
 
@@ -320,9 +319,9 @@ class SubjectsDetailView(PermissionAndLoginRequiredMixin, View):
                 case "dc":
                     subject = get_object_or_404(Subject, pk=kwargs.get("pk"))
                     subject.delete()
-                    messages.success(self.request, _("Course deleted successfully."))
+                    messages.success(self.request, "Course deleted successfully.")
                     return redirect("supports:subjects")
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return redirect("supports:subjects")
 
 subjects_detail_view = SubjectsDetailView.as_view()
@@ -354,12 +353,12 @@ class StudentsView(PermissionAndLoginRequiredMixin, View):
             chosen_class = get_object_or_404(Class, pk=chosen_class_id)
             user = form.save(self.request)
             Student.objects.create(user=user, student_class=chosen_class)
-            messages.success(self.request, _("Student created successfully."))
+            messages.success(self.request, "Student created successfully.")
             return redirect("supports:students")
         self.context["form"] = form
         logger.error(f"An error occured when user {self.request.user.username}"
                      f" tried to sign up a student: {form.errors}")
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return render(self.request, self.template_name, self.context)
 
 
@@ -395,7 +394,7 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
                                                             data=self.request.POST)
                         if student_spec_form.is_valid():
                             student_spec_form.save()
-                            messages.success(self.request, _("Student updated successfully."))
+                            messages.success(self.request, "Student updated successfully.")
                             return redirect("supports:students-detail", pk=kwargs.get("pk"))
                         self.context.update({
                             "student_spec_form": student_spec_form,
@@ -404,9 +403,9 @@ class StudentsDetailView(PermissionAndLoginRequiredMixin, View):
                         return render(self.request, self.template_name, self.context)
                 case "ds":
                     get_object_or_404(get_user_model(), pk=kwargs.get("pk")).delete()
-                    messages.success(self.request, _("Student deleted successfully."))
+                    messages.success(self.request, "Student deleted successfully.")
                     return redirect("supports:students")
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         return redirect("supports:students-detail", pk=kwargs.get("pk"))
 
 

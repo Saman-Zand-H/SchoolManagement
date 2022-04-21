@@ -1,6 +1,5 @@
 from functools import partial
 from django.views.generic import TemplateView, View
-from django.utils.translation import gettext as _
 from django.utils.translation import activate
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -39,7 +38,7 @@ homepageview = HomePageView.as_view()
 
 class SupportView(View):
     def get(self, *args, **kwargs):
-        return render(self.request, "accounts/support.html", {
+        return render(self.request, "dashboard/support.html", {
             "form": SupportForm(),
             "segment": "support-page"
         })
@@ -60,7 +59,7 @@ class SupportView(View):
                             html_message=f"""
                     <html>
                         <body>
-                            <h1>{_("DjSchool Support")}</h1>
+                            <h1>DjSchool Support</h1>
                             <h3>{users_name}- {users_email}</h3>
                             <pre>{users_text}</pre>
                         </body>
@@ -70,7 +69,7 @@ class SupportView(View):
                     extra={"markup": True})
                 messages.success(
                     self.request,
-                    _("Thanks for your message. Message sent successfully."))
+                    "Thanks for your message. Message sent successfully.")
             except SMTPException as e:
                 logger.error(
                     f"[red]There was an error while user {self.request.user} "
@@ -80,11 +79,11 @@ class SupportView(View):
                 logger.error(f"The error: {e}")
                 messages.error(
                     self.request,
-                    _("An internal error happened. Please call us as soon as you can."
-                      ))
+                    "An internal error happened. Please call us as soon as you can."
+                )
             return redirect("home:support-page")
         else:
-            messages.error(self.request, _("Provided inputs are invalid."))
+            messages.error(self.request, "Provided inputs are invalid.")
             return render(self.request, "dashboard/support.html",
                           {"form": form})
 
@@ -139,10 +138,10 @@ class AddArticleView(LoginRequiredMixin, View):
             article.school = school
             article.save()
             messages.success(self.request,
-                             _("Article saved successfully."))
+                             "Article saved successfully.")
             return redirect("home:article-detail", pk=article.pk)
         else:
-            messages.error(self.request, _("Provided inputs are invalid."))
+            messages.error(self.request, "Provided inputs are invalid.")
         return redirect("home:articles")
 
 
@@ -178,8 +177,8 @@ class ArticleDetailView(LoginRequiredMixin, View):
                         )
                     ):
                         article.delete()
-                        messages.success(self.request, _(
-                            "Article deleted successfully."))
+                        messages.success(
+                            self.request, "Article deleted successfully.")
                         return redirect("home:articles")
                     raise PermissionDenied()
 
@@ -192,8 +191,14 @@ class AssignmentsView(LoginRequiredMixin, View):
     context = dict()
     
     def get(self, *args, **kwargs):
-        assignment_instances = Assignment.objects.filter(
-            assignment_class__school=self.request.user.school).distinct()
+        match self.request.user.user_type:
+            case "SS" | "T":
+                assignment_instances = Assignment.objects.filter(
+                    assignment_class__school=self.request.user.school).distinct()
+            case "S":
+                assignment_instances = Assignment.objects.filter(
+                    assignment_class=self.request.user.student.user.student_class
+                )
         self.context.update({
             "nav_color": "bg-gradient-indigo",
             "assignments": assignment_instances.order_by("-deadline"),
@@ -222,9 +227,9 @@ class AddAssignmentView(PermissionAndLoginRequiredMixin, View):
         form = AssignmentForm(data=self.request.POST, request=self.request)
         if form.is_valid():
             instance = form.save()
-            messages.success(self.request, _("Assignment saved successfully."))
+            messages.success(self.request, "Assignment saved successfully.")
             return redirect(instance.get_absolute_url())
-        messages.error(self.request, _("Provided inputs are invalid."))
+        messages.error(self.request, "Provided inputs are invalid.")
         self.context.update({"form": form})
         return render(self.request, self.template_name, self.context)
             
@@ -261,9 +266,9 @@ class AssignmentDetailView(LoginRequiredMixin, View):
                             request=self.request, data=self.request.POST, instance=assignment)
                         if a_form.is_valid():
                             a_form.save()
-                            success_message(message=_("Assignment updated successfully."))
+                            success_message(message="Assignment updated successfully.")
                             return redirect(assignment.get_absolute_url())
-                        error_message(message=_("Provided inputs are invalid."))
+                        error_message(message="Provided inputs are invalid.")
                         self.context.update({"form": a_form})
                         return render(self.request, self.template_name, self.context)
                     raise PermissionDenied("You are not the teacher of this assignment.")

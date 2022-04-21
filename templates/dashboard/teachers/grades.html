@@ -6,7 +6,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% block title %} {% trans 'Grades' %} {% endblock title %} 
+{% block title %} Grades {% endblock title %} 
 
 {% block content %}
 
@@ -16,7 +16,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Grades' %}
+                        Grades
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -29,13 +29,13 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{% url 'teachers:home' %}">{% trans 'Dashboard' %}</a>
+                                <a href="{% url 'teachers:home' %}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{% url 'teachers:exams' %}">{% trans 'Exams' %}</a>
+                                <a href="{% url 'teachers:exams' %}">Exams</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Grades' %}
+                                Grades
                             </li>
                         </ol>
                     </nav>
@@ -52,10 +52,10 @@
                                    >
                                 {% if exam.grade_exam.exists %}
                                     <i class="fas fa-pen"></i>
-                                    {% trans 'Edit' %}
+                                    Edit
                                 {% else %}
                                     <i class="fas fa-plus"></i>
-                                    {% trans 'New' %}
+                                    New
                                 {% endif %}
                             </button>
                         </div>
@@ -67,7 +67,7 @@
                                     class="btn btn-sm btn-danger text-white border-danger"
                                    >
                             <i class="fas fa-trash-alt"></i>
-                            {% trans 'Delete' %}
+                            Delete
                             </button>
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">
-                                        {% trans 'Add Grades' %}
+                                        Add Grades
                                     </h5>
                                     <button 
                                             type="button" 
@@ -121,9 +121,9 @@
                                     <table class="table table-dark text-center">
                                         <thead>
                                             <tr>
-                                                <td>{% trans 'ID' %}</td>
-                                                <td>{% trans 'Name' %}</td>
-                                                <td>{% trans 'Grade' %}</td>
+                                                <td>ID</td>
+                                                <td>Name</td>
+                                                <td>Grade</td>
                                             </tr>
                                         </thead>
                                         <form 
@@ -180,14 +180,14 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                           {% trans 'Close' %}
+                                           Close
                                     </button>
                                     <button 
                                             type="button" 
                                             class="btn btn-primary" 
                                             onclick="$('#submitGrades').submit()"
                                            >
-                                           {% trans 'Add' %}
+                                           Add
                                     </button>
                                 </div>
                             </div>
@@ -208,7 +208,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
-                                        {% trans 'Delete Exam' %}
+                                        Delete Exam
                                     </h5>
                                     <button 
                                             type="button" 
@@ -220,19 +220,19 @@
                                     </button>
                                 </div>
                                 <div class="model-body text-center">
-                                    {% trans 'Are You sure you want to delete this exam PERMANENTLY?' %}
+                                    Are You sure you want to delete this exam PERMANENTLY?
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" 
                                             class="btn btn-secondary" 
                                             data-dismiss="modal">
-                                        {% trans 'No' %}
+                                        No
                                     </button>
                                     <form action="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="operation" value="de">
                                         <button type="submit" class="btn btn-danger">
-                                            {% trans 'Yes' %}
+                                            Yes
                                         </button>
                                     </form>
                                 </div>
@@ -252,7 +252,7 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">{% trans 'Grades' %}</h3>
+                    <h3 class="mb-0">Grades</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
@@ -261,20 +261,20 @@
                             <tr>
                                 <th scope="col" class="sort" data-sort="name"></th>
                                 <th scope="col" class="sort" data-sort="budget">
-                                    {% trans 'Name' %}
+                                    Name
                                 </th>
                                 <th scope="col" class="sort" data-sort="status">
-                                    {% trans 'Grade' %}
+                                    Grade
                                 </th>
                                 <th scope="col">
-                                    {% trans 'Student' %}
+                                    Student
                                 </th>
                                 <th 
                                     scope="col" 
                                     class="sort" 
                                     data-sort="completion"
                                    >
-                                   {% trans 'Performance' %}
+                                   Performance
                                 </th>
                             </tr>
                         </thead>
@@ -334,7 +334,7 @@
                             {% else %}
                                 <tr>
                                     <td colspan="5" class="text-center">
-                                        <b>{% trans 'No grade is submitted yet.' %}</b>
+                                        <b>No grade is submitted yet.</b>
                                     </td>
                                 </tr>
                             {% endif %}

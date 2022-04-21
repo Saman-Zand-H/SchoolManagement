@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Classes' %} {% endblock title %}
+{% block title %}Classes{% endblock title %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Classes' %}
+                        Classes
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -25,10 +25,10 @@
                                 <a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{% url 'supports:home' %}">{% trans 'Dashboard' %}</a>
+                                <a href="{% url 'supports:home' %}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Classes' %}
+                                Classes
                             </li>
                         </ol>
                     </nav>
@@ -43,7 +43,7 @@
                                     class="btn btn-sm btn-neutral"
                                    >
                                     <i class="fas fa-plus"></i> 
-                                    {% trans 'New' %}
+                                    New
                             </button>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
-                                        {% trans 'Create a new class' %}
+                                        Create a new class
                                     </h5>
                                     <button 
                                             type="button" 
@@ -74,11 +74,11 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <div>* {% trans 'these fields are required' %}</div>
+                                    <div>* these fields are required</div>
                                     <div class="mt-2">
                                         {% if form.errors or form.non_field_errors %}
                                             <hr>
-                                            <h3>{% trans 'Invalid Inputs:' %}</h3><br>
+                                            <h3>Invalid Inputs:</h3><br>
                                             {% for field in form %}
                                                 {% for error in field.errors %}
                                                     <p class="text-danger">- {{ field.label }}: {{ error }}</p>
@@ -128,7 +128,7 @@
                                                     {% else %}
                                                         <div class="col text-center">
                                                             <strong>
-                                                                {% trans "You haven't created any course yet." %}
+                                                                You haven't created any course yet.
                                                             </strong>
                                                         </div>
                                                     {% endif %}
@@ -143,14 +143,14 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                        {% trans 'Close' %}
+                                        Close
                                     </button>
                                     <button 
                                             type="button" 
                                             class="btn btn-primary" 
                                             onclick="$('#createClassForm').submit()"
                                            >
-                                        {% trans 'Create' %}
+                                        Create
                                     </button>
                                 </div>
                             </div>
@@ -169,18 +169,18 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">{% trans 'Classes' %}</h3>
+                    <h3 class="mb-0">Classes</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
                     <table class="table table-hover align-items-center table-flush">
                         <thead class="thead-light">
                             <tr>
-                                <th>{% trans 'Class ID' %}</th>
-                                <th>{% trans 'Courses Count' %}</th>
-                                <th>{% trans 'Students Count' %}</th>
-                                <th>{% trans 'Students' %}</th>
-                                <th>{% trans 'Performance' %}</th>
+                                <th>Class ID</th>
+                                <th>Courses Count</th>
+                                <th>Students Count</th>
+                                <th>Students</th>
+                                <th>Performance</th>
                             </tr>
                         </thead>
                         <tbody class="list">
@@ -223,7 +223,7 @@
                                                         </a>
                                                     {% endfor %}
                                                 {% else %}
-                                                    <h3>{% trans 'No student in this class' %}</h3>
+                                                    <h3>No student in this class</h3>
                                                 {% endif %}
                                             </div>
                                         </td>
@@ -238,7 +238,7 @@
                             {% else %}
                                     <tr>
                                         <td colspan="5" class="text-center">
-                                            {% trans 'No class is created yet.' %}
+                                            No class is created yet.
                                         </td>
                                     </tr>
                             {% endif %}

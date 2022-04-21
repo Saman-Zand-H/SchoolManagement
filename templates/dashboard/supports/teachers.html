@@ -4,7 +4,7 @@
 {% load customtags %} 
 {% load i18n %}
 
-{% block title %} {% trans 'Teachers' %} {% endblock title %}
+{% block title %}Teachers{% endblock title %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Teachers' %}
+                        Teachers
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,11 +28,11 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Teachers' %}
+                                Teachers
                             </li>
                         </ol>
                     </nav>
@@ -48,7 +48,7 @@
                                     class="btn btn-sm btn-neutral"
                                    >
                                 <i class="fas fa-plus"></i> 
-                                {% trans 'New' %}
+                                New
                             </button>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
-                                        {% trans 'Create A New Teacher' %}
+                                    Create A New Teacher
                                     </h5>
                                     <button 
                                             type="button" 
@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="">
-                                        * {% trans 'these fields are required' %}
+                                        * these fields are required
                                     </div>
                                     <form id="createClassForm" method="POST" enctype="multipart/form-data">
                                         {% csrf_token %}
@@ -92,14 +92,14 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                        {% trans 'Close' %}
+                                        Close
                                     </button>
                                     <button 
                                             type="button" 
                                             class="btn btn-primary" 
                                             onclick="$('#createClassForm').submit()"
                                            >
-                                        {% trans 'Create' %}
+                                        Create
                                     </button>
                                 </div>
                             </div>
@@ -126,8 +126,8 @@
                                             {{ teacher.user.name|title }}
                                         </div>
                                         <p class="card-text">
-                                            {% trans 'Courses:' %} {{ teacher.subject_teacher.count }}<br>
-                                            {% trans 'Degree:' %} {{ teacher.degree|default:"not set" }}<br>
+                                            Courses: {{ teacher.subject_teacher.count }}<br>
+                                            Degree: {{ teacher.degree|default:"not set" }}<br>
                                         </p>
                                     </div>
                                 </a>
@@ -138,7 +138,7 @@
                     <div class="col">
                         <div class="card border-0 bg-gradient-gray-dark text-white my-4">
                             <div class="card-body">
-                                <strong class="card-text">{% trans 'No teacher is added yet.' %}</strong>
+                                <strong class="card-text">No teacher is added yet.</strong>
                             </div>
                         </div>
                     </div>

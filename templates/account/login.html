@@ -6,7 +6,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% block title %} {% trans 'Sign In' %} {% endblock title %}
+{% block title %}Sign In{% endblock title %}
 
 {% block content %}
 
@@ -46,7 +46,7 @@
 								 <p class="text-danger">- {{ error }}</p>
 							{% endfor %}
 						{% else %}
-							<p>{% trans 'Add your credentials' %}</p>
+							<p>Add your credentials</p>
 						{% endif %}
 					</div>
 
@@ -72,22 +72,22 @@
 							</div>
 						</div>
                         <div class="text-center mt--3">
-                            <small><a href="{% url 'account_reset_password' %}">{% trans 'Did you forget your password?' %}</a></small>
+                            <small><a href="{% url 'account_reset_password' %}">Did you forget your password?</a></small>
                         </div>
 						<div class="text-center">
-							<button type="submit" class="btn btn-primary my-4">{% trans 'Sign In' %}</button>
+							<button type="submit" class="btn btn-primary my-4">Sign In</button>
 						</div>
 					</form>
 					<hr>
 					{% url 'account_signup' as signup_url %}
 					<div class="text-center py-2">
-						{% blocktrans %}Or <a href="{{ signup_url }}">create a new account</a>{% endblocktrans %}
+						Or <a href="{{ signup_url }}">create a new account</a>
 					</div>
 				</div>
 			</div>
 			<div class="row mt-3">
 				<div class="col-6  offset-1 text-right">
-					<a href="{% url 'home:support-page' %}" class="text-light"><small>{% trans 'Get Support' %}</small></a>
+					<a href="{% url 'home:support-page' %}" class="text-light"><small>Get Support</small></a>
 				</div>
 			</div>
 		</div>

@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth.models import Permission, Group
 from django.db.models import Avg
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField
 
 from datetime import date
@@ -26,8 +26,13 @@ class Student(models.Model):
                                       on_delete=models.SET_NULL,
                                       null=True,
                                       related_name="student_class",
-                                      verbose_name=_("Student Class"),
+                                      verbose_name="Student Class",
                                       blank=True)
+    
+    class Meta:
+        permissions = (
+            ("student", "Student"),
+        )
 
     def __str__(self):
         return self.user.username
@@ -40,6 +45,15 @@ class Student(models.Model):
 
     def get_absolute_url_teachers(self):
         return reverse("teachers:students-detail", kwargs={"pk": self.pk})
+    
+    def save(self, *args, **kwargs):
+        group, created = Group.objects.get_or_create(name="Students")
+        if created:
+            group.permissions.add(
+                Permission.objects.get(codename="student"))
+        self.user.groups.add(group)
+        return super().save(*args, **kwargs)
+        
     
     @property
     def average_grade_percent(self):
@@ -88,7 +102,7 @@ class Subject(models.Model):
 
     class Meta:
         unique_together = ["name", "teacher"]
-        verbose_name = _("Courses")
+        verbose_name = "Courses"
         verbose_name_plural = "Courses"
 
 
@@ -119,7 +133,7 @@ class Grade(models.Model):
     
     def clean(self):
         if self.grade > self.exam.full_score:
-            raise ValidationError({"grade": _("Grade cannot be higher than full score.")}, 
+            raise ValidationError({"grade": "Grade cannot be higher than full score."}, 
                                   code="invalid_grade")
         super().clean()
         
@@ -138,8 +152,10 @@ class Exam(models.Model):
     full_score = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        default=20,
+        default=20.00,
+        blank=True,
     )
+    visible_to_students = models.BooleanField(default=True, blank=True)
 
     @property
     def average_grade(self):
@@ -155,6 +171,11 @@ class Exam(models.Model):
     @property
     def school(self):
         return self.exam_class.school.name
+    
+    def clean(self, *args, **kwargs):
+        if self.subject not in self.exam_class.subjects:
+            raise ValidationError({"subject": "Subject is not in class."})
+        super().clean(*args, **kwargs)
 
     def __str__(self):
         return f"{self.teacher}, {self.subject}"
@@ -271,5 +292,5 @@ class Assignment(models.Model):
     def clean(self):
         super().clean()
         if not self.subject in self.assignment_class.subjects.all():
-            raise ValidationError({"subject": _("Subject must be in class.")},
+            raise ValidationError({"subject": "Subject must be in class."},
                                   code="invalid_subject")

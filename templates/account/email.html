@@ -6,7 +6,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% block title %} {% trans 'E-Mail Addresses' %} {% endblock title %}
+{% block title %}E-Mail Addresses{% endblock title %}
 
 {% block content %}
 
@@ -17,7 +17,10 @@
             <div class="card bg-secondary shadow border-0">
                 <div class="card-header bg-transparent pb-5">
                     <div class="text-muted text-center mt-2 mb-3">
-                        <img src="{% static 'assets/img/brand/raw-logo-comp.png' %}" class="mx-auto" width="250rem">
+                        <img 
+                             src="{% static 'assets/img/brand/raw-logo-comp.png' %}" 
+                             class="mx-auto" width="250rem"
+                            >
                     </div>
                 </div>
                 <div class="card-body px-lg-5 py-lg-5">
@@ -47,12 +50,12 @@
                                     <p class="text-danger">- {{ error }}</p>
                                 {% endfor %}
                             {% else %}
-                                <h1 class="text-center">{% trans 'E-Mail Addresses' %}</h1>
+                                <h1 class="text-center">E-Mail Addresses</h1>
                             {% endif %}
                         </div>
                     </div>
                     {% if user.emailaddress_set.all %}
-                    <p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
+                    <p>The following e-mail addresses are associated with your account</p>
                     
                     <form action="{% url 'account_email' %}" class="email_list" method="post">
                         {% csrf_token %}
@@ -66,11 +69,11 @@
                     
                                     {{ emailaddress.email }}
                                     {% if emailaddress.verified %}
-                                        <span class="badge badge-success">{% trans 'Verified' %}</span>
+                                        <span class="badge badge-success">Verified</span>
                                     {% else %}
-                                        <span class="badge badge-warning">{% trans 'Unverified' %}</span>
+                                        <span class="badge badge-warning">Unverified</span>
                                     {% endif %}
-                                    {% if emailaddress.primary %}<span class="badge badge-info">{% trans 'Primary' %}</span>{% endif %}
+                                    {% if emailaddress.primary %}<span class="badge badge-info">Primary</span>{% endif %}
                                 </label>
                             </div>
                             {% endfor %}
@@ -78,13 +81,13 @@
                             <div class="buttonHolder">
                                 <div class="row">
                                     <div class="col">
-                                        <button class="btn btn-info my-1" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
-                                        <button class="btn btn-danger" type="submit" name="action_remove">{% trans 'Remove' %}</button>
+                                        <button class="btn btn-info my-1" type="submit" name="action_primary">Make Primary</button>
+                                        <button class="btn btn-danger" type="submit" name="action_remove">Remove</button>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col mt-2">
-                                      <button class="btn btn-primary my-1" type="submit" name="action_send">{% trans 'Re-send Verification' %}</button>  
+                                      <button class="btn btn-primary my-1" type="submit" name="action_send">Re-send Verification</button>  
                                     </div>
                                 </div>
                             </div>
@@ -93,20 +96,20 @@
                     </form>
                     
                     {% else %}
-                        <p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up. You should really
-                        add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
+                        <p><strong>Warning:</strong> You currently do not have any e-mail address set up. You should really
+                        add an e-mail address so you can receive notifications, reset your password, etc.</p>
                     
                     {% endif %}
                     
                     {% if can_add_email %}
                         <hr>
                         <div class="mt-3">
-                            <h2>{% trans 'Add E-Mail Address' %}</h2>
+                            <h2>Add E-Mail Address'</h2>
                             
                             <form method="post" action="{% url 'account_email' %}" class="mt-3">
                                 {% csrf_token %}
                                 {{ form|crispy }}
-                                <button class="btn btn-outline-success" name="action_add" type="submit">{% trans 'Add E-Mail Address' %}</button>
+                                <button class="btn btn-outline-success" name="action_add" type="submit">Add E-Mail Address</button>
                             </form>
                         </div>
                     {% endif %}
@@ -119,7 +122,7 @@
                             {% elif user.user_type == "T" %} 
                                 href="{% url 'profile' %}" 
                             {% endif %}
-                        >{% trans 'Profile Page' %}</a>
+                        >Profile Page</a>
                     </div>
                 </div>
             </div>

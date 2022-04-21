@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, DetailView, TemplateView
+from django.views.generic import View, DetailView
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.forms import modelformset_factory
-from django.utils.translation import gettext as _
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -104,20 +100,23 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
         if form.is_valid():
             subject = form.cleaned_data.get("subject")
             exam_class = form.cleaned_data.get("exam_class")
-            full_score = form.cleaned_data.get("full_score", 20.0)
+            full_score = form.cleaned_data.get("full_score")
+            logger.error(full_score)
             timestamp = form.cleaned_data.get("timestamp")
+            visible_to_students = form.cleaned_data.get("visible_to_students")
             chosen_subject_instance = get_object_or_404(Subject, pk=subject)
             chosen_class_instance = get_object_or_404(Class, pk=exam_class)
             teacher = get_object_or_404(Teacher, user=self.request.user)
             Exam.objects.create(subject=chosen_subject_instance,
                                 exam_class=chosen_class_instance,
-                                full_score=full_score,
+                                full_score=full_score or 20.00,
                                 timestamp=timestamp,
+                                visible_to_students=visible_to_students,
                                 teacher=teacher)
-            messages.success(self.request, _("Exam created successfully."))
+            messages.success(self.request, "Exam created successfully.")
             return redirect("teachers:exams")
         else:
-            messages.error(self.request, _("Provided inputs are invalid."))
+            messages.error(self.request, "Provided inputs are invalid.")
             self.context.update({"form": form})
             return render(self.request, "dashboard/teachers/exams.html",
                           self.context)
@@ -187,19 +186,19 @@ class ExamDetailView(PermissionAndLoginRequiredMixin, View):
                     formset = GradeFormset(self.request.POST)
                     if formset.is_valid():
                         formset.save()
-                        success_message(message=_("Grades submitted successfully."))
+                        success_message(message="Grades submitted successfully.")
                     else:
                         error_message(
-                            message=_("Grades cannot exceed the full score."))
+                            message="Grades cannot exceed the full score.")
                     return redirect("teachers:exams-detail", pk)
                 case "de":
                     pk = kwargs["pk"]
                     exam = Exam.objects.get(pk=pk)
                     exam.delete()
-                    success_message(message=_("Exam deleted successfully."))
+                    success_message(message="Exam deleted successfully.")
                     return redirect("teachers:exams")
         else:
-            error_message(message=_("Provided inputs are invalid."))
+            error_message(message="Provided inputs are invalid.")
             return redirect("teachers:exams")
 
 

@@ -4,7 +4,7 @@
 {% load customtags %} 
 {% load i18n %}
 
-{% block title %} {% trans 'Classes' %} {% endblock title %}
+{% block title %}Classes{% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %} 
@@ -16,7 +16,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Classes' %}
+                        Classes
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -30,11 +30,11 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'teachers:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Classes' %}
+                                Classes
                             </li>
                         </ol>
                     </nav>
@@ -48,7 +48,7 @@
         <div class="col">
             <div class="card shadow">
                 <div class="card-header bg-transparent">
-                    <h3 class="mb-0">{% trans 'Classes' %}</h3>
+                    <h3 class="mb-0">Classes</h3>
                 </div>
                 <div class="table-responsive">
                     <div>
@@ -56,16 +56,16 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th scope="col">
-                                        {% trans 'Class ID' %}
+                                        Class ID
                                     </th>
                                     <th scope="col">
-                                        {% trans 'Students Count' %}
+                                        Students Count
                                     </th>
                                     <th scope="col">
-                                        {% trans 'Students' %}
+                                        Students
                                     </th>
                                     <th scope="col">
-                                        {% trans 'Average Grade' %}
+                                        Average Grade
                                     </th>
                                     <th scope="col"></th>
                                 </tr>
@@ -106,7 +106,7 @@
                                                         {% endfor %}
                                                     {% else %}
                                                         <h3 class="text-dark">
-                                                            {% trans 'No student found in this class.' %}
+                                                            No student found in this class.
                                                         </h3>
                                                     {% endif %}
                                                 </div>
@@ -142,7 +142,7 @@
                                             colspan="5" 
                                             class="text-center"
                                            >
-                                           {% trans 'Sorry! We cannot find any class for you.' %}
+                                           Sorry! We cannot find any class for you.
                                         </td>
                                     </tr>
                                 {% endif %}

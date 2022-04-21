@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Dashboard' %} {% endblock title %}
+{% block title %}Dashboard{% endblock title %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Home' %}
+                        Home
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,7 +28,7 @@
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Dashboard' %}
+                                Dashboard
                             </li>
                         </ol>
                     </nav>
@@ -43,10 +43,10 @@
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">
-                                        {% trans 'School' %}
+                                        School
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">
-                                        {{ user.school_name|join:"" }}
+                                        {{ user.school.name|title }}
                                     </span>
                                 </div>
                                 <div class="col-auto">
@@ -69,7 +69,7 @@
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">
-                                        {% trans 'Class' %}
+                                        Class
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">
                                         {{ student.student_class.class_id }}
@@ -95,7 +95,7 @@
                             <div class="row">
                                 <div class="col">
                                     <h5 class="card-title text-uppercase text-muted mb-0">
-                                        {% trans 'Average Grade Percentage' %}
+                                        Average Grade Percentage
                                     </h5>
                                     <span class="h2 font-weight-bold mb-0">
                                         {{ student.average_grade_percent }} %
@@ -128,10 +128,10 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h6 class="text-light text-uppercase ls-1 mb-1">
-                                {% trans 'Overview' %}
+                                Overview
                             </h6>
                             <h5 class="h3 text-white mb-0">
-                                {% trans 'Average Performance' %}
+                                Average Performance
                             </h5>
                         </div>
                         <div class="col">
@@ -190,10 +190,10 @@
                         <table class="table table-action align-content-center">
                             <thead class="thead thead-light">
                                 <tr>
-                                    <th class="col-2">{% trans 'Subject' %}</th>
-                                    <th class="col-2">{% trans 'Teacher' %}</th>
-                                    <th class="col-6">{% trans 'Assignment' %}</th>
-                                    <th class="col-2">{% trans 'Deadline' %}</th>
+                                    <th class="col-2">Subject</th>
+                                    <th class="col-2">Teacher</th>
+                                    <th class="col-6">Assignment</th>
+                                    <th class="col-2">Deadline</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -225,7 +225,7 @@
                                     <tr>
                                         <td colspan="4">
                                             <h4 class="text-center">
-                                                {% trans 'No assignments has been submitted yet.' %}
+                                                No assignments has been submitted yet.
                                             </h4>
                                         </td>
                                     </tr>

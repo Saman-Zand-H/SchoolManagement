@@ -22,7 +22,7 @@
          >
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{% trans 'DjS School' %}</title>
+    <title>{% trans 'Takhte Whiteboard' %}</title>
 
     <meta 
           content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' 
@@ -93,7 +93,7 @@
                                         >
                                 </div>
                                 <div class="brand text-black">
-                                    {% trans 'Django Solutions' %}
+                                    {% trans 'Takhte Whiteboard' %}
                                 </div>
                             </div>
                         </a>
@@ -156,7 +156,7 @@
                                    href="{% url 'home:support-page' %}" 
                                    class="btn btn-round btn-info btn-fill"
                                   >
-                                    {% trans 'Contact' %}
+                                    {% trans 'Contact Me' %}
                                 </a>
                             </li>
 
@@ -271,19 +271,26 @@
                         </div>
                     </div>
                     <div class="col-md-5 col-sm-12">
-                        <h1 class="text-center">{% trans 'About DjS School' %}
+                        <h1 class="text-center">{% trans 'About Us' %}
 
                             <small class="subtitle">{% trans 'Get to know us' %}</small></h1>
                         <hr>
-                        <p>
-                            {% trans 'DjS School offers Management tools for managing your school. From administrators to teachers can use our app.' %}
+                        <p>{% blocktrans %}Takhte Whiteboard offers management tools for managing your school.{% endblocktrans %}
                         </p>
-                        <p>
-                            {% trans 'We deeply care for how administrators can manage their school more efficiently. Here administrators can create teachers and students, subjects and classes. Teachers are also important to us! Teachers here can create exams and submit grades for students.' %}
+                        <p>{% blocktrans %}With this app, principals can register teachers and students, create classes,
+                            subjects and their teachers, and write and submit articles. Teachers
+                            can save records of their exams and their students' grade and make use of the charts
+                            provided in addition to access the information about their students and their
+                            classes. They can set assignments and write articles that will be visible to
+                            their students and their colleagues. Students can read articles and assignments,
+                            and all the users have access to the internal messenger provided. <b>Note that
+                            only principals can create groups.</b>{% endblocktrans %}
                         </p>
-                        {% url 'home:support-page' as support_page %}
-                        <p>
-                            {% blocktrans %}We take great interest in how our costumers use our app. We are constantly thinking about how to make our app more useful. One of our tools in improving our app is your feedbacks. So please feel free to leave feedbacks. You can do this on the <a href="{{ support_page }}">support page</a>. {% endblocktrans %}
+                        {% url 'home:support' as support_url %}
+                        <p>{% blocktrans %}I take great interest in our costumers feedback and I'm constantly
+                            thinking about making this app better. I invite you to take a part in
+                            this process by tell us your suggestions in the 
+                            <a href="{{ support_url }}">Support page</a>.{% endblocktrans %}
                         </p>
                         <br>
                     </div>
@@ -293,32 +300,14 @@
         </div>
         <!-- end container -->
         <div class="parallax-pro">
-            <div class="img-src" style="background-image: url('../../../static/assets/img/theme/hampshire.jpg');">
+            <div class="img-src" style="background-image: url('../../../static/assets/img/theme/home-blur.jpg');">
             </div>
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6 col-md-offset-3 col-md-12 text-center">
-                        <h1 class="hello text-center">
-                            <span class="text-white display-2">{% trans 'DjS School' %} 
-                                <span class="label label-warning">{% trans 'V2.0' %}</span>
-                            </span>
-                            <small>
-                                <ul class="list-unstyled">
-                                    <li>{% trans '+ New Sections' %}</li>
-                                    <li>{% trans '+ RESTful APIs' %}</li>
-                                    <li>{% trans '+ Chatrooms' %}</li>
-                                    <h3 class="display-3">{% trans 'Coming Soon...' %}</h3>
-                                </ul>
-                            </small>
-                        </h1>
-                    </div>
-                </div>
-                <div class="space-30"></div>
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="credits">
                             <script>document.write(new Date().getFullYear())</script> 
-                            {% trans '&copy; DjS School' %} <i class="fas fa-school"></i> - {% trans 'for managing schools more effectively' %}
+                            &copy; {% trans 'Takhte Whiteboard' %} <i class="fas fa-school"></i> - {% trans 'for managing schools more effectively' %}
                         </div>
                     </div>
                 </div>

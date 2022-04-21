@@ -6,7 +6,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% block title %} {% trans 'Sign Up' %} {% endblock title %}
+{% block title %}Sign Up{% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -78,7 +78,7 @@
                                 {% endfor %}
                             {% else %}
                                 <p class="text-center">
-                                    {% trans 'Join us' %}
+                                    Join us
                                 </p>
                             {% endif %}
                         </div>
@@ -133,10 +133,10 @@
                             </div>
                             <small>
                                 <ul class="text-black-50">
-                                    <li>{% trans 'Your password can’t be too similar to your other personal information.' %}</li>
-                                    <li>{% trans 'Your password must contain at least 8 characters.' %}</li>
-                                    <li>{% trans 'Your password can’t be a commonly used password.' %}</li>
-                                    <li>{% trans 'Your password can’t be entirely numeric.' %}</li>
+                                    <li>Your password can’t be too similar to your other personal information.'</li>
+                                    <li>Your password must contain at least 8 characters.'</li>
+                                    <li>Your password can’t be a commonly used password.'</li>
+                                    <li>Your password can’t be entirely numeric.'</li>
                                 </ul>
 				            </small>
                         </div>
@@ -174,8 +174,8 @@
                             </div>
                             <small>
                                 <ul class="text-black-50">
-                                    <li>{% trans "The size of your file can't exceed 3MB." %}</li>
-                                    <li>{% trans 'Allowed extensions are .jpg and .png.' %}</li>
+                                    <li>The size of your file can't exceed 3MB.</li>
+                                    <li>Allowed extensions are .jpg and .png.</li>
                                 </ul>
 				            </small>
                         </div>
@@ -193,14 +193,17 @@
                         {% endif %}
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary my-4" name="action">
-                                {% trans 'Sign Up' %}
+                                Sign Up
                             </button>
                         </div>
                     </form>
                     <hr>
                     <div class="text-center py-2">
                         {% url 'account_login' as login_url %}
-                        {% blocktrans %}Or if you already have an account <a href="{{ login_url }}">log in</a> .{% endblocktrans %}
+                        Or if you already have an account 
+                        <a href="{{ login_url }}">
+                            log in
+                        </a> .
                     </div>
                 </div>
             </div>

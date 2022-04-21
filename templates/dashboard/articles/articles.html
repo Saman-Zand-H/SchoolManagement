@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Articles' %} {% endblock title %}
+{% block title %}Articles{% endblock title %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Articles' %}
+                        Articles
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -31,7 +31,7 @@
                                 <a href="{% url 'supports:home' %}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Articles' %}
+                                Articles
                             </li>
                         </ol>
                     </nav>
@@ -43,7 +43,7 @@
                         class="btn btn-sm btn-neutral my-1"
                         >
                             <i class="fas fa-plus"></i>
-                            {% trans 'New' %}
+                            New
                         </a>
                     </div>
                 {% endif %}

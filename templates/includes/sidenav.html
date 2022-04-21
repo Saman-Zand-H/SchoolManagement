@@ -18,7 +18,7 @@
                         <a class="nav-link" href="{% url 'home:home' %}">
                             <h3>
                                 <i class="fas fa-home text-primary px-1"></i>
-                                <span class="nav-link-text">{% trans 'Home' %}</span>
+                                <span class="nav-link-text">Home</span>
                             </h3>
                         </a>
                     </li>
@@ -27,7 +27,7 @@
                 {% if user.is_authenticated %}
                     <hr class="mb-3 mt-0">
                     <h6 class="navbar-heading p-0 text-muted">
-                        <span class="docs-normal">{% trans 'Main Menu' %}</span>
+                        <span class="docs-normal">Main Menu</span>
                     </h6>
                     <ul class="navbar-nav">
                         <li class="nav-item">
@@ -38,7 +38,7 @@
                                    class="fas fa-tachometer-alt px-1 
                                           {% if 'home' in segment %}text-primary{% endif %}"
                                   ></i>
-                                <span class="nav-link-text">{% trans 'Dashboard' %}</span>
+                                <span class="nav-link-text">Dashboard</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -50,7 +50,7 @@
                                 <i class="ni ni-single-02 px-1 
                                           {% if 'profile' in segment %}text-danger{% endif %}"
                                   ></i>
-                                <span class="nav-link-text">{% trans 'Profile' %}</span>
+                                <span class="nav-link-text">Profile</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -63,7 +63,7 @@
                                     <i class="fas fa-comment-alt 
                                               {% if 'messenger' in segment %}text-orange{% endif %}"
                                       ></i>
-                                    <span class="nav-link-text">{% trans 'Messenger' %}</span>
+                                    <span class="nav-link-text">Messenger</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -72,7 +72,7 @@
                                    href="{% url 'home:articles' %}">
                                     <i class="fas fa-newspaper px-1 
                                               {% if 'articles' in segment %}text-info{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Articles' %}</span>
+                                    <span class="nav-link-text">Articles</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -81,7 +81,7 @@
                                    href="{% url 'home:assignments' %}">
                                     <i class="fas fa-pencil-alt px-1
                                               {% if 'assignments' in segment %}text-indigo{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Assignments' %}</span>
+                                    <span class="nav-link-text">Assignments</span>
                                 </a>
                             </li>
                         {% if user.user_type == "T" %}
@@ -91,7 +91,7 @@
                                    href="{% url 'teachers:classes' %}">
                                     <i class="ni ni-badge px-1 
                                               {% if 'classes' in segment %}text-yellow{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Classes' %}</span>
+                                    <span class="nav-link-text">Classes</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -100,7 +100,7 @@
                                    href="{% url 'teachers:students' %}">
                                     <i class="fas fa-user-graduate px-1 
                                               {% if 'students' in segment %}text-green{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Students' %}</span>
+                                    <span class="nav-link-text">Students</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -109,7 +109,7 @@
                                    href="{% url 'teachers:exams' %}">
                                     <i class="fas fa-clipboard px-1 
                                               {% if 'exams' in segment %}text-default{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Exams' %}</span>
+                                    <span class="nav-link-text">Exams</span>
                                 </a>
                             </li>
                         {% elif user.user_type == "SS" %}
@@ -119,7 +119,7 @@
                                    href="{% url 'supports:classes' %}">
                                     <i class="fas fa-chalkboard px-1 
                                               {% if 'classes' in segment %}text-yellow{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Classes' %}</span>
+                                    <span class="nav-link-text">Classes</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -128,7 +128,7 @@
                                    href="{% url 'supports:teachers' %}">
                                     <i class="fas fa-chalkboard-teacher px-1 
                                               {% if 'teachers' in segment %}text-green{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Teachers' %}</span>
+                                    <span class="nav-link-text">Teachers</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -137,7 +137,7 @@
                                    href="{% url 'supports:subjects' %}">
                                     <i class="fas fa-book px-1 
                                               {% if 'courses' in segment %}text-black{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Courses' %}</span>
+                                    <span class="nav-link-text">Courses</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -146,7 +146,17 @@
                                    href="{% url 'supports:students' %}">
                                     <i class="fas fa-user-graduate px-1 
                                               {% if 'students' in segment %}text-default{% endif %}"></i>
-                                    <span class="nav-link-text">{% trans 'Students' %}</span>
+                                    <span class="nav-link-text">Students</span>
+                                </a>
+                            </li>
+                        {% elif user.user_type == "S" %}
+                            <li class="nav-item">
+                                <a class="nav-link 
+                                          {% if 'grades' in segment %}active{% endif %}" 
+                                   href="{% url 'students:exams' %}">
+                                    <i class="fas fa-clipboard px-1 
+                                              {% if 'grades' in segment %}text-indigo{% endif %}"></i>
+                                    <span class="nav-link-text">Grades</span>
                                 </a>
                             </li>
                         {% endif %}
@@ -156,14 +166,14 @@
                                href="{% url 'logout' %}">
                                 <i class="ni ni-user-run px-1 
                                           {% if 'logout' in segment %}text-red{% endif %}"></i>
-                                <span class="nav-link-text">{% trans 'Log Out' %}</span>
+                                <span class="nav-link-text">Log Out</span>
                             </a>
                         </li>
                     </ul>
                     <hr class="my-3">
                 {% endif %}
                 <h6 class="navbar-heading p-0 text-muted">
-                    <span class="docs-normal">{% trans 'Contact' %}</span>
+                    <span class="docs-normal">Contact</span>
                 </h6>
                 <ul class="navbar-nav mb-md-3">
                     <li class="nav-item">
@@ -171,7 +181,7 @@
                            href="{% url 'home:support-page' %}">
                             <i class="ni ni-support-16 px-1 
                                       {% if 'support-page' in segment %}text-purple{% endif %}"></i>
-                            <span class="nav-link-text">{% trans 'Support' %}</span>
+                            <span class="nav-link-text">Support</span>
                         </a>
                     </li>
                     <li class="nav-item">

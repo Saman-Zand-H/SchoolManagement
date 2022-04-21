@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Support' %} {% endblock title %}
+{% block title %}Support{% endblock title %}
 
 {% block content %}
 
@@ -13,11 +13,25 @@
         <div class="header-body">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{% trans 'Support' %}</h6>
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        Support
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
                         <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                            <li class="breadcrumb-item"><a href="{% url 'home:home' %}"><i class="fas fa-home"></i></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{% trans 'Support' %}</li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li 
+                                class="breadcrumb-item active" 
+                                aria-current="page"
+                               >
+                               Support
+                            </li>
                         </ol>
                     </nav>
                 </div>
@@ -33,29 +47,25 @@
             <div class="alert alert-default" role="alert">
                 <div class="my-1 mx-3 pb-1">
                     <div class="row mx-auto">
-                        <div class="col-lg-3 my-md-3">
+                        <div class="col-lg-3 my-md-3 offset-2">
                             <div class="mt-2">
                                 <i class="fab fa-telegram fa-2x"></i>&nbsp;
-                                <a href="https://telegram.me/ContactDjS/" class="text-light text-lg">
-                                  @ContactDjS
+                                <a href="https://telegram.me/tnsaman/" class="text-light text-lg">
+                                    @TNSaman
                                 </a>
                             </div>
                         </div>
-
-                        <div class="col-lg-4 my-md-3">
+                        <div class="col-lg-3 my-md-3 offset-2">
                             <div class="mt-2">
                                 <i class="fas fa-phone-volume fa-2x"></i>&nbsp;
                                 <a href="tel:+989226761449" class="text-light text-lg">
-                                    {% if LANGUAGE_CODE == 'en' %}
-                                        +98 922 676 1449
-                                    {% else %}
-                                        ۱۴۴۹ ۶۷۶ ۹۲۲ ۹۸+
-                                    {% endif %}
+                                    +98 922 676 1449
                                 </a>
                             </div>
                         </div>
-
-                        <div class="col-lg-4 my-md-3">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 my-md-3 offset-2">
                             <div class="row mt-2">
                                 <i class="fas fa-envelope fa-2x"></i>&nbsp;
                                 <div class="my-1 mx-1">
@@ -65,12 +75,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-3 my-md-3 offset-2">
+                            <div class="row mt-2">
+                                <i class="fab fa-linkedin fa-2x"></i>&nbsp;
+                                <div class="my-1 mx-1">
+                                    <a href="linkedin.com/in/saman-z-a49423238" class="text-light">
+                                        Saman Zand Haghighi
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                     <hr>
                     <div class="my-1">
                         <h2 class="text-white">
-                            {% trans 'Send us your issues and suggestions' %}
+                            Send us your issues and suggestions
                         </h2>
 
                         <div class="my-2">
@@ -100,7 +120,7 @@
                                 {{ form.text }}
                             </div>
 
-                            <button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
                     </div>
             </div>

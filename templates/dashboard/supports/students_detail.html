@@ -14,7 +14,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Students' %}
+                        Students
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,12 +28,12 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:students' %}">
-                                    {% trans 'Students' %}
+                                    Students
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
@@ -51,7 +51,7 @@
                             class="btn btn-sm btn-danger text-white border-danger"
                            >
                         <i class="fas fa-trash-alt"></i>
-                        {% trans 'Delete' %}
+                        Delete
                     </button>
                     <!-- Add Grades Modal -->
                     <div 
@@ -69,7 +69,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">
-                                        {% trans 'Delete Student' %}
+                                        Delete Student
                                     </h5>
                                     <button 
                                             type="button" 
@@ -81,7 +81,7 @@
                                     </button>
                                 </div>
                                 <div class="model-body text-center">
-                                    {% trans 'Are You sure you want to delete this student PERMANENTLY?' %}
+                                    Are You sure you want to delete this student PERMANENTLY?
                                 </div>
                                 <div class="modal-footer">
                                     <button 
@@ -89,13 +89,13 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                           {% trans 'No' %}
+                                           No
                                         </button>
                                     <form method="POST">
                                         {% csrf_token %}
                                         <input name="operation" value="ds" type="hidden">
                                         <button type="submit" class="btn btn-danger">
-                                            {% trans 'Yes' %}
+                                            Yes
                                         </button>
                                     </form>
                                 </div>
@@ -113,16 +113,16 @@
     <div class="row">
 		<div class="col mx-auto"><br>
 			<div class="alert alert-default" role="alert">
-				<h2 class="text-white">{% trans 'Current Information' %}</h2>
+				<h2 class="text-white">Current Information</h2>
 
                 <div class="my-4">
-                    {% trans 'Name:' %} <strong>{{ student.user.name|title }}</strong>
+                    Name: <strong>{{ student.user.name|title }}</strong>
                 </div>
                 <div class="my-4">
-                    {% trans 'ID:' %} <strong>{{ student.user.username }}</strong>
+                    ID: <strong>{{ student.user.username }}</strong>
                 </div>
                 <div class="my-4">
-                    {% trans 'Class:' %} <strong>{{ student.student_class }}</strong>
+                    Class: <strong>{{ student.student_class }}</strong>
                 </div>
 			</div>
 		</div>
@@ -130,7 +130,7 @@
     <div class="row">
 		<div class="col mx-auto"><br>
 			<div class="alert alert-default" role="alert">
-                <h2 class="text-white">{% trans 'Change Information' %}</h2>
+                <h2 class="text-white">Change Information</h2>
                 {% if student_spec_form.errors or student_pec.non_field_errors %}
                     <hr>
                     {% for field in student_spec_form %}
@@ -154,7 +154,7 @@
                             {{ student_spec_form.student_class }}
                         </div>
 					<button type="submit" class="btn btn-danger ml-4">
-                        {% trans 'Save Changes' %}
+                        Save Changes
                     </button>
 				</form>
 			</div>

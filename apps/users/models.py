@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_noop as _
 from algoliasearch_django import get_adapter
 
 import logging
@@ -25,15 +24,15 @@ def validate_file_extension(file):
     ext = os.path.splitext(file.name)[1]
     valid_extensions = [".jpg", ".png"]
     if not ext.lower() in valid_extensions:
-        logger.error(_("Unsupported file detected by: {}.".format(file.name)))
-        raise ValidationError(_("Invalid file extension."))
+        logger.error("Unsupported file detected by: {}.".format(file.name))
+        raise ValidationError("Invalid file extension.")
 
 
 def validate_file_size(file):
     if file.size > 3 * 1024 * 1024:
         logger.error(
-            _("Maximum image file size exceeded by: {}.".format(file.name)))
-        raise ValidationError(_("Unacceptable file size."))
+            "Maximum image file size exceeded by: {}.".format(file.name))
+        raise ValidationError("Unacceptable file size.")
 
 
 class CustomManager(BaseUserManager):

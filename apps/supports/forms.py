@@ -1,5 +1,4 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 
 from mainapp.models import Class, Subject, Student
 from supports.models import School
@@ -28,7 +27,7 @@ class CreateSchoolForm(forms.ModelForm):
             "name":
             forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": _("Name of your school")
+                "placeholder": "Name of your school"
             })
         }
 
@@ -46,11 +45,11 @@ class EditClassForm(forms.ModelForm):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         self.fields["class_id"] = forms.CharField(
-            label=_("Class ID"),
+            label="Class ID",
             widget=forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": _("A unique identifier for class"),
+                    "placeholder": "A unique identifier for class",
                 }),
         )
         
@@ -59,7 +58,7 @@ class EditClassForm(forms.ModelForm):
             self.fields["subjects"] = forms.ModelMultipleChoiceField(
                 widget=forms.CheckboxSelectMultiple(),
                 required=False,
-                label=_("Courses"),
+                label="Courses",
                 queryset=Subject.objects.filter(
                     teacher__school__support=user).distinct(),
                 to_field_name="pk",
@@ -73,7 +72,7 @@ class EditClassForm(forms.ModelForm):
         class_id = self.cleaned_data.get("class_id")
         class_instance = Class.objects.filter(class_id=class_id)
         if class_instance.exists() and str(self.instance) != str(class_id):
-            raise forms.ValidationError(_("This class already exists"),
+            raise forms.ValidationError("This class already exists",
                                         code="non-unique_class_id")
         return class_id
 
@@ -86,7 +85,7 @@ class CreateClassForm(EditClassForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["school"].required = False
-        self.fields["subjects"].label = _("Courses")
+        self.fields["subjects"].label = "Courses"
 
 
 class ChangeTeacherDetails(forms.ModelForm):
@@ -109,7 +108,7 @@ class SelectClassesForm(forms.Form):
         Class.objects.all(),
         to_field_name="id",
         widget=forms.CheckboxSelectMultiple(),
-        label=_("Classes"),
+        label="Classes",
     )
 
     def __init__(self, *args, **kwargs):
@@ -145,7 +144,7 @@ class StudentsClassForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.request = kwargs.pop("request", None)
-        self.fields["student_class"].label = _("Class")
+        self.fields["student_class"].label = "Class"
         super().__init__(*args, **kwargs)
         if self.request is not None:
             self.fields["student_class"].queryset = Class.objects.filter(

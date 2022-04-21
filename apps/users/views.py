@@ -3,7 +3,6 @@ from django.views.generic import View
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.utils.translation import gettext as _
 from allauth.account.views import LogoutView, PasswordChangeView
 from allauth.account.models import EmailAddress
 from allauth.account.forms import ChangePasswordForm
@@ -16,6 +15,10 @@ class CustomLogoutView(LogoutView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["segment"] = "logout"
+        context.update({
+            "segment": "logout",
+            "nav_color": "bg-gradient-danger",
+        })
         return context
 
 
@@ -45,10 +48,10 @@ class ProfileView(LoginRequiredMixin, View):
             about = form.cleaned_data.get("about")
             self.request.user.about = about
             self.request.user.save()
-            messages.success(self.request, _("Bio was updated successfully."))
+            messages.success(self.request, "Bio updated successfully.")
             return redirect("profile")
         else:
-            messages.error(self.request, _("Provided inputs are invalid."))
+            messages.error(self.request, "Provided inputs are invalid.")
             self.context["form"] = form
             return render(self.request, self.template_name, self.context)
 

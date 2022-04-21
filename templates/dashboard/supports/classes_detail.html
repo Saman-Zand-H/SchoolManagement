@@ -16,7 +16,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Class:' %} {{ class.class_id }}
+                        Class: {{ class.class_id }}
                     </h6>
                     <nav  
                          aria-label="breadcrumb" 
@@ -30,12 +30,12 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:classes' %}">
-                                    {% trans 'Classes' %}
+                                    Classes
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
@@ -55,7 +55,7 @@
                                     class="btn btn-sm btn-neutral"
                                    >
                                 <i class="fas fa-pen"></i>
-                                {% trans 'Edit' %}
+                                Edit
                             </button>
                         </div>
                         <div class="col-2 col-sm">
@@ -67,7 +67,7 @@
                                     class="btn btn-sm btn-danger text-white border-danger"
                                    >
                                 <i class="fas fa-trash-alt"></i>
-                                {% trans 'Delete' %}
+                                Delete
                             </button>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                                         class="modal-title" 
                                         id="exampleModalLabel"
                                        >
-                                        {% trans 'Delete Class' %}
+                                        Delete Class
                                     </h5>
                                     <button 
                                             type="button" 
@@ -100,14 +100,15 @@
                                     </button>
                                 </div>
                                 <div class="model-body text-center">
-                                    {% trans 'Are You sure you want to delete this class PERMANENTLY?' %}
+                                    Are You sure you want to delete this class PERMANENTLY?
                                 </div>
                                 <div class="modal-footer">
                                     <button 
                                             type="button" 
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
-                                           >{% trans 'No' %}
+                                           >
+                                        No
                                     </button>
                                     <form action="POST">
                                         {% csrf_token %}
@@ -132,9 +133,8 @@
                                 <div class="modal-header">
                                     <h5 
                                         class="modal-title" 
-                                        id="exampleModalLabel"
                                        >
-                                       {% trans 'Edit this Class' %}
+                                       Edit this Class
                                     </h5>
                                     <button 
                                             type="button" 
@@ -151,7 +151,7 @@
                                     <div class="mt-2">
                                         {% if form.errors or form.non_field_errros %}
                                             <hr>
-                                            <h3>{% trans 'Invalid Inputs:' %}</h3><br>
+                                            <h3>Invalid Inputs:</h3><br>
                                             {% for field in form %}
                                                 {% for error in field.errors %}
                                                     <p class="text-danger">
@@ -215,14 +215,14 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                            {% trans 'Close' %}
+                                            Close
                                     </button>
                                     <button 
                                             type="button" 
                                             class="btn btn-primary"
                                             onclick="$('#createClassForm').submit()"
                                            >
-                                            {% trans 'Edit' %}
+                                            Edit
                                     </button>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                                             {{ subject.name|title }}
                                         </div>
                                         <p class="card-text">
-                                            {% trans 'Teacher:' %} 
+                                            Teacher:
                                             <br><strong>
                                                 {{ subject.teacher.user.name|title }}
                                             </strong><br>
@@ -268,7 +268,7 @@
                             <a href="{{ teacher.get_absolute_url }}" class="text-light">
                                 <div class="card-body">
                                     <div class="card-title">
-                                        {% trans 'No course is added yet.' %}
+                                        No course is added yet.
                                     </div>
                                 </div>
                             </a>
@@ -279,7 +279,7 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">{% trans 'Students' %}</h3>
+                    <h3 class="mb-0">Students</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
@@ -292,8 +292,8 @@
                         <thead class="thead-light">
                             <tr>
                                 <th></th>
-                                <th>{% trans 'Name' %}</th>
-                                <th>{% trans 'Picture' %}</th>
+                                <th>Name</th>
+                                <th>Picture</th>
                             </tr>
                         </thead>
                         <tbody class="list">
@@ -334,7 +334,7 @@
                             {% else %}
                                 <tr>
                                     <td colspan="2" class="text-center">
-                                        {% trans 'No student is added to this class yet.' %}
+                                        No student is added to this class yet.
                                     </td>
                                 </tr>
                             {% endif %}

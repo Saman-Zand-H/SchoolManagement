@@ -28,12 +28,12 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:home' %}">
-                                {% trans 'Dashboard' %}
+                                Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:teachers' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
@@ -53,7 +53,7 @@
                                     class="btn btn-sm btn-danger text-white border-danger"
                                    >
                                 <i class="fas fa-trash-alt"></i>
-                                {% trans 'Delete' %}
+                                Delete
                             </button>
                        </div>
                    </div>
@@ -73,7 +73,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
-                                        {% trans 'Delete Teacher' %}
+                                        Delete Teacher
                                     </h5>
                                     <button 
                                             type="button" 
@@ -85,7 +85,7 @@
                                     </button>
                                 </div>
                                 <div class="model-body text-center">
-                                    {% trans 'Are You sure you want to delete this teacher PERMANENTLY?' %}
+                                    Are You sure you want to delete this teacher PERMANENTLY?
                                 </div>
                                 <div class="modal-footer">
                                     <button 
@@ -93,13 +93,13 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                        {% trans 'No' %}
+                                        No
                                     </button>
                                     <form method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="operation" value="dt">
                                         <button type="submit" class="btn btn-danger">
-                                            {% trans 'Yes' %}
+                                            Yes
                                         </button>
                                     </form>
                                 </div>
@@ -117,12 +117,12 @@
     <div class="row">
 		<div class="col mx-auto"><br>
 			<div class="alert alert-default" role="alert">
-				<h2 class="text-white">{% trans 'Current Information' %}</h2>
+				<h2 class="text-white">Current Information</h2>
                 <div class="my-4">
-                    {% trans 'Name:' %} <strong>{{ teacher.user.name|title }}</strong>
+                    Name: <strong>{{ teacher.user.name|title }}</strong>
                 </div>
                 <div class="my-4">
-                    {% trans 'ID:' %} <strong>{{ teacher.user.username }}</strong>
+                    ID: <strong>{{ teacher.user.username }}</strong>
                 </div>
 			</div>
 		</div>
@@ -130,10 +130,10 @@
     <div class="row">
 		<div class="col mx-auto"><br>
 			<div class="alert alert-default" role="alert">
-                <h2 class="text-white">{% trans 'Change Information' %}</h2>
+                <h2 class="text-white">Change Information</h2>
                 {% if details_form.errors or details_form.non_field_errors %}
                     <hr>
-                    <h3 class="text-white">{% trans 'Invalid Inputs:' %}</h3><br>
+                    <h3 class="text-white">Invalid Inputs:</h3><br>
                     {% for field in details_form %}
                         {% for error in field.errors %}
                             <div class="alert alert-white" role="alert">
@@ -160,7 +160,7 @@
                         {{ details_form.university }}
                     </div>
 					<button type="submit" class="btn btn-danger ml-4">
-                        {% trans 'Save Changes' %}
+                        Save Changes
                     </button>
 				</form>
 			</div>
@@ -171,17 +171,17 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">{% trans 'Classes' %}</h3>
+                    <h3 class="mb-0">Classes</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
                     <table class="table align-items-center table-flush">
                         <thead class="thead-light">
                             <tr>
-                                <th>{% trans 'Class ID' %}</th>
-                                <th>{% trans 'Students Count' %}</th>
-                                <th>{% trans 'Students' %}</th>
-                                <th>{% trans 'Performance' %}</th>
+                                <th>Class ID</th>
+                                <th>Students Count</th>
+                                <th>Students</th>
+                                <th>Performance</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -222,7 +222,7 @@
                                                         </a>
                                                     {% endfor %}
                                                 {% else %}
-                                                    <h3>{% trans 'No student in this class' %}</h3>
+                                                    <h3>No student in this class</h3>
                                                 {% endif %}
                                             </div>
                                         </td>
@@ -256,7 +256,7 @@
                             <tbody class="list">
                                 <tr>
                                     <td class="text-center" colspan="5">
-                                        {% trans 'This teacher has not been added to any class yet.' %}
+                                        This teacher has not been added to any class yet.
                                     </td>
                                 </tr>
                             </tbody>
@@ -271,16 +271,16 @@
             <div class="card">
                 <!-- Card header -->
                 <div class="card-header border-0">
-                    <h3 class="mb-0">{% trans 'Courses' %}</h3>
+                    <h3 class="mb-0">Courses</h3>
                 </div>
                 <!-- Light table -->
                 <div class="table-responsive">
                     <table class="table align-items-center table-flush">
                         <thead class="thead-light">
                             <tr>
-                                <th>{% trans 'Courses' %}</th>
-                                <th>{% trans 'Classes' %}</th>
-                                <th>{% trans 'Teachers' %}</th>
+                                <th>Courses</th>
+                                <th>Classes</th>
+                                <th>Teachers</th>
                             </tr>
                         </thead>
                         {% if subjects %}
@@ -310,7 +310,7 @@
                                 <tbody class="list">
                                     <tr>
                                         <td colspan="3" class="text-center">
-                                            {% trans 'This teacher is not added to any course.' %}
+                                            This teacher is not added to any course.
                                         </td>
                                     </tr>
                                 </tbody>

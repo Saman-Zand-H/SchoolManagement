@@ -1,8 +1,9 @@
 from random import choices
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.account.forms import (LoginForm, SignupForm, 
-                                   ResetPasswordForm, AddEmailForm)
-from django.utils.translation import gettext_lazy as _
+from allauth.account.forms import (LoginForm, 
+                                   SignupForm, 
+                                   ResetPasswordForm, 
+                                   AddEmailForm)
 from django import forms
 
 import logging
@@ -19,14 +20,14 @@ def validate_file_extension(file):
     valid_extensions = [".jpg", ".png"]
     if not ext.lower() in valid_extensions:
         logger.info("An invalid file was detected, and rejected.")
-        raise forms.ValidationError(_("Unsupported file extension."),
+        raise forms.ValidationError("Unsupported file extension.",
                                     code="invalid_extension")
 
 
 def validate_file_size(file):
     if file.size > 3 * 1024**2:
         logger.info("An invalid file was detected, and rejected.")
-        raise forms.ValidationError(_("Maximum file size is 3MB."),
+        raise forms.ValidationError("Maximum file size is 3MB.",
                                     code="invalid_filesize")
 
 
@@ -39,22 +40,22 @@ class BaseSignupForm(SignupForm):
     first_name = forms.CharField(
         max_length=254,
         min_length=2,
-        label=_("Firstname"),
+        label="Firstname",
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": _("enter your first name"),
+            "placeholder": "enter your first name",
         }))
     last_name = forms.CharField(
         max_length=254,
         min_length=2,
-        label=_("Lastname"),
+        label="Lastname",
         widget=forms.TextInput(attrs={
             "class": "form-control",
-            "placeholder": _("enter your last name"),
+            "placeholder": "enter your last name",
         }))
     picture = forms.ImageField(
         required=False,
-        label=_("Avatar Picture"),
+        label="Avatar Picture",
         validators=[validate_file_extension, validate_file_size],
         widget=forms.ClearableFileInput(attrs={
             "class": "form-control",
@@ -67,17 +68,17 @@ class BaseSignupForm(SignupForm):
         super().__init__(*args, **kwargs)
         self.request = request
         self.fields["username"].widget = forms.TextInput(attrs={
-            "placeholder": _("enter your username"),
+            "placeholder": "enter your username",
             "class": "form-control",
             "id": "username",
         })
         self.fields["password1"].widget = forms.PasswordInput(attrs={
-            "placeholder": _("enter your password"),
+            "placeholder": "enter your password",
             "class": "form-control",
             "id": "password1",
         })
         self.fields["password2"].widget = forms.PasswordInput(attrs={
-            "placeholder": _("enter your password again"),
+            "placeholder": "enter your password again",
             "class": "form-control",
             "id": "password2",
         })
@@ -85,10 +86,10 @@ class BaseSignupForm(SignupForm):
             widget=forms.EmailInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": _("e.g. example@example.com"),
+                    "placeholder": "e.g. example@example.com",
                 }),
             
-            label=_("E-Mail Address"),
+            label="E-Mail Address",
             required=False,
         )
     
@@ -110,19 +111,19 @@ class CustomLoginForm(LoginForm):
         self.fields["login"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label=_("Your ID"),
+            label="Your ID",
             widget=forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": _("Your ID"),
+                "placeholder": "Your ID",
             }),
         )
         self.fields["password"] = forms.CharField(
             max_length=20,
             min_length=2,
-            label=_("Password"),
+            label="Password",
             widget=forms.PasswordInput(attrs={
                 "class": "form-control",
-                "placeholder": _("Password"),
+                "placeholder": "Password",
             }),
         )
 
@@ -131,11 +132,11 @@ class CustomPasswordResetForm(ResetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["email"] = forms.EmailField(
-            label=_("E-Mail Address"),
+            label="E-Mail Address",
             widget=forms.EmailInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": _("e.g. example@example.com")
+                    "placeholder": "e.g. example@example.com"
                 }))
 
 
@@ -146,9 +147,9 @@ class CustomAddEmailForm(AddEmailForm):
             widget=forms.EmailInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": _("e.g. example@example.com")
+                    "placeholder": "e.g. example@example.com"
                 }),
-            label=_("E-Mail Address"))
+            label="E-Mail Address")
 
 class SupportStudentSignupForm(BaseSignupForm):
     student_class = forms.ModelChoiceField(
@@ -166,7 +167,7 @@ class SupportStudentSignupForm(BaseSignupForm):
             
     def clean(self):
         if self.cleaned_data.get("user_type") != "S":
-            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+            raise forms.ValidationError({"user_type": "Invalid user type."})
         return super().clean()
 
 
@@ -174,14 +175,14 @@ class SupportTeacherSignupForm(BaseSignupForm):
     
     def clean(self):
         if self.cleaned_data.get("user_type") != "T":
-            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+            raise forms.ValidationError({"user_type": "Invalid user type."})
         return super().clean()
 
 class SupportSignupForm(BaseSignupForm):    
     
     def clean(self):
         if self.cleaned_data.get("user_type") != "SS":
-            raise forms.ValidationError({"user_type": _("Invalid user type.")})
+            raise forms.ValidationError({"user_type": "Invalid user type."})
         return super().clean()
 
 

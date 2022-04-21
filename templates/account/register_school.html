@@ -6,7 +6,7 @@
 
 {% get_current_language as LANGUAGE_CODE %}
 
-{% block title %} {% trans 'School Registration' %} {% endblock title %}
+{% block title %}Create School{% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -51,7 +51,7 @@
                                 {% endfor %}
                             {% else %}
                                 <p class="text-center">
-                                    {% trans 'Submit' %}
+                                    Submit
                                 </p>
                             {% endif %}
                         </div>
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary my-4">{% trans 'Sign Up' %}</button>
+                            <button type="submit" class="btn btn-primary my-4">Sign Up</button>
                         </div>
                     </form>
                 </div>

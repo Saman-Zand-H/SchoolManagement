@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Students' %} {% endblock title %}
+{% block title %} Students {% endblock title %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Students' %}
+                        Students
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,11 +28,11 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'teachers:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Students' %}
+                                Students
                             </li>
                         </ol>
                     </nav>
@@ -60,8 +60,8 @@
                                         {{ student.user.name|title }}
                                     </div>
                                     <p class="card-text">
-                                        {% trans 'ID:' %} {{ student.user.username }}<br>
-                                        {% trans 'Class:' %} {{ student.student_class }}
+                                        ID: {{ student.user.username }}<br>
+                                        Class: {{ student.student_class }}
                                     </p>
                                 </div>
                             </a>
@@ -74,7 +74,7 @@
                         <div class="card-body">
                             <div class="card-body">
                                 <strong class="text-white">
-                                    {% trans 'No student found.' %}
+                                    No student found.
                                 </strong>
                             </div>
                         </div>

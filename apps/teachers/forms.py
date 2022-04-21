@@ -1,5 +1,4 @@
 from django import forms
-from django.utils.translation import gettext as _
 from ckeditor.widgets import CKEditorWidget
 
 from decimal import Decimal
@@ -19,13 +18,7 @@ class ExamForm(forms.Form):
     exam_class = forms.IntegerField(required=False)
     full_score = forms.DecimalField(required=False)
     timestamp = forms.DateField(required=False)
-
-
-class FilterExamsForm(forms.Form):
-    dateSince = forms.DateField(required=False)
-    dateTill = forms.DateField(required=False)
-    subjectFilter = forms.IntegerField(required=False)
-    classFilter = forms.IntegerField(required=False)
+    visible_to_students = forms.BooleanField(required=False, widget=forms.CheckboxInput())
 
 
 class SetGradeForm(forms.ModelForm):
@@ -49,7 +42,7 @@ class SetGradeForm(forms.ModelForm):
     def clean_grade(self):
         grade = self.cleaned_data.get("grade")
         if not isinstance(grade, Decimal):
-            raise forms.ValidationError(_("Provided grade is not valid."))
+            raise forms.ValidationError("Provided grade is not valid.")
         return grade
 
 

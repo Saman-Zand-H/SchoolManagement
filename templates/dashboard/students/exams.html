@@ -1,0 +1,82 @@
+{% extends 'layouts/base.html' %} 
+
+{% load crispy_forms_tags %} 
+{% load static %} 
+{% load i18n %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}Exams{% endblock title %} 
+
+{% block content %}
+
+<!-- Header -->
+<div class="header bg-gradient-indigo pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        Exams
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'teachers:home' %}">
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Exams
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page content -->
+<div class="container mt--6">
+    <div class="row">
+        {% if grades.exists %}
+            {% for grade in grades %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card border-0 bg-green text-lighter">
+                        <div class="card-body">
+                            <div class="card-title">
+                                {{ grade.exam.subject.name|title }}
+                            </div>
+                            <p class="card-text">
+                                Timestamp: {{ grade.exam.timestamp|date:"D, d/m/Y" }}<br>
+                                Class: {{ grade.exam.exam_class }}<br>
+                                Your Grade: {{ grade.grade }}<br>
+                                Average Grade: {{ grade.exam.average_grade }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %} 
+        {% else %}
+            <div class="col">
+                <div class="card border-0 bg-gradient-green">
+                    <div class="card-body">
+                        <div class="card-body text-white text-center">
+                            <strong>No exam is created yet.</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% include "includes/footer.html" %}
+{% endblock content %}

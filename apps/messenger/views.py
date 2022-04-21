@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.translation import gettext
 from django.urls import reverse
 from django.conf import settings
 from functools import partial
@@ -67,11 +66,11 @@ class ChatsListView(LoginRequiredMixin, View):
                                 chatgroup=group,
                             )
                             success_message(
-                                message=gettext("Group created successfully."))
+                                message="Group created successfully.")
                             return redirect("messenger:chat-page", 
                                             group_id=group.group_id)
                         error_message(
-                            message=gettext("Invalid input provided."))
+                            message="Invalid input provided.")
                         return render(self.request, 
                                       self.template_name, 
                                       self.context)
@@ -91,13 +90,13 @@ class ChatsListView(LoginRequiredMixin, View):
                                                      chatgroup=chatgroup)
                         Member.objects.get_or_create(user=target_user, 
                                                      chatgroup=chatgroup)
-                        success_message(message=gettext("Conversation created successfully."))
+                        success_message(message="Conversation created successfully.")
                     return redirect("messenger:chat-page", 
                                     group_id=chatgroup.group_id)
                 case _:
-                    error_message(message=gettext("Invalid parameter provided."))
+                    error_message(message="Invalid parameter provided.")
         self.context["form"] = conversation_form
-        error_message(message=gettext("Invalid input provided."))
+        error_message(message="Invalid input provided.")
         return render(self.request, self.template_name, self.context)
         
     
@@ -152,10 +151,10 @@ class ChatPageView(LoginRequiredMixin, View):
             if form.is_valid():
                 form.save()
                 success_message(
-                    message=gettext("Group updated successfully"))
+                    message="Group updated successfully")
             else:
                 error_message(
-                    message=gettext("invalid inputs provided."))
+                    message="invalid inputs provided.")
             return redirect("messenger:chat-page", group_id=chatgroup.group_id)
         raise PermissionDenied("The use is not the owner of this group.")
    
@@ -185,7 +184,7 @@ class MembersView(LoginRequiredMixin, View):
                         user=user, chatgroup=chatgroup)
                     if created:
                         success_message(
-                            message=gettext("User added successfully."))
+                            message="User added successfully.")
                 case "delete":
                     member_qs = Member.objects.filter(user=user, 
                                                       chatgroup=chatgroup)
@@ -194,10 +193,10 @@ class MembersView(LoginRequiredMixin, View):
                     if member_qs.exists():
                         member_qs.delete()
                         success_message(
-                            message=gettext("Member deleted successfully."))
+                            message="Member deleted successfully.")
                     else:
                         error_message(
-                            message=gettext("This user isn't a member of this group.")) 
+                            message="This user isn't a member of this group.")
                 case "leave":
                     member_qs = Member.objects.filter(user=user, 
                                                       chatgroup=chatgroup)
@@ -206,18 +205,18 @@ class MembersView(LoginRequiredMixin, View):
                         if self.request.user == chatgroup.owner:
                             chatgroup.delete()
                             success_message(
-                                message=gettext("Group deleted successfully."))
+                                message="Group deleted successfully.")
                         else:
                             success_message(
-                                message=gettext("You left the group successfully."))
+                                message="You left the group successfully.")
                     else:
                         error_message(
-                            message=gettext("This user isn't a member of this group."))
+                            message="This user isn't a member of this group.")
                     return redirect("messenger:home")
                 case _:
-                    error_message(message=gettext("Invalid parameter provided."))
+                    error_message(message="Invalid parameter provided.")
         else:
-            error_message(message=gettext("Invalid inputs provided."))
+            error_message(message="Invalid inputs provided.")
         return redirect("messenger:chat-page", group_id=kwargs.get("group_id"))
                 
 

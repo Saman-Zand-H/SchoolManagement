@@ -4,7 +4,7 @@
 {% load customtags %}
 {% load i18n %}
 
-{% block title %} {% trans 'Students' %} {% endblock title %}
+{% block title %}Students{% endblock title %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">
-                        {% trans 'Students' %}
+                        Students
                     </h6>
                     <nav 
                          aria-label="breadcrumb" 
@@ -28,11 +28,11 @@
                             </li>
                             <li class="breadcrumb-item">
                                 <a href="{% url 'supports:home' %}">
-                                    {% trans 'Dashboard' %}
+                                    Dashboard
                                 </a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                {% trans 'Students' %}
+                                Students
                             </li>
                         </ol>
                     </nav>
@@ -48,7 +48,7 @@
                                     class="btn btn-sm btn-neutral"
                                    >
                                 <i class="fas fa-plus"></i> 
-                                {% trans 'New' %}
+                                New
                             </button>
                         </div> 
                     </div>
@@ -68,7 +68,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">
-                                        {% trans 'Create A New Teacher' %}
+                                        Create A New Teacher
                                     </h5>
                                     <button 
                                             type="button" 
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div>
-                                        * {% trans 'these fields are required' %}
+                                        * these fields are required
                                     </div>
                                     <form id="createClassForm" method="POST">
                                         {% csrf_token %}
@@ -95,14 +95,14 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                           {% trans "Close" %}
+                                           Close
                                     </button>
                                     <button 
                                             type="button" 
                                             class="btn btn-primary"
                                             onclick="$('#createClassForm').submit()"
                                            >
-                                           {% trans "Create" %}
+                                           Create
                                     </button>
                                 </div>
                             </div>
@@ -132,8 +132,8 @@
                                             {{ student.user.name|title }}
                                         </div>
                                         <p class="card-text">
-                                            {% trans 'ID:' %} {{ student.user.username }}<br>
-                                            {% trans 'Class:' %} {{ student.student_class }}
+                                            ID: {{ student.user.username }}<br>
+                                            Class: {{ student.student_class }}
                                         </p>
                                     </div>
                                 </a>
@@ -146,7 +146,7 @@
                             <a href="{{ subject.get_absolute_url }}" class="text-light">
                                 <div class="card-body">
                                     <strong class="card-text text-white">
-                                        {% trans 'No student is created yet.' %}
+                                        No student is created yet.
                                     </strong>
                                 </div>
                             </a>

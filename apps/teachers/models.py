@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission, Group
 from django.urls import reverse
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_noop as _
 
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -75,9 +74,9 @@ class Teacher(models.Model):
         super().clean()
         if self.user.user_type != "T":
             logger.error(
-                _("A non-teacher typed user was being used as a teacher."))
+                "A non-teacher typed user was being used as a teacher.")
             raise ValidationError(
-                _("{} is not a teacher. User must be typed as a teacher.").
+                "{} is not a teacher. User must be typed as a teacher.".
                 format(self.user.name))
 
     def save(self, *args, **kwargs):

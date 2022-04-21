@@ -1,23 +1,50 @@
 {% load static %}
 {% load i18n %}
 
-<nav id="navbar-main" class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light">
+<nav 
+     id="navbar-main" 
+     class="navbar navbar-horizontal 
+            navbar-transparent navbar-main 
+            navbar-expand-lg navbar-light"
+    >
     <div class="container">
-        <a class="navbar-brand" href="{% url 'home:home' %}">
+        <a 
+           class="navbar-brand" 
+           href="{% url 'home:home' %}"
+          >
             <div class="container">
                 <div class="row">
                     <h1 class="display-3">DjS</h1>
                 </div>
             </div>
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+        <button 
+                class="navbar-toggler" 
+                type="button" 
+                data-toggle="collapse" 
+                data-target="#navbar-collapse" 
+                aria-controls="navbar-collapse" 
+                aria-expanded="false" 
+                aria-label="Toggle navigation"
+               >
       <span class="navbar-toggler-icon"></span>
     </button>
-        <div class="navbar-collapse navbar-custom-collapse collapse" id="navbar-collapse">
+        <div 
+             class="navbar-collapse navbar-custom-collapse collapse" 
+             id="navbar-collapse"
+            >
             <div class="navbar-collapse-header">
                 <div class="row">
                     <div class="col-6 collapse-close">
-                        <button type="button" class="navbar-toggler text-center" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <button 
+                                type="button" 
+                                class="navbar-toggler text-center" 
+                                data-toggle="collapse" 
+                                data-target="#navbar-collapse" 
+                                aria-controls="navbar-collapse" 
+                                aria-expanded="false" 
+                                aria-label="Toggle navigation"
+                               >
                             <span></span>
                             <span></span>
                         </button>
@@ -26,7 +53,13 @@
             </div>
             <ul class="navbar-nav align-items-lg-center ml-lg-auto">
                 <li class="nav-item">
-                    <a class="nav-link nav-link-icon text-center" href="https://github.com/Saman-Zand-H/" target="_blank" data-toggle="tooltip" data-original-title="{% trans 'Follow me on Github' %}">
+                    <a 
+                       class="nav-link nav-link-icon text-center" 
+                       href="https://github.com/Saman-Zand-H/" 
+                       target="_blank" 
+                       data-toggle="tooltip" 
+                       data-original-title="Follow my work on on Github"
+                      >
                         <i class="fab fa-github"></i>
                         <span class="nav-link-inner--text d-lg-none">Github</span>
                     </a>

@@ -52,7 +52,7 @@
                                    {% if LANGUAGE_CODE != 'fa' %}ml-auto{% endif %}"
                            >
                         <i class="fas fa-trash-alt"></i>
-                        {% trans 'Delete' %}
+                        Delete
                     </button>
                     <div 
                          class="modal fade
@@ -70,7 +70,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="delete-article">
-                                        {% trans 'Delete' %}
+                                        Delete
                                     </h5>
                                     <button 
                                             type="button" 
@@ -83,10 +83,8 @@
                                 </div>
                                 <div class="model-body text-center">
                                     <p>
-                                        {% blocktrans %}
                                         You are about to delete this article permanently. Are
                                         you sure you want to do this?
-                                        {% endblocktrans %}
                                     </p>
                                 </div>
                                 <div class="modal-footer">
@@ -95,13 +93,13 @@
                                             class="btn btn-secondary" 
                                             data-dismiss="modal"
                                            >
-                                        {% trans 'No' %}
+                                        No
                                     </button>
                                     <form method="POST">
                                         {% csrf_token %}
                                         <input type="hidden" name="operation" value="da">
                                         <button type="submit" class="btn btn-danger">
-                                           {% trans 'Yes' %}
+                                           Yes
                                         </button>
                                     </form>
                                 </div>
