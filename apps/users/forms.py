@@ -3,7 +3,8 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import (LoginForm, 
                                    SignupForm, 
                                    ResetPasswordForm, 
-                                   AddEmailForm)
+                                   AddEmailForm,
+                                   PasswordField)
 from django import forms
 
 import logging
@@ -59,7 +60,8 @@ class BaseSignupForm(SignupForm):
         validators=[validate_file_extension, validate_file_size],
         widget=forms.ClearableFileInput(attrs={
             "class": "form-control",
-        }))
+        }),
+    )
     user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES,
                                   widget=forms.HiddenInput,
                                   required=False)
@@ -72,11 +74,13 @@ class BaseSignupForm(SignupForm):
             "class": "form-control",
             "id": "username",
         })
-        self.fields["password1"].widget = forms.PasswordInput(attrs={
-            "placeholder": "enter your password",
-            "class": "form-control",
-            "id": "password1",
-        })
+        self.fields["password1"] = PasswordField(
+            widget=forms.PasswordInput(attrs={
+                "placeholder": "enter your password",
+                "class": "form-control",
+                "id": "password1",
+            }),
+        )
         self.fields["password2"].widget = forms.PasswordInput(attrs={
             "placeholder": "enter your password again",
             "class": "form-control",

@@ -16,15 +16,12 @@ class DashboardView(View, PermissionAndLoginRequiredMixin):
     def get(self, *args, **kwargs):
         student_instance = self.request.user.student_user
         self.context.update({
-            "student":
-            student_instance,
-            "segment":
-            "home",
-            "chart_labels":
-            get_charts_labels_ready()[0],
-            "assignments":
-            Assignment.objects.filter(assignment_class=student_instance.
-                                      student_class).order_by("-deadline")[:5],
+            "student": student_instance,
+            "segment": "home",
+            "chart_labels": get_charts_labels_ready()[0],
+            "assignments": Assignment.objects.filter(
+                assignment_class=student_instance.student_class
+            ).order_by("-deadline")[:5],
         })
         return render(self.request, self.template_name, self.context)
 

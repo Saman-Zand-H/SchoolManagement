@@ -191,6 +191,7 @@ class AssignmentsView(LoginRequiredMixin, View):
     context = dict()
     
     def get(self, *args, **kwargs):
+        assignment_instances = Assignment.objects.none()
         match self.request.user.user_type:
             case "SS" | "T":
                 assignment_instances = Assignment.objects.filter(

@@ -27,7 +27,7 @@ class CreateSchoolView(LoginRequiredMixin, View):
         if not School.objects.filter(support=self.request.user).exists():
             form = CreateSchoolForm()
             self.context["form"] = form
-            messages.warning(self.request, "You have to register your school first.")
+            messages.info(self.request, "You have to register your school first.")
             return render(self.request, self.template_name, self.context)
         return redirect("home:home")
 

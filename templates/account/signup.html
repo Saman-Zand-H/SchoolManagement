@@ -29,156 +29,13 @@
                     </div>
                 </div>
                 <div class="card-body px-lg-5 py-lg-5">
-                    <div class="text-center text-muted mb-4">
-                        {% if messages %}
-                            {% for message in messages %}
-                                {% if message.tags == "error" %}
-                                    <div 
-                                         class="alert alert-danger 
-                                                alert-dismissible fade 
-                                                show mx-lg--5 mx-sm--4" 
-                                         role="alert"
-                                        >
-                                {% else %}
-                                    <div 
-                                         class="alert alert-{{ message.tags }} 
-                                                alert-dismissible fade 
-                                                show mx-lg--5 mx-sm--4" 
-                                         role="alert"
-                                        >
-                                {% endif %}
-                                    <span class="alert-inner--text">
-                                        {% if LANGUAGE_CODE == 'en' %}
-                                            <strong>{{ message.tags|upper }}!</strong>
-                                        {% endif %} 
-                                        {{ message }}
-                                    </span>
-                                    <button 
-                                            type="button" 
-                                            class="close" 
-                                            data-dismiss="alert" 
-                                            aria-label="Close"
-                                           >
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <div class="text-left">
-                            {% if form.errors or form.non_field_errors %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        <p class="text-danger">
-                                            - {{ field.label }}: {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                {% endfor %}
-                                {% for error in field.non_field_errors %}
-                                    <p class="text-danger">- {{ error }}</p>
-                                {% endfor %}
-                            {% else %}
-                                <p class="text-center">
-                                    Join us
-                                </p>
-                            {% endif %}
-                        </div>
-                    </div>
-
                     <form 
                           method="POST" 
                           action="{% url 'account_signup' %}" 
                           enctype="multipart/form-data"
                          >
                         {% csrf_token %}
-                        <div class="form-group mb-3">
-                            {{ form.username.label }}*
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-id-card-alt"></i>
-                                    </span>
-                                </div>
-                                {{ form.username }}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                        {{ form.first_name.label }}*
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                </div>
-                                {{ form.first_name }}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            {{ form.last_name.label }}*
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                </div>
-                                {{ form.last_name }}
-                            </div>
-                        </div>
-                        {{ form.password1.label }}*
-                        <div class="form-group">
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                </div>
-                                {{ form.password1 }}
-                            </div>
-                            <small>
-                                <ul class="text-black-50">
-                                    <li>Your password can’t be too similar to your other personal information.'</li>
-                                    <li>Your password must contain at least 8 characters.'</li>
-                                    <li>Your password can’t be a commonly used password.'</li>
-                                    <li>Your password can’t be entirely numeric.'</li>
-                                </ul>
-				            </small>
-                        </div>
-                        <div class="form-group">
-                            {{ form.password2.label }}*
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                </div>
-                                {{ form.password2 }}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            {{ form.email.label }}
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                </div>
-                                {{ form.email }}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            {{ form.picture.label }}
-                            <div class="input-group input-group-alternative">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user-circle"></i>
-                                    </span>
-                                </div>
-                                {{ form.picture }}
-                            </div>
-                            <small>
-                                <ul class="text-black-50">
-                                    <li>The size of your file can't exceed 3MB.</li>
-                                    <li>Allowed extensions are .jpg and .png.</li>
-                                </ul>
-				            </small>
-                        </div>
+                        {{ form|crispy }}
                         <input 
                                type="hidden"
                                name="user_type"
@@ -191,6 +48,27 @@
                                    value="{{ redirect_field_value }}" 
                                   >
                         {% endif %}
+                        <hr>
+                        <small>
+                            <ul class="text-black-50">
+                                <li>The size of your file can't exceed 3MB.</li>
+                                <li>Allowed extensions are .jpg and .png.</li>
+                            </ul>
+                            <ul class="text-black-50">
+                                <li>
+                                    Your password can’t be too similar to your other personal information.
+                                </li>
+                                <li>
+                                    Your password must contain at least 8 characters.
+                                </li>
+                                <li>
+                                    Your password can’t be a commonly used password.
+                                </li>
+                                <li>
+                                    Your password can’t be entirely numeric.
+                                </li>
+                            </ul>
+                        </small>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary my-4" name="action">
                                 Sign Up
