@@ -31,7 +31,7 @@ class ChatsListView(LoginRequiredMixin, View):
             "is_support": is_support,
             "algolia_application_id": settings.ALGOLIA_APPLICATION_ID,
             "algolia_search_key": settings.ALGOLIA_SEARCH_KEY,
-            "school_name": self.request.user.school_name[0],
+            "school_name": self.request.user.school.name,
         })
         if is_support:
             self.context["group_form"] = GroupForm()
@@ -128,7 +128,7 @@ class ChatPageView(LoginRequiredMixin, View):
             "group_form": GroupForm(instance=chatgroup),
             "algolia_search_key": settings.ALGOLIA_SEARCH_KEY,
             "algolia_application_id": settings.ALGOLIA_APPLICATION_ID,
-            "school_name": self.request.user.school_name[0],
+            "school_name": self.request.user.school.name,
             "other_user_about": other_user,
         })
         return render(self.request, 

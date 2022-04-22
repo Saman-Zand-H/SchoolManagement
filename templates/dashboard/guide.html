@@ -1,0 +1,460 @@
+{% extends 'layouts/base.html' %}
+
+{% load crispy_forms_tags %}
+{% load customtags %}
+{% load static %}
+
+{% block title %}Support{% endblock title %}
+
+{% block content %}
+
+<div class="header bg-gradient-orange pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">
+                        Usage Guide
+                    </h6>
+                    <nav 
+                         aria-label="breadcrumb" 
+                         class="d-none d-md-inline-block ml-md-4"
+                        >
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'home:home' %}">
+                                    <i class="fas fa-home"></i>
+                                </a>
+                            </li>
+                            <li 
+                                class="breadcrumb-item active" 
+                                aria-current="page"
+                               >
+                               Guide
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col mx-auto"><br>   
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title text-center">
+                        <i class="fas fa-info-circle"></i>&nbsp;
+                        Usage Guide
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <h1>Principals</h1>
+                    <p>
+                        In this app, the base for any school is the principal. Principals
+                        can signup using the signup button provided in the <a href="/">homepage</a>.
+                    </p>
+                    <div class="image-responsive">
+                        <img 
+                             src="{% static 'assets/img/theme/SignupButton.png' %}"
+                             alt="Signup Button Photo"
+                             class="img-fluid"
+                            >
+                    </div>
+                    <p>
+                        After clicking on the signup button, you'll be redirected to a page. On
+                        this page, you'll be asked to fill in your details. Note that picture and
+                        email are optional fields. You can add emails and picture later in your 
+                        profile page.
+                        When you fill in your sign up form and click on the signup button, you'll
+                        be redirected to the another page where you'll need to tell us the name of 
+                        your school. And just then your sign up process will be over and you'll ve redirected 
+                        to the homepage again, where you can enter the actual app by clicking on the dashboard 
+                        button.
+                    </p>
+                    <div class="image-responsive">
+                        <img
+                             src="{% static 'assets/img/theme/DashboardButton.png' %}"
+                             alt="Dashboard Button Photo"
+                             class="img-fluid"
+                            >
+                    </div>
+                    <p>
+                        In the dashboard, you'll face a sidenav with several options provided for you.
+                        Each of them will lead you to a different part of the app. We'll go through 
+                        all of those pages together here.
+                    </p>
+                    <div class="row">
+                        <div class="image-responsive col-3">
+                            <img
+                                src="{% static 'assets/img/theme/SideNav.png' %}"
+                                alt="Sidenav Photo"
+                                class="img-fluid"
+                                >
+                        </div>
+                        <div class="col-9">
+                            <h3>Dashboard</h3>
+                            <p>
+                                Starting with the dashboard itself. The dashboard is the first page,
+                                which gives you an overview of your school. Which consists of the name 
+                                of your school, the number of classes you have, the number of teachers, 
+                                and the number of students. A table consisting of 5 classes of your school
+                                is also provided. You can click on the class name to view details about the class,
+                                it's subjects, and students. Click on the three dots and you'll be redirected to the
+                                classes page. Also, we have provided another table for the
+                                teachers. You can click on the teacher name to view details about the teacher. This 
+                                table is also provided with a three dots button to redirect to the teachers page.
+                                <div class="image-responsive">
+                                    <img 
+                                     src="{% static 'assets/img/theme/PDashboard.png' %}"
+                                     alt="Principal Dashboard Photo"
+                                     class="img-fluid"
+                                    >
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Classes</h3>
+                        <p>
+                            When you come to this page, you'll see a table that lists your classes.
+                            By clicking on the class ID of each class, you'll be again redirected to another page,
+                            that shows the details of that class. As an example, consider the class "901" in 
+                            the picture.
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/PClassesView.png' %}"
+                                     alt="Classes Page Photo"
+                                     class="img-fluid"
+                                    >
+                            </div>
+                        </p>
+                        <p>
+                            We click on the class ID and then we we're taken to the following page which shows us
+                            the subjects added to the class and the students. There are also two buttons at the top of
+                            the page by clicking on which you can edit or remove your class.
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/PClassD.png' %}"
+                                     alt="Class Detail Page Photo"
+                                     class="img-fluid"
+                                    >
+                            </div>
+                        </p>
+                        <p>
+                            In order to create a new class, you need to click on the "New" button 
+                            which is located at the top of the classes page. by clicking on this 
+                            you'll be represented a form which you need to fill in in order to 
+                            create your class.
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/PClassAdd.png' %}"
+                                     alt="Add Class Photo"
+                                     class="img-fluid"
+                                    >
+                            </div><br>
+                            This form includes two types of fields. The first one asks for the name
+                            of your class, or in other terms your school-unique class ID.
+                            The second one asks for the subjects that are supposed to be included in your class.
+                            It's named "Courses" because we encounter the subject and its teacher together and
+                            it feels more correct to call it just "Courses" instead of "Subjects".
+                            After filling out the form, click on the create button and your class will be
+                            created.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Teachers</h3>
+                        <p>
+                            The next section is the teachers section. Here teachers are shown in box-like elements 
+                            that represent an overview of them. 
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/TeachersView.png' %}"
+                                     alt="Teachers Page Photo"
+                                     class="img-fluid"
+                                    >
+                            </div><br>
+                            By clicking on the "Add" bottom on the top of the page you'll be shown a form
+                            where you can add a new teacher.
+                            If you click on those box-like elements, you'll be taken to a page with the details
+                            about that teacher. This page gives you the teacher's name, username, email, university,
+                            and their degree. You can change the university and the degree but the email can
+                            only be changed by themselves. There's a table containing the classes. you can 
+                            visit the detail the detail page of the class by clicking on the class id. There's 
+                            also another table representing the courses that this teacher is the teacher of.<br>
+                            <div class="image-responsive my-2">
+                                <img
+                                     src="{% static 'assets/img/theme/TeacherD.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Detail Page Photo"
+                                    >
+                            </div>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Courses</h3>
+                        <p>
+                            This page is the courses page. Here you can see an overview of all the existing courses.<br>
+                            <div class="image-responsive">
+                                <img 
+                                 class="img-fluid"
+                                 alt="Courses Page"
+                                 src="{% static 'assets/img/theme/PCourses.png' %}"
+                                >
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="image-responsive mx-auto">
+                                        <img 
+                                        class="img-fluid"
+                                        alt="Add Course Photo"
+                                        src="{% static 'assets/img/theme/PAddCourse.png' %}"
+                                        >
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    By clicking on the "New" button at the top of the page you'll be shown a form
+                                    where you can add a new course. You'll be asked to enter the name of the course,
+                                    and select its teacher.
+                                </div>
+                            </div><br>
+                            By clicking on the box-like elements you'll be redirected to the detail page of the course.<br>
+                            <div class="image-responsive my-2">
+                                <img 
+                                 class="img-fluid"
+                                 alt="Course Detail Page"
+                                 src="{% static 'assets/img/theme/PCoursesD.png' %}"
+                                >
+                            </div>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Students</h3>
+                        <p>
+                            This page is the students page. Here you can see an overview of all the existing students and
+                            register new students. The mechanism is like the other pages we went through. There is a box-like
+                            element for each student. By clicking on the box-like element you'll be redirected to the detail page.
+                            And there is an "Add" button at the top of the page. By clicking on this you'll be shown a form
+                            where you can add a new student.<br>
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/PStudents.png' %}"
+                                     alt="Students Page Photo"
+                                     class="img-fluid"
+                                    >
+                            </div>
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/PStudentD.png' %}"
+                                     alt="Students Page Photo"
+                                     class="img-fluid"
+                                    >
+                            </div>
+                        </p>
+                    </div>
+                    <hr>
+                    <h1>Teachers</h1>
+                    <p>
+                        Teachers can only be signed up by the principal of their school. Ask your principal 
+                        to sign you up, set you a username and a password. You can change your password 
+                        afterwards in case you don't want others to have it.                        
+                    </p>
+                    <div>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="image-responsive">
+                                    <img
+                                         src="{% static 'assets/img/theme/TSideNav.png' %}"
+                                         alt="Teacher Sidenav Photo"
+                                         class="img-fluid"
+                                        >
+                                </div>
+                            </div>
+                            <div class="col-9">
+                                <p>
+                                    The sidenav is a little different for teachers. Teachers have access 
+                                    to exams page, whereas principal don't. Classes page and students page 
+                                    are also briefer for teachers. They only have access to the details of
+                                    the classes they teach and students in those classes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>                        
+                    <div>
+                        <h3>Dashboard</h3>
+                        <p>
+                            The dashboard page is different for teachers. It first shows you two charts. The one
+                            on the left chart, gives you an overview of for each of your classes in a certain month.
+                            By clicking on the "Classes" button on the top of the chart, you'll be represented a 
+                            dropdown where you can select the class you want to see the overview for.
+                            On the other hand, the chart on the right chart gives you an overview of all of 
+                            the classes during a certain month.<br>
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/TDashboard.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Dashboard Photo"
+                                    >
+                            </div><br>                      
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Classes</h3>
+                        <p>
+                            The page is a laconic overview of all the classes you teach. Unlike other pages,
+                            you won't be taken to any page if you click on the class ID.
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/TClass.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Classes Photo"
+                                    >
+                            </div><br>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Students</h3>
+                        <p>
+                            You are shown box-like elements with brief details about your students. You can 
+                            click on them to see the detail page of the student.
+                            <div class="image-responsive">
+                                <img
+                                    src="{% static 'assets/img/theme/TStudents.png' %}"
+                                    class="img-fluid"
+                                    alt="Teacher Students Photo"
+                                    >
+                            </div><br>
+                            On the detail page, you'll see your student's email (if set), the class they are in,
+                            their username, and their average grade in all of their exams.<br>
+                            <div class="image-responsive">
+                                <img
+                                     src="{% static 'assets/img/theme/TStudentD.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Student Detail Photo"
+                                    >
+                            </div>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Exams</h3>
+                        <p>
+                            This page might need a little more explanation. Like other pages, your data is represented
+                            in a box-like elements. By clicking on the box-like element you'll be redirected to the detail page.
+                            In this page, there are two buttons on the top of the page. One is used to add a new exam.
+                            It represents you a form, where you need to specify the class you want to add the exam to,
+                            after you select the class, another field will show up that asks you to select the subject. 
+                            The next field asks you to enter the full score, which is 20 by default, and has to be a number.
+                            The next field asks you to enter the date of the exam. Click on the field and a date picker 
+                            will show up. Use the date picker to select the date of the exam. And finally, there's a toggle button 
+                            that asks if the exam should be visible to students.<br>
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/TAddExam.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Add Exams Photo"
+                                    >
+                            </div><br>
+                            The other button is used to filter the exams. By clicking on it, you'll be presented a modal
+                            where you can select the class you want to see the exams for, the subject you want to see, and 
+                            the date you want to see. The date is a date range actually, 
+                            but you can use one without the other one.<br><br>
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/TFilterExam.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Filter Exams Photo"
+                                    >
+                            </div><br>
+                            Click on the elements and you'll be taken to the detail page, where you can set grades 
+                            for the students in the exam by clicking on the add/edit button.<br><br>
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/TGradesAdd.png' %}"
+                                     class="img-fluid"
+                                     alt="Teacher Exam Detail Photo"
+                                    >
+                            </div>             
+                        </p>
+                    </div>
+                    <h1>Students</h1>
+                    <p>
+                        This user type does not need any specific explanation. Students can only access the exams page,
+                        assignments page, the articles page, the profile page, the messenger, and the dashboard page.
+                        These are the pages that all users have access to.
+                    </p>
+                    <h1>All The Other Pages</h1>
+                    <div>
+                        <h3>Profile</h3>
+                        <p>
+                            This is your profile page. The same for all the user types. You can change your password,
+                            change your email, and change your bio. Your bio is used in the messenger.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Messenger</h3>
+                        <p>
+                            The internal messenger. The only user type that can create groups is the principal.
+                            The principal can create groups by clicking on the "New Group" button on the top of the page,
+                            where he'll be asked to enter the group name. They can upload profile pictures and 
+                            set a group bio as well, but it's completely optional.
+                            After they created the group, they'll be redirected to the group page. For adding members,
+                            click on the group name, which is located in a frame on the top, scroll down to the "Members" 
+                            section. Cilck on "Add Members" and you'll be presented a modal where you can select the members
+                            whether by searching their username or name or by finding the users manually.
+                            <b>
+                                If you're using this app from Iran, you need to have your VPN on in order to
+                                add members since Algolia is not available in Iran.
+                            </b>
+                            Other users can create conversations where they also need to have their VPN on 
+                            to find the user they want to text.<br><br>
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/Messenger.png' %}"
+                                     class="img-fluid"
+                                     alt="Messenger Photo"
+                                    >
+                            </div>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Articles</h3>
+                        <p>
+                            All the teachers and principals can add articles. The articles are shown on the articles page.
+                            By clicking on the "New" button, you'll be redirected to a page where you can write 
+                            your article. This form asks you for a title, categories that are comma separated (You can't have
+                            more than 5 categories and categories can't have more than 20 characters, e.g. "Math, Physics"),
+                            and the article itself. You can make use of tools provided in the editor to write your article.
+                            You can also use LaTeX. To do so, click on the Math button, which is located in the editor by 
+                            a summation sigma symbol.
+                            <div class="image-responsive">
+                                <img 
+                                     src="{% static 'assets/img/theme/Articles.png' %}"
+                                     class="img-fluid"
+                                     alt="Articles Page Photo"
+                                    >
+                            </div>
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Assignments</h3>
+                        <p>
+                            Only teachers can add assignments. The assignments are shown on the assignments page.
+                            The form used for adding assignments is almost the same as the one used for adding articles.
+                            Just that you need to set the assignment class, subject, and the deadline. The editor for the body
+                            is the same as the one used for articles.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %} {% endblock javascripts %}

@@ -126,7 +126,8 @@
                                             {{ teacher.user.name|title }}
                                         </div>
                                         <p class="card-text">
-                                            Courses: {{ teacher.subject_teacher.count }}<br>
+                                            Appeard in {{ teacher.subject_teacher.count|default:"0" }} 
+                                            Course{{ teacher.subject_teacher.count|pluralize }}<br>
                                             Degree: {{ teacher.degree|default:"not set" }}<br>
                                         </p>
                                     </div>

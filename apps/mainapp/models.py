@@ -52,8 +52,7 @@ class Student(models.Model):
             group.permissions.add(
                 Permission.objects.get(codename="student"))
         self.user.groups.add(group)
-        return super().save(*args, **kwargs)
-        
+        return super().save(*args, **kwargs) 
     
     @property
     def average_grade_percent(self):

@@ -116,15 +116,26 @@
 <div class="container-fluid mt--6">
     <div class="row">
 		<div class="col mx-auto"><br>
-			<div class="alert alert-default" role="alert">
-				<h2 class="text-white">Current Information</h2>
-                <div class="my-4">
-                    Name: <strong>{{ teacher.user.name|title }}</strong>
+			<div class="card">
+                <div class="card-body bg-gradient-gray-dark text-white rounded">
+                    <h2>Current Information</h2>
+                    <div class="my-4">
+                        Name: <strong>{{ teacher.user.name|title }}</strong>
+                    </div>
+                    <div class="my-4">
+                        ID: <strong>{{ teacher.user.username }}</strong>
+                    </div>
+                    <div class="my-4">
+                        Email: <strong>{{ teacher.user.email|default:"Not Set" }}</strong>
+                    </div>
+                    <div class="my-4">
+                        University: <strong>{{ teacher.university|default:"Not Set" }}</strong>
+                    </div>
+                    <div class="my-4">
+                        Degree: <strong>{{ teacher.degree|default:"Not Set" }}</strong>
+                    </div>
                 </div>
-                <div class="my-4">
-                    ID: <strong>{{ teacher.user.username }}</strong>
-                </div>
-			</div>
+            </div>
 		</div>
     </div>
     <div class="row">
@@ -280,7 +291,6 @@
                             <tr>
                                 <th>Courses</th>
                                 <th>Classes</th>
-                                <th>Teachers</th>
                             </tr>
                         </thead>
                         {% if subjects %}
@@ -289,7 +299,11 @@
                                     <tr>    
                                         <th scope="row" class="name">
                                             <div class="media align-items-center">
-                                                <h1 class="text-dark mr-4">{{ subject.name }}</h1>
+                                                <a class="hover" href="{{ subject.get_absolute_url }}">
+                                                    <h1 class="text-dark mr-4">
+                                                        {{ subject.name|title }}
+                                                    </h1>
+                                                </a>
                                                 <div class="media-body">
                                                     <span class="mb-0 text-sm"></span>
                                                 </div>
@@ -297,11 +311,6 @@
                                         </th>
                                         <td class="budget">
                                             {{ subject.class_subjects.count }}
-                                        </td>
-                                        <td>
-                                            <div class="budget">
-                                                {{ subject.teachers.count }}
-                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>

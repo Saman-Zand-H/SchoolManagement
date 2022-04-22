@@ -185,6 +185,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if 'guide' in segment %} active {% endif %}" 
+                           href="{% url 'home:guide' %}">
+                            <i class="fas fa-exclamation px-1
+                                      {% if 'guide' in segment %}text-orange{% endif %}"></i>
+                            <span class="nav-link-text">Guide</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" target="_blank" href="https://github.com/saman-zand-h/">
                             <i class="fab fa-github text-dark px-1"></i>
                             <span class="nav-link-text">Github</span>

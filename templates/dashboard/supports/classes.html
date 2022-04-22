@@ -89,7 +89,11 @@
                                             {% endfor %}
                                         {% endif %}
                                     </div>
-                                    <form id="createClassForm" action="{% url 'supports:classes' %}" method="POST">
+                                    <form 
+                                          id="createClassForm" 
+                                          action="{% url 'supports:classes' %}" 
+                                          method="POST"
+                                         >
                                         {% csrf_token %}
                                         <div class="my-4">
                                             {{ form.class_id.label }}*
@@ -104,8 +108,8 @@
                                                         {% for subject in form.subjects %}
                                                             <div class="col">
                                                                 <div 
-                                                                     class="card border-0 
-                                                                            bg-gradient-light 
+                                                                     class="card border-0
+                                                                            bg-gradient-danger
                                                                             text-dark text-center"
                                                                     >
                                                                     <label for="{{ subject.id_for_label }}">

@@ -59,6 +59,8 @@ class HomeView(PermissionAndLoginRequiredMixin, View):
             "school": school,
             "classes": school.class_school.all()[:4],
             "teachers": school.teacher_school.all()[:4],
+            "students_count": Student.objects.filter(
+                student_class__school=self.request.user.school).count(),
             "segment": "home"
         }
         return render(self.request, "dashboard/supports/index.html", context)
@@ -90,7 +92,7 @@ class ClassesView(PermissionAndLoginRequiredMixin, View):
             return render(self.request, self.template_name, self.context)
         except School.DoesNotExist:
             messages.error(self.request, "You have to register your school first.")
-            return redirect("supports:create_school")
+            return redirect("supports:create-school")
 
     def post(self, *args, **kwargs):
         error_message = partial(messages.error, request=self.request)

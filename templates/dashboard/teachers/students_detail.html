@@ -33,17 +33,23 @@
 <div class="container-fluid mt--6">
     <div class="row">
         <div class="col mx-auto"><br>
-            <div class="alert alert-default" role="alert">
-                <h2 class="text-white">Current Information</h2>
-
-                <div class="my-4">
-                    Name: <strong>{{ student.user.name|title }}</strong>
-                </div>
-                <div class="my-4">
-                    ID: <strong>{{ student.user.username }}</strong>
-                </div>
-                <div class="my-4">
-                    Class: <strong>{{ student.student_class }}</strong>
+            <div class="card">
+                <div class="card-body bg-gradient-gray-dark rounded text-light">
+                    <div class="my-4">
+                        Name: <strong>{{ student.user.name|title }}</strong>
+                    </div>
+                    <div class="my-4">
+                        ID: <strong>{{ student.user.username }}</strong>
+                    </div>
+                    <div class="my-4">
+                        Class: <strong>{{ student.student_class }}</strong>
+                    </div>
+                    <div class="my-4">
+                        Email: <strong>{{ student.user.email }}</strong>
+                    </div>
+                    <div class="my-4">
+                        Average Grade Percent: <strong>{{ student.average_grade_percent }}%</strong>
+                    </div>
                 </div>
             </div>
         </div>

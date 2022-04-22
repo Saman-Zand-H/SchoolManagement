@@ -276,3 +276,18 @@ class AssignmentDetailView(LoginRequiredMixin, View):
     
     
 assignment_detail_view = AssignmentDetailView.as_view()
+
+
+class GuideTemplateView(TemplateView):
+    template_name = "dashboard/guide.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "segment": self.request.path.split("/"),
+            "nav_color": "bg-gradient-orange",
+        })
+        return context
+
+
+guide_template_view = GuideTemplateView.as_view()
