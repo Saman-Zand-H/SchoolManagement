@@ -122,7 +122,7 @@ class TestConsumers(ChannelsLiveServerTestCase):
         cls.driver.close()
         super().tearDownClass()
 
-    # === Utility ===
+    # === Utility Functions ===
 
     def _create_user(self,
                      driver,

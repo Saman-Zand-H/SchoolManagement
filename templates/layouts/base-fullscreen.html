@@ -1,12 +1,14 @@
-{% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
+{% load static %}
+
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="service-worker-js" content="/webpush/service-worker.js">
+    <meta name="django-webpush-vapid-key" content="{{ vapid_key }}">
 
     <title>
         Authentication - {% block title %} Base {% endblock %}
@@ -48,13 +50,20 @@
                 </div>
             </div>
             <div class="separator separator-bottom separator-skew zindex-100">
-                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <svg 
+                     x="0" 
+                     y="0"
+                     viewBox="0 0 2560 100" 
+                     preserveAspectRatio="none" 
+                     version="1.1" 
+                     xmlns="http://www.w3.org/2000/svg"
+                    >
           <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
         </svg>
             </div>
         </div>
 
-        <section class="{% if LANGUAGE_CODE != 'en' %}rtl text-right{% endif %}">
+        <section>
             {% block content %}{% endblock content %} 
         </section>
 
@@ -67,7 +76,9 @@
     <!-- Specific JS goes HERE -->
     {% block javascripts %}{% endblock javascripts %}
 
-    <script src="/static/assets/js/argon.js?v=1.2.0"></script>
+    <script src="{% static 'assets/js/argon.js' %}"></script>
+    <script src="{% static 'assets/js/webpush.js' %}"></script>
+    <script src="/webpush/jsi18n" id="webpush-js" type="text/javascript"></script>
 
 </body>
 

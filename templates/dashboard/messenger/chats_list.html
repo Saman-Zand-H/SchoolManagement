@@ -4,11 +4,11 @@
 {% load customtags %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% load webpush_notifications %}
 
 {% block title %}Messages{% endblock title %}
 
 {% block content %}
-
 <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white mt-3">
     <div class="list-group list-group-flush border-bottom scrollarea">
         <li class="list-group-item align-content-start">
@@ -104,15 +104,18 @@
                                 </div>
                                 <div class="mt-2 mb-4 mx-auto text-left">
                                     <input 
-                                        type="text" 
-                                        class="form-control" 
-                                        id="search-username" 
-                                        autocorrect="false"
-                                        autocomplete="off"
-                                        spellcheck="false"
-                                        placeholder="enter the user's username..."
+                                           type="text" 
+                                           class="form-control" 
+                                           id="search-username" 
+                                           autocorrect="false"
+                                           autocomplete="off"
+                                           spellcheck="false"
+                                           placeholder="enter the user's username..."
+                                          >
+                                    <form 
+                                         method="POST" 
+                                         action="{% url 'messenger:home' %}"
                                         >
-                                    <form method="post">
                                         {% csrf_token %}
                                         <input name="conversation_type" value="pm" type="hidden">
                                         <div class="text-center text-danger">
@@ -145,48 +148,59 @@
                 </div>
             </div>
         </li>
-        {% if memberships %}
-            <div style="overflow-y:scroll">
-                {% for membership in memberships %}
-                    <a 
-                       href="{{ membership.chatgroup.get_absolute_url }}" 
-                       class="list-group-item list-group-item-action py-3" 
-                       aria-current="true"
-                       id="group-{{ membership.chatgroup.group_id }}"
-                      >
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <div class="media align-items-center">
-                                <span class="avatar avatar-sm rounded-circle">
-                                    <img 
-                                         alt="Profile Picture" 
-                                         style="width: 36px; height: 36px;"
-                                         src="{{ membership.chatgroup|get_group_photo:user }}"
-                                    >
-                                </span>
-                                <div class="media-body ml-2 d-lg-block">
-                                    <span class="mb-0 text-sm font-weight-bold">
-                                        {{ membership.chatgroup|get_group_name:user }}
+        <div id="chat-main-list">
+            {% if memberships %}
+                <div style="overflow-y:scroll" id="chat-list">
+                    {% for membership in memberships %}
+                        <a 
+                           href="{{ membership.chatgroup.get_absolute_url }}" 
+                           class="list-group-item list-group-item-action py-3" 
+                           aria-current="true"
+                           id="group-{{ membership.chatgroup.group_id }}"
+                        >
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <div class="media align-items-center">
+                                    <span class="avatar avatar-sm rounded-circle">
+                                        <img 
+                                            alt="Profile Picture" 
+                                            style="width: 36px; height: 36px;"
+                                            src="{{ membership.chatgroup|get_group_photo:user }}"
+                                        >
                                     </span>
+                                    <div class="media-body ml-2 d-lg-block">
+                                        <span class="mb-0 text-sm font-weight-bold">
+                                            {{ membership.chatgroup|get_group_name:user }}
+                                        </span>
+                                    </div>
                                 </div>
+                                <small>
+                                    <span 
+                                          class="badge badge-pill 
+                                                  bg-default text-light"
+                                          {% if not membership.unread_messages.exists %}
+                                              style="display: none;"
+                                          {% endif %}
+                                         >
+                                        {{ membership.unread_messages.count|default:"0" }}
+                                    </span>
+                                    {{ membership.chatgroup.message_chatgroup.last.date_written|date:"D" }}
+                                </small>
                             </div>
-                            <small>
-                                {% if membership.is_unread %}
-                                    <span class="badge badge-pill bg-default text-light">Unread</span>
-                                {% endif %}
-                                {{ membership.chatgroup.message_chatgroup.last.date_written|date:"D" }}
-                            </small>
-                        </div>
-                        <div class="col-10 mb-1 pt-2 small text-muted">
-                            {{ membership.chatgroup.ordered_messages.last.body|truncatechars:30|default:"" }}
-                        </div>
-                    </a>
-                {% endfor %}
-            </div>
-        {% else %}
-            <li class="list-group-item text-center">
-                You haven't started any conversation yet.
-            </li>
-        {% endif %}
+                            <div 
+                                 class="col-10 mb-1 pt-2 small text-muted" 
+                                 id="text-{{ membership.chatgroup.group_id }}"
+                                >
+                                {{ membership.chatgroup.ordered_messages.last.body|truncatechars:30|default:"" }}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <li class="list-group-item text-center" id="no-chat">
+                    You haven't started any conversation yet.
+                </li>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -231,7 +245,6 @@
           ),
           indexName = "{{ user.get_index_name|safe }}",
           helper = algoliasearchHelper(client, indexName),
-          username = "{{ user.username|safe }}";
           school_name = "{{ school_name|safe }}";
     $noHits.hide();
     $hitsTable.hide();
@@ -261,7 +274,9 @@
             $noHits.show();
         } else {
             for (var i = 0; i < content.hits.length; ++i) {
-                hitsHtml += hitTemplate.render(content.hits[i]);
+                if (content.hits[i].username !== "{{ user.username|safe }}") {
+                    hitsHtml += hitTemplate.render(content.hits[i]);
+                }
             }
             $noHits.hide();
             $hits.html(hitsHtml);
@@ -272,3 +287,77 @@
     };
 </script>
 {% endblock javascripts %}
+{% block websocket %}
+    <script>
+        const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/{{ user.username }}/`),
+              username = "{{ user.username|safe }}";
+
+        socket.onopen = function (e) {
+            console.log("[+] Connection established");
+        };
+
+        socket.onclose = function (e) {
+            console.log("[-] Connection closed");
+        }
+
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data),
+                $chatgroup = $(`#group-${data.chatgroup_id}`),
+                $chatList = $("#chat-list"),
+                $noChat = $("#no-chat");
+            if ($chatgroup.length === 1) {
+                var $unreadBadge = $chatgroup.find(".badge");
+                $unreadBadge.text(data.unread_messages_count);
+                $unreadBadge.show();
+                $(`#text-${data.chatgroup_id}`).text(data.body);
+            } else {
+                var newMessageHTML = `
+                        <a 
+                           href="${data.chatgroup_url}" 
+                           class="list-group-item list-group-item-action py-3" 
+                           aria-current="true"
+                           id="group-${data.chatgroup_id}"
+                          >
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <div class="media align-items-center">
+                                    <span class="avatar avatar-sm rounded-circle">
+                                        <img 
+                                             alt="Profile Picture" 
+                                             style="width: 36px; height: 36px;"
+                                             src="${data.group_picture_url}"
+                                            >
+                                    </span>
+                                    <div class="media-body ml-2 d-lg-block">
+                                        <span class="mb-0 text-sm font-weight-bold">
+                                            ${data.group_name}
+                                        </span>
+                                    </div>
+                                </div>
+                                <small>
+                                    <span 
+                                          class="badge badge-pill 
+                                                 bg-default text-light"
+                                         >
+                                        ${data.unread_messages_count}
+                                    </span>
+                                    ${data.date_written}
+                                </small>
+                            </div>
+                            <div class="col-10 mb-1 pt-2 small text-muted">
+                                ${data.body}
+                            </div>
+                        </a>`;
+                if ($chatList.length > 0) {
+                    $chatList.append(newMessageHTML);
+                } else {
+                    $noChat.remove();
+                    $("#chat-main-list").append(`
+                        <div style="overflow-y:scroll;" id="chat-list">
+                            ${newMessageHTML}
+                        </div>`
+                    );
+                }
+            }
+        };
+    </script>
+{% endblock %}

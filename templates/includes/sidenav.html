@@ -1,13 +1,10 @@
-{% load i18n %}
-
-{% get_current_language as LANGUAGE_CODE %}
 
 <nav 
      class="sidenav navbar navbar-vertical 
             fixed-left navbar-expand-xs 
-            navbar-light bg-white 
-            {% if LANGUAGE_CODE != 'en' %}text-right{% endif %}" 
+            navbar-light bg-white" 
      id="sidenav-main"
+     style="z-index: 200;"
     >
     <div class="scrollbar-inner">
         <div class="navbar-inner">

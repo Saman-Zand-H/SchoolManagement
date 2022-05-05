@@ -42,7 +42,8 @@ DEBUG = env.bool("DEBUG", default=1)
 ALLOWED_HOSTS = ["localhost", 
                  "127.0.0.1", 
                  "djs-tnsaman.fandogh.cloud",
-                 "takhte-whiteboard.ir"]
+                 "takhte-whiteboard.ir",
+                 "0233-162-55-176-247.eu.ngrok.io"]
 
 
 # Application definition
@@ -76,6 +77,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'drf_yasg',
+    'webpush',
 
     # Local apps
     'users.apps.UsersConfig',
@@ -121,6 +123,7 @@ TEMPLATES = [
         },
     },
 ]
+TEMPLATES[0]['OPTIONS']['context_processors'].append("mainapp.context_processors.vapid_key")
 
 ASGI_APPLICATION = 'conf.asgi.application'
 
@@ -314,7 +317,7 @@ CKEDITOR_CONFIGS = {
         'mathJaxLib': '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
         'extraPlugins': ','.join([
             'mathjax', 
-            ]),
+        ]),
     },
 }
 
@@ -357,5 +360,12 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'takhteWhiteboard-token'
 JWT_AUTH_REFRESH_COOKIE = 'takhteWhiteboard-refresh-token'
 
-# Selenium-force-login configurations
+# selenium-force-login configurations
 SELENIUM_LOGIN_START_PAGE = "/accounts/login/"
+
+# webpush configurations
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": env.str("VAPID_PUBLIC_KEY"),
+    "VAPID_PRIVATE_KEY": env.str("VAPID_PRIVATE_KEY"),
+    "VAPID_ADMIN_EMAIL": "contact@takhte-whiteboard.ir",
+}

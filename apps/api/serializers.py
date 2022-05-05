@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth import  get_user_model
 
 from mainapp.models import Student, Class, Exam, Grade, Article, Assignment
-from supports.models import School
 from teachers.models import Teacher
 
 

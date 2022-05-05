@@ -5,9 +5,9 @@ services:
     build: .
     command: python manage.py runserver
     volumes:
-      - .:/usr/src/app/
+      - .:/usr/src/app
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
       - db
       - redis_server

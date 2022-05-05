@@ -1,4 +1,4 @@
-.env
+.*
 todo.txt
-.dockerignore
-logs/*
+logs
+__pycache__

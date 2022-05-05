@@ -206,7 +206,7 @@
                                     </table>
                                     <div class="my-3">
                                         <form 
-                                              method="POST"
+                                              method="post"
                                               action="{% url 'messenger:manage-members' chatgroup.group_id %}"
                                              >
                                             {% csrf_token %}
@@ -370,13 +370,15 @@
             });
         </script>
     {% endif %}
-    <script>
+{% endblock javascripts %}
+{% block websocket %}
+        <script>
         const group_id = "{{ chatgroup.group_id|safe }}",
+              username = "{{ user.username|safe }}",
               socket = new WebSocket(`ws://${window.location.host}/ws/messenger/${group_id}/`),
               sendMsgBtn = $("#send-msg-btn"),
               msgInput = $("#msg-input"),
               msgBox = $("#message-box"),
-              username = "{{ user.username }}",
               msgCard = $("#msg-card");
 
         {% if chatgroup.owner == user %}
@@ -400,13 +402,9 @@
             msgInput.focus();
             msgCard.scrollTop(msgCard.prop("scrollHeight"));
 
-            {% if last_message %}
-                var message_id = "{{ last_message.message_id.hex }}",
-                    read_mark = $(`#read_${message_id}`),
-                    message_sender = "{{ last_message.author.username }}",
-                    unread_mark = $(`#unread_${message_id}`);
-                unread_mark.hide();
-                read_mark.show();
+            {% if last_message_qs.exists %}
+                var message_id = "{{ last_message_qs.last.message_id.hex }}",
+                    message_sender = "{{ last_message_qs.last.author.username }}";
                 data = {
                     "type": "seen",
                     "sender": message_sender,
@@ -511,4 +509,4 @@
             }
         };
     </script>
-{% endblock javascripts %}
+{% endblock %}

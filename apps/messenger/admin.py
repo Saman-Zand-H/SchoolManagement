@@ -28,14 +28,16 @@ class MemberAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     list_display = [
+        "message_id",
         "author", 
         "chatgroup", 
         "body", 
         "date_written",
         "seen",
     ]
+    admin_order_field = "-date_written"
     search_fields = ("author", "chatgroup", "body", "message_id")
-    list_filter = ("author", "chatgroup",)
+    list_filter = ("author", "chatgroup", "seen")
     actions = [
         mark_as_read,
         mark_as_unread,

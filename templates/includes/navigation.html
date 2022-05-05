@@ -1,12 +1,10 @@
 {% load static %}
-{% load i18n %}
-
-{% get_current_language as LANGUAGE_CODE %}
 
 <nav 
      class="navbar navbar-top mb-2
             navbar-expand navbar-dark 
             {{ nav_color|default:'bg-primary' }} border-bottom"
+     style="z-index:600"
     >
     <div class="container-fluid">
         <div 
@@ -42,11 +40,7 @@
                             </div>
                         </div>
                     </a>
-                    <div 
-                         class="dropdown-menu 
-                                {% if LANGUAGE_CODE == 'fa' %}text-right{% endif %} 
-                                dropdown-menu-right"
-                        >
+                    <div class="dropdown-menu dropdown-menu-right">
                         <div class="dropdown-header noti-title">
                             <h6 class="text-overflow m-0">Welcome!</h6>
                         </div>
@@ -60,6 +54,14 @@
                             <i class="ni ni-support-16"></i>
                             <span>Support</span>
                         </a>
+                        <button
+                                id="webpush-subscribe-button" 
+                                data-url="/webpush/save_information"
+                                class ="dropdown-item"
+                               >
+                            <i class="far fa-bell"></i>
+                            Subscribe to Push Messaging
+                        </button>
                         {% if user.is_authenticated %}
                         <div class="dropdown-divider"></div>
                             <a href="{% url 'logout' %}" class="dropdown-item">

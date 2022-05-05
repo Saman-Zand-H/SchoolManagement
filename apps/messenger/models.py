@@ -1,10 +1,11 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.urls import reverse
 from django.db import IntegrityError
 from django.templatetags.static import static
 
-from string import ascii_letters
+from string import ascii_letters, digits
 from random import choices
 from uuid import uuid4
 
@@ -12,7 +13,7 @@ from users.models import validate_file_size, validate_file_extension
 
 
 def generate_group_id(length=12):
-    return "".join(choices(ascii_letters, k=length))
+    return "".join(choices(ascii_letters+digits, k=length))
 
 
 class ChatGroup(models.Model):
@@ -37,8 +38,9 @@ class ChatGroup(models.Model):
     is_pm = models.BooleanField(default=True)
 
     def __str__(self):
+        members = [member.user.username for member in self.member_chatgroup.all()]
         if self.is_pm:
-            return f"private message: {self.name}"
+            return (f"private message: {members}")
         return f"{self.name} - Owner: {self.owner.username}"
 
     def get_absolute_url(self):
@@ -55,7 +57,7 @@ class ChatGroup(models.Model):
             the_other_member = [
                 *filter(lambda member: member.user != user, members)
             ][0]
-            return the_other_member.user.name()
+            return the_other_member.user.name
         else:
             return self.name
 
@@ -71,9 +73,7 @@ class ChatGroup(models.Model):
                 "assets/img/icons/empty-profile.jpg")
 
     def is_marked_as_unread(self):
-        if self.message_chatgroup.filter(seen=False).exists():
-            return True
-        return
+        return self.message_chatgroup.filter(seen=False).exists()
 
 
 class Member(models.Model):
@@ -98,21 +98,28 @@ class Member(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.chatgroup}"
-
+    
     @property
-    def is_unread(self):
-        if self.chatgroup.ordered_messages.exists():
-            return self.last_read_message != self.chatgroup.ordered_messages.last()
-        return
-
-    def save(self, *args, **kwargs):
+    def unread_messages(self):
+        if self.last_read_message:
+            return self.chatgroup.ordered_messages.filter(
+                Q(date_written__gt=self.last_read_message.date_written) 
+                & Q(seen=False))
+    
+    def clean(self):
         chatgroup = ChatGroup.objects.get(group_id=self.chatgroup.group_id)
-        if chatgroup.is_pm and chatgroup.member_chatgroup.count() >= 2:
-            raise IntegrityError("A private message can only have two members")
-        super().save(*args, **kwargs)
+        if chatgroup.is_pm and chatgroup.member_chatgroup.count() > 2:
+            raise IntegrityError(
+                "A private message can only have two members")
+        return super().clean()
 
     class Meta:
         unique_together = (("user", "chatgroup"), )
+        
+        
+class MessageManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by("-date_written")
 
 
 class Message(models.Model):
@@ -135,6 +142,8 @@ class Message(models.Model):
     body = models.TextField()
     seen = models.BooleanField(default=False)
     date_written = models.DateTimeField(auto_now_add=True)
+    
+    objects = MessageManager()
 
     def __str__(self):
         return f"{self.author} - {self.chatgroup}: {self.body[:10]}..."

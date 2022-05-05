@@ -24,5 +24,4 @@ class ChatPageIndex(AlgoliaIndex):
         
     }
     custom_objectID = "username" 
-    should_index = "is_not_principal"
     

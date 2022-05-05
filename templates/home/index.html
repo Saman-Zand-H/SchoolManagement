@@ -137,7 +137,8 @@
                                                             url: this.href,
                                                             data: {
                                                                 language: code,
-                                                                csrfmiddlewaretoken: '{{ csrf_token }}'},
+                                                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                                                            },
                                                             method: "POST",
                                                             success: function(e) {
                                                                 location.reload();
@@ -231,7 +232,7 @@
                                    href="{% url 'home:guide' %}" 
                                    class="btn btn-round btn-secondary btn-fill border-dark"
                                   >
-                                    Guide
+                                    {% trans 'Guide' %}
                                 </a>
                             </li>
                         </ul>

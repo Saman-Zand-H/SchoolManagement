@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
+from django.templatetags.static import static as static_file
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler404, handler403, handler500
@@ -21,6 +23,12 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    # Notifications
+    path(
+        route="webpush/",
+        view=include("webpush.urls"),
+    ),
+    
     # Admin
     path(
         route='emperor-page/', 
@@ -90,6 +98,10 @@ urlpatterns = [
     path(
         route='ckeditor/', 
         view=include('ckeditor_uploader.urls'),
+    ),
+    path(
+        route="main/",
+        view=include("mainapp.urls", namespace="main"),
     ),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

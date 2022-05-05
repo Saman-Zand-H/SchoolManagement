@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 USER_TYPE_CHOICES = (
     ("S", "student"),
     ("T", "teacher"),
-    ("SS", "support staff"),
+    ("SS", "support staff")
 )
 
 
@@ -148,6 +148,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         return f"/users/{self.pk}/"
 
+    @property
     def name(self):
         return f"{self.first_name.title()} {self.last_name.title()}".strip()
     
@@ -181,20 +182,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     @property
     def school(self):
-        match self.user_type:
-            case "T":
-                queryset = self.teacher_user.school
-            case "S":
-                queryset = self.student_user.student_class.school
-            case "SS":
-                queryset = self.school_support
-        return queryset
+        if hasattr(self, "school_support"):
+            return self.school_support
+        elif hasattr(self, "student_user"):
+            return self.student_user.student_class.school
+        elif hasattr(self, "teacher_user"):
+            return self.teacher_user.school
     
     @property
     def school_name_tag(self):
         # Don't ask why I used this dummy format here. Instead,
         # ask Algolia why they used a list() instead of a [* ]
-        return [self.school.name]
+        if hasattr(self.school, "name"):
+            return [self.school.name]
+        return [""]
 
     def save(self, *args, **kwargs):
         if not self.email:

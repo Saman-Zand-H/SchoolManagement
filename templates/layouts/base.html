@@ -1,15 +1,13 @@
 {% load static %}
-{% load i18n %}
-
-{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="service-worker-js" content="/webpush/service-worker.js">    
+    <meta name="django-webpush-vapid-key" content="{{ vapid_key }}">
     <title>
         Dashboard - {% block title %} Base {% endblock %}
     </title>
@@ -39,7 +37,7 @@
     <div class="main-content" id="panel">
 
         {% include "includes/navigation.html" %}
-        <section class="{% if LANGUAGE_CODE != 'en' %}rtl text-right{% endif %}">
+        <section>
             <div class="header {{ nav_color|default:'bg-primary' }} mb--3 mt--2">
                 {% if messages %}
                     {% for message in messages %}
@@ -49,9 +47,8 @@
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                         {% endif %}
                             <span class="alert-inner--text">
-                                {% if LANGUAGE_CODE == 'en' %}
-                                    <strong>{{ message.tags|upper }}!</strong>
-                                {% endif %} {{ message }}
+                                <strong>{{ message.tags|upper }}!</strong>
+                                {{ message }}
                             </span>
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -68,6 +65,17 @@
 
     <!-- Specific JS goes HERE -->
     {% block javascripts %}{% endblock javascripts %}
+    {% block websocket %}
+        <script>
+            const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/{{ user.username }}/`);
+            socket.onopen = (e) => {
+                console.log("[+] Connection established.")
+            };
+            socket.onclose = (e) => {
+                console.log("[!] Connection closed.")
+            }
+        </script>
+    {% endblock websocket %}
 
 </body>
 

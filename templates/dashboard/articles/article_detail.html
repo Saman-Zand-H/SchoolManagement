@@ -2,9 +2,6 @@
 
 {% load static %}
 {% load customtags %}
-{% load i18n %}
-
-{% get_current_language as LANGUAGE_CODE %}
 
 {% block title %} {{ article.title }} {% endblock title %}
 
@@ -49,14 +46,13 @@
                             class="btn btn-sm 
                                    btn-danger text-white 
                                    border-danger 
-                                   {% if LANGUAGE_CODE != 'fa' %}ml-auto{% endif %}"
+                                   ml-auto"
                            >
                         <i class="fas fa-trash-alt"></i>
                         Delete
                     </button>
                     <div 
-                         class="modal fade
-                                {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %}" 
+                         class="modal fade text-left" 
                          id="delete-article"
                          tabindex="-1" 
                          role="dialog" 

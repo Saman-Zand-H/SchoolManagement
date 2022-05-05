@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-21 15:46+0430\n"
+"POT-Creation-Date: 2022-04-22 20:10+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "Persian"
 msgstr "فارسی"
 
 #: templates/home/index.html:25 templates/home/index.html:96
-#: templates/home/index.html:310
+#: templates/home/index.html:318
 msgid "Takhte Whiteboard"
 msgstr "تخته وابت‌برد"
 
@@ -51,19 +51,23 @@ msgstr "ورود"
 msgid "Signup"
 msgstr "ثبت‌نام"
 
-#: templates/home/index.html:274
+#: templates/home/index.html:234
+msgid "Guide"
+msgstr "راهنما"
+
+#: templates/home/index.html:282
 msgid "About Us"
 msgstr "درباره ما"
 
-#: templates/home/index.html:276
+#: templates/home/index.html:284
 msgid "Get to know us"
 msgstr "مارا بیشتر بشناسید"
 
-#: templates/home/index.html:278
+#: templates/home/index.html:286
 msgid "Takhte Whiteboard offers management tools for managing your school."
 msgstr "تخته وایت‌برد به شما ابزار هایی برای مدیریت مدرسه شما میدهد."
 
-#: templates/home/index.html:280
+#: templates/home/index.html:288
 msgid ""
 "With this app, principals can register teachers and students, create "
 "classes,\n"
@@ -90,7 +94,7 @@ msgstr ""
 "مقالات ثبت شده برایشان را مشاهده کنند. همچنین تمام کاربران دسترسی ب پیام‌رسان "
 "داخلی دارند. <b>توجه کنید که فقط مدیران توانایی ایجاد گروه دارند.</b>"
 
-#: templates/home/index.html:290
+#: templates/home/index.html:298
 #, python-format
 msgid ""
 "I take great interest in our costumers feedback and I'm constantly\n"
@@ -104,6 +108,6 @@ msgstr ""
 "بهتر سازی این برنامه هستم. من از شما دعوت میکنم که نظرات خودرا در <a href="
 "\"%(support_url)s\">صفحه پشتیبانی</a> به من برسانید."
 
-#: templates/home/index.html:310
+#: templates/home/index.html:318
 msgid "for managing schools more effectively"
 msgstr "برای مدیریت مفیدتر مدارس"

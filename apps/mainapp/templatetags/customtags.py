@@ -22,7 +22,7 @@ def return_student_pk(queryset, pk):
 
 @register.filter
 def getuserbyindex(queryset, pk):
-    return getbyindex(queryset, pk).user.name()
+    return getbyindex(queryset, pk).user.name
 
 @register.filter
 def set_average_grade_color(percent):

@@ -1,8 +1,8 @@
 {% extends 'layouts/base.html' %} 
 
 {% load crispy_forms_tags %} 
-{% load static %} 
 {% load i18n %}
+{% load static %} 
 
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -199,8 +199,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal text-left fade 
-                                {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %}" 
+                    <div class="modal text-left fade text-left" 
                          id="filterExams" 
                          tabindex="-1" 
                          role="dialog" 

@@ -1,10 +1,7 @@
 {% extends 'layouts/base.html' %} 
 
 {% load crispy_forms_tags %} 
-{% load customtags %} 
-{% load i18n %} 
-
-{% get_current_language as LANGUAGE_CODE %}
+{% load customtags %}
 
 {% block title %} Grades {% endblock title %} 
 
@@ -194,7 +191,7 @@
                         </div>
                     </div>
                     <div 
-                         class="modal {% if LANGUAGE_CODE != 'fa' %}text-left{% endif %} fade" 
+                         class="modal text-left fade" 
                          id="deleteExam" 
                          tabindex="-1" 
                          role="dialog" 
