@@ -159,8 +159,6 @@ class ChatPageView(LoginRequiredMixin, View):
         return redirect("messenger:home")
     
     def post(self, *args, **kwargs):
-        logger.debug(f"{reverse('messenger:chat-page', self.kwargs['group_id'])} "
-                      "- {self.request.user.username}   POST: {self.request.POST}")
         error_message = partial(messages.error, 
         request=self.request)
         success_message = partial(messages.success, 

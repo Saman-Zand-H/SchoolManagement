@@ -64,6 +64,8 @@
     {% include "includes/scripts.html" %}
 
     <!-- Specific JS goes HERE -->
+    <script src="{% static 'assets/js/webpush.js' %}"></script>
+    <script src="/webpush/jsi18n" id="webpush-js" type="text/javascript"></script>
     {% block javascripts %}{% endblock javascripts %}
     {% block websocket %}
         <script>

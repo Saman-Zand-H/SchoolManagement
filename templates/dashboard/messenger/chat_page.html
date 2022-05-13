@@ -180,11 +180,11 @@
                                                         {% endif %}
                                                         {% if user == chatgroup.owner and member.user != user %}
                                                             <form 
-                                                                action="{% url 'messenger:manage-members' chatgroup.group_id %}" 
-                                                                method="POST"
-                                                                class="text-center" 
-                                                                id="delete_{{ member.user.username }}"
-                                                                >
+                                                                  action="{% url 'messenger:manage-members' chatgroup.group_id %}" 
+                                                                  method="POST"
+                                                                  class="text-center" 
+                                                                  id="delete_{{ member.user.username }}"
+                                                                 >
                                                                 {% csrf_token %}
                                                                 <input type="hidden" value="delete" name="request_type">
                                                                 <input 
@@ -238,12 +238,13 @@
             <div class="list-group list-group-flush" id="message-box">
                 {% if chatgroup.message_chatgroup.exists %}
                     {% for message in chatgroup.ordered_messages %}
-                        <li class="message list-group-item 
+                        <li class="message list-group-item
                                    {% if message.author == user %}
                                        bg-gradient-gray-dark
                                    {% else %}
                                        bg-gray
-                                   {% endif %}"
+                                   {% endif %}
+                                   {% if not message.seen %}unread{% endif %}"
                             id="{{ message.message_id.hex }}"
                            >
                             {% if message.author == user %}
@@ -324,7 +325,7 @@
         {% endverbatim %}
 
         <script>
-            $(document).ready(function() {
+            $(document).ready(() => {
                 var $inputField = $("#search-users-input"),
                     $hits = $("#hits"),
                     $hitsTable = $("#hits-table"),
@@ -342,17 +343,17 @@
                 $hits.hide();
 
                 helper.setQueryParameter("tagFilters", school_name);
-                $inputField.keyup(function() {
+                $inputField.keyup(() => {
                     var query = $inputField.val();
                     helper.setQuery(query).search();
                 }).focus();
 
-                helper.on("result", function(data) {
+                helper.on("result", (data) => {
                     renderHits(data);
                 });
                 helper.search();
 
-                function renderHits(content) {
+                renderHits = (content) => {
                     var hitsHtml = "";
                     if (content.hits.length === 0) {
                         hitsHtml = "We found no result for your search.";
@@ -387,40 +388,53 @@
             if (groupPhotoField.val()) {
                 discardBtn.show();
             }
-            groupPhotoField.change(function(e) {
+            groupPhotoField.change((e) => {
                 if (groupNameField.val()){
                     discardBtn.show();
                 };
             });
-            discardBtn.click(function(e) {
+            discardBtn.click((e) => {
                 groupPhotoField.val("");
                 discardBtn.hide();
             });
         {% endif %}
 
-        window.onload = function() {
-            msgInput.focus();
-            msgCard.scrollTop(msgCard.prop("scrollHeight"));
-
-            {% if last_message_qs.exists %}
-                var message_id = "{{ last_message_qs.last.message_id.hex }}",
-                    message_sender = "{{ last_message_qs.last.author.username }}";
-                data = {
-                    "type": "seen",
-                    "sender": message_sender,
-                    "message_id": message_id,
-                };
-                socket.send(JSON.stringify(data));
-            {% endif %}
+        checkIsInSite = (elem) => {
+            var messageCard = document.getElementById("msg-card"),
+                h = msgCard.height() + msgCard.scrollTop();
+            return ((0 < elem.offsetTop) 
+                     && (elem.offsetTop <= h))
         };
 
-        msgInput.keyup(function(e) {
+        notAuthor = (elem) => {
+            return (username !== elem.attributes["sender"].nodeValue)
+        }
+
+        msgCard.on("scroll", (e) => {
+            var messages = Array.from($(".unread"));
+            messages = messages.filter(checkIsInSite);
+            if (messages.length > 0) {
+                var lastMessage = messages[messages.length-1],
+                    data = {
+                        "type": "seen",
+                        "message_id": lastMessage.attributes["id"].nodeValue,
+                    };
+                socket.send(JSON.stringify(data));
+            }
+        });
+
+        window.onload = () => {
+            msgInput.focus();
+            msgCard.scrollTop(msgCard.prop("scrollHeight"));
+        };
+
+        msgInput.keyup((e) => {
             if (e.which == 13) {
                 sendMsgBtn.click();
             };
         });
 
-        sendMsgBtn.click(function(e) {
+        sendMsgBtn.click((e) => {
             e.preventDefault();
             var msg = msgInput.val();
             if (msg.length > 0) {
@@ -435,21 +449,25 @@
             };
         });
 
-        socket.onclose = function(e) {
+        socket.onclose = (e) => {
             console.log("[!] Connection closed.");
         };
 
-        socket.onopen = function(e) {
+        socket.onopen = (e) => {
             console.log("[+] Connection established.");
         };
 
-        socket.onmessage = function(e) {
+        socket.onmessage = (e) => {
             var data = JSON.parse(e.data);
+            console.log(data);
             switch(data.type){
                 case "msg":
                     if (data.sender_username === username) {
                         msgBox.append(
-                            `<li class="list-group-item bg-gradient-gray-dark">
+                            `<li 
+                                 class="list-group-item bg-gradient-gray-dark unread"
+                                 id="${data.message_id}"
+                                >
                                 <h5 class="text-success">
                                     <strong>YOU</strong>
                                 </h5>
@@ -473,7 +491,8 @@
                         msgBox.append(
                             `<li class="message 
                                     list-group-item 
-                                    bg-gray"
+                                    bg-gray
+                                    unread"
                                  id="${data.message_id}"
                                 >
                                 <h5>
@@ -484,23 +503,19 @@
                             </li>`
                         );  
                         msgCard.scrollTop(msgCard.prop("scrollHeight"));
-                        const seen_data = {
-                            "type": "seen",
-                            "message_id": data.message_id,
-                            "sender": data.sender_username,
-                        };
-                        socket.send(
-                            JSON.stringify(seen_data),
-                        );
                     };
                     break;
                 case "seen":
                     var message_author = data.sender;
                     if (username === message_author){
                         for (let t=0; t < data.message_ids.length; t++) {
-                            var message_id = data.message_ids[t];
+                            var message_id = data.message_ids[t],
+                                elem = $(`${message_id}`);
                             $(`#unread_${message_id}`).hide();
                             $(`#read_${message_id}`).show();
+                            if (elem.hasClass("unread")){
+                                elem.removeClass("unread");
+                            }
                         }
                     }
                     break;

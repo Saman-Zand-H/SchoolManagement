@@ -292,15 +292,15 @@
         const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/{{ user.username }}/`),
               username = "{{ user.username|safe }}";
 
-        socket.onopen = function (e) {
+        socket.onopen = (e) => {
             console.log("[+] Connection established");
         };
 
-        socket.onclose = function (e) {
+        socket.onclose = (e) => {
             console.log("[-] Connection closed");
         }
 
-        socket.onmessage = function (e) {
+        socket.onmessage = (e) => {
             const data = JSON.parse(e.data),
                 $chatgroup = $(`#group-${data.chatgroup_id}`),
                 $chatList = $("#chat-list"),
