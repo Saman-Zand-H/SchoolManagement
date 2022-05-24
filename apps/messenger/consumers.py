@@ -44,7 +44,7 @@ class MessengerConsumer(AsyncConsumer):
                     "type": "websocket.accept",
                 })
         else:
-            logger.info(f"A forbidden user tried to connect to {self.group_id}")
+            logger.info(f"A forbidden request was made to {self.chatgroup} by {self.user}")
             await self.close(403)
 
     async def websocket_disconnect(self, event):
@@ -156,7 +156,9 @@ class MessengerConsumer(AsyncConsumer):
             return
         
     @database_sync_to_async
-    def is_present_in_chatgroup(self, group: ChatGroup, user: CustomUser) -> bool:
+    def is_present_in_chatgroup(self, 
+                                group: ChatGroup, 
+                                user: CustomUser) -> bool:
         return group.member_chatgroup.filter(user=user).exists()
         
     @database_sync_to_async
@@ -169,15 +171,20 @@ class MessengerConsumer(AsyncConsumer):
         return list(chatgroup.member_chatgroup.values_list("user__username"))
 
     @database_sync_to_async
-    def create_message(self, message: str, chatgroup: ChatGroup | int) -> Message:
+    def create_message(self, 
+                       message: str, 
+                       chatgroup: ChatGroup | int) -> Message:
         return Message.objects.create(author=self.user,
                                       body=message,
                                       chatgroup=chatgroup)
         
     @database_sync_to_async
-    def set_last_read_message(self, username:str, message_id:str) -> int:
+    def set_last_read_message(self, 
+                              username:str, 
+                              message_id:str) -> int:
         try:
-            message = Message.objects.filter(message_id=message_id).values_list("seen")
+            message = Message.objects.filter(
+                message_id=message_id).values_list("seen")
             return Member.objects.filter(user__username=username).update(
                 last_read_message=UUID(message_id))
         except AssertionError:
@@ -193,7 +200,8 @@ class MessengerConsumer(AsyncConsumer):
             messages_qs_ids = list({
                 message.message_id.hex for message in messages_qs
             } | {message_id})
-            logger.info(f"Marking messages as read: {messages_qs_ids} by {self.user}")
+            logger.info(
+                f"Marking messages as read: {messages_qs_ids} by {self.user}")
             messages_qs.update(seen=True)
             return messages_qs_ids
         except (Message.DoesNotExist, ValueError):
