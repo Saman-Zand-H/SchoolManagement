@@ -54,16 +54,19 @@ class HomeView(PermissionAndLoginRequiredMixin, View):
     permission_required = "supports.support"
 
     def get(self, *args, **kwargs):
-        school = get_object_or_404(School, support=self.request.user)
-        context = {
-            "school": school,
-            "classes": school.class_school.all()[:4],
-            "teachers": school.teacher_school.all()[:4],
-            "students_count": Student.objects.filter(
-                student_class__school=self.request.user.school).count(),
-            "segment": "home"
-        }
-        return render(self.request, "dashboard/supports/index.html", context)
+        school = School.objects.filter(support=self.request.user)
+        if school.exists():
+            school = school[0]
+            context = {
+                "school": school,
+                "classes": school.class_school.all()[:4],
+                "teachers": school.teacher_school.all()[:4],
+                "students_count": Student.objects.filter(
+                    student_class__school=self.request.user.school).count(),
+                "segment": "home"
+            }
+            return render(self.request, "dashboard/supports/index.html", context)
+        return redirect("supports:create-school")
 
 
 home_view = HomeView.as_view()
@@ -178,7 +181,8 @@ class TeachersView(PermissionAndLoginRequiredMixin, View):
         load_template = self.request.path.split("/")
         school = get_object_or_404(School, support=self.request.user)
         teachers = Teacher.objects.filter(school=school).distinct()
-        form = SupportTeacherSignupForm(self.request, initial={"user_type": "SS"})
+        form = SupportTeacherSignupForm(self.request, 
+                                        initial={"user_type": "SS"})
         self.context.update({
             "teachers": teachers,
             "form": form,

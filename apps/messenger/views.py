@@ -131,7 +131,8 @@ class ChatPageView(LoginRequiredMixin, View):
         
     def get(self, *args, **kwargs):
         loadTemplate = self.request.path.split()[-1]
-        chatgroup_qs = ChatGroup.objects.filter(group_id=self.kwargs.get("group_id"))
+        chatgroup_qs = ChatGroup.objects.filter(
+            group_id=self.kwargs.get("group_id"))
         if chatgroup_qs.exists():
             chatgroup = chatgroup_qs.first()
             other_user = None

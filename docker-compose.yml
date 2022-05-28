@@ -7,10 +7,11 @@ services:
     volumes:
       - .:/usr/src/app
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - db
       - redis_server
+      - rabbitmq
     tty: true
   db:
     image: postgres:13.0-alpine
@@ -26,7 +27,16 @@ services:
       - 6379:6379
     volumes:
       - redis_data:/var/lib/redis/data/
+  rabbitmq:
+    image: rabbitmq:3.10.2-alpine
+    ports:
+      - 5672:5672
+    command: rabbitmq-server
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq/data/
+    
 
 volumes:
   postgres_data:
   redis_data:
+  rabbit_data:

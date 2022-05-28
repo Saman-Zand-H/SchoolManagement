@@ -54,6 +54,7 @@
                             <i class="ni ni-support-16"></i>
                             <span>Support</span>
                         </a>
+                        {% if user.is_authenticated %}
                         <button
                                 id="webpush-subscribe-button" 
                                 data-url="/webpush/save_information"
@@ -62,7 +63,6 @@
                             <i class="far fa-bell"></i>
                             Subscribe to Push Messaging
                         </button>
-                        {% if user.is_authenticated %}
                         <div class="dropdown-divider"></div>
                             <a href="{% url 'logout' %}" class="dropdown-item">
                                 <i class="ni ni-user-run text-red"></i>
