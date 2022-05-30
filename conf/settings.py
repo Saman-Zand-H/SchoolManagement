@@ -369,3 +369,10 @@ WEBPUSH_SETTINGS = {
     "VAPID_PRIVATE_KEY": env.str("VAPID_PRIVATE_KEY"),
     "VAPID_ADMIN_EMAIL": "contact@takhte-whiteboard.ir",
 }
+
+# celery configurations
+CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", 
+                            "amqp://guest:guest@rabbitmq:5672")
+CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", 
+                                "rpc://")
+CELERY_TIMEZONE = "Asia/Tehran"

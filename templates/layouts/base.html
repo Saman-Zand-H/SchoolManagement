@@ -68,15 +68,17 @@
     <script src="/webpush/jsi18n" id="webpush-js" type="text/javascript"></script>
     {% block javascripts %}{% endblock javascripts %}
     {% block websocket %}
-        <script>
-            const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/{{ user.username }}/`);
-            socket.onopen = (e) => {
-                console.log("[+] Connection established.")
-            };
-            socket.onclose = (e) => {
-                console.log("[!] Connection closed.")
-            }
-        </script>
+        {% if user.is_authenticated %}
+            <script>
+                const socket = new WebSocket(`ws://${window.location.host}/ws/notifications/{{ user.username }}/`);
+                socket.onopen = (e) => {
+                    console.log("[+] Connection established.")
+                };
+                socket.onclose = (e) => {
+                    console.log("[!] Connection closed.")
+                }
+            </script>
+        {% endif %}
     {% endblock websocket %}
 
 </body>

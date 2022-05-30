@@ -17,6 +17,7 @@ from smtplib import SMTPException
 from mainapp.models import School, Article, Assignment
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 from .forms import SupportForm, ArticleForm, AssignmentForm, OperationType
+from .tasks import support_email_task
 from supports.forms import EditOperationType
 
 logger = logging.getLogger(__name__)
@@ -40,43 +41,29 @@ class SupportView(View):
     def get(self, *args, **kwargs):
         return render(self.request, "dashboard/support.html", {
             "form": SupportForm(),
-            "segment": "support-page"
+            "segment": "support-page",
+            "nav_color": "bg-gradient-purple",
         })
 
     def post(self, *args, **kwargs):
         form = SupportForm(self.request.POST)
         logger.info(
-            f"[blue]{self.request.user} tried to send a support message.[/]",
-            extra={"markup": True})
+            f"{self.request.user} tried to send a support message.")
 
         if form.is_valid():
-            users_name = form.cleaned_data.get("name")
-            users_email = form.cleaned_data.get("email")
-            users_text = form.cleaned_data.get("text")
+            user_name = form.cleaned_data.get("name")
+            user_email = form.cleaned_data.get("email")
+            user_message = form.cleaned_data.get("text")
             try:
-                mail_admins(f"DjS-School Supprt by {users_name}",
-                            users_text,
-                            html_message=f"""
-                    <html>
-                        <body>
-                            <h1>DjSchool Support</h1>
-                            <h3>{users_name}- {users_email}</h3>
-                            <pre>{users_text}</pre>
-                        </body>
-                    </html>""")
-                logger.info(
-                    f"[green]User {self.request.user} succesfully sent a support message.[/]",
-                    extra={"markup": True})
-                messages.success(
-                    self.request,
-                    "Thanks for your message. Message sent successfully.")
+                support_email_task.delay(user_name, 
+                                         user_email, 
+                                         user_message)
             except SMTPException as e:
                 logger.error(
-                    f"[red]There was an error while user {self.request.user} "
+                    f"There was an error while user {self.request.user} "
                     "was trying to send a support message! The problem "
-                    "caused by the email API.[/]",
-                    extra={"markup": True})
-                logger.error(f"The error: {e}")
+                    "caused by the email API.")
+                logger.error(f"Error: {e}")
                 messages.error(
                     self.request,
                     "An internal error happened. Please call us as soon as you can."

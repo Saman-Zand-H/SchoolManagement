@@ -17,5 +17,6 @@ python manage.py compilemessages
 python manage.py algolia_applysettings
 python manage.py algolia_reindex
 daphne -b 0.0.0.0 -p 8000 conf.asgi:application
+/etc/init.d/celeryd start
 
 exec "$@"
