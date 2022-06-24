@@ -18,7 +18,7 @@ class School(models.Model):
         unique_together = ["name", "support"]
         permissions = (
             ("support", "has support staff's permissions"), 
-            ("create_api", "has permission to create in api"),
+            ("api_post", "has permission to send a post_request to api"),
         )
 
     def __str__(self):
@@ -28,7 +28,7 @@ class School(models.Model):
         group, group_created = Group.objects.get_or_create(name="Principals")
         if group_created:
             support_perm = Permission.objects.filter(codename="support")[0]
-            api_perm = Permission.objects.filter(codename="create_api")[0]
+            api_perm = Permission.objects.filter(codename="api_post")[0]
             group.permissions.add(support_perm)
             group.permissions.add(api_perm)
         self.support.groups.add(group)

@@ -1,16 +1,25 @@
-from rest_framework.viewsets import  ReadOnlyModelViewSet
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import  ModelViewSet
 from django.contrib.auth import get_user_model
 
-from .serializers import (StudentsSerializer, 
-                          UsersSerializer, 
-                          ClassesSerializer, 
-                          ExamsSerializer,
-                          ArticlesSerializer,
-                          AssignmentsSerializer,
-                          TeachersSerializer)
+from .serializers import (ReadOnlyStudentsSerializer, 
+                          ReadOnlyUsersSerializer, 
+                          ReadOnlyClassesSerializer, 
+                          ReadOnlyExamsSerializer,
+                          ReadOnlyArticlesSerializer,
+                          ReadOnlyAssignmentsSerializer,
+                          ReadOnlyTeachersSerializer,
+                          ReadOnlyGradesSerializer,
+                          WriteOnlyStudentsSerializer, 
+                          WriteOnlyUsersSerializer, 
+                          WriteOnlyClassesSerializer, 
+                          WriteOnlyExamsSerializer,
+                          WriteOnlyArticlesSerializer,
+                          WriteOnlyAssignmentsSerializer,
+                          WriteOnlyTeachersSerializer,
+                          WriteOnlyGradesSerializer)
 from .permissions import CanCreate
-from mainapp.models import (Student, 
+from mainapp.models import (Grade, 
+                            Student, 
                             Class, 
                             Exam, 
                             Article, 
@@ -18,9 +27,29 @@ from mainapp.models import (Student,
 from teachers.models import Teacher
 
 
-class StudentsViewSet(ReadOnlyModelViewSet):
-    serializer_class = StudentsSerializer
-    permission_classes = (CanCreate, IsAuthenticated)
+class _BaseViewSet(ModelViewSet):
+    permission_classes = [CanCreate]
+    
+    def get_serializer_class(self):
+        assert self.serializer_class is not None, (
+            "'%s' should either include a `serializer_class` attribute, "
+            "or override the `get_serializer_class()` method."
+            % self.__class__.__name__
+        )
+        assert self.writeonly_serializer_class is not None, (
+            "'%s' should either include a `writeonly_serializer_class` attribute, "
+            "or override the `get_serializer_class()` method."
+            % self.__class__.__name__
+        )
+        if self.action in ["retrieve", "list"]:
+            return self.serializer_class
+        else:
+            return self.writeonly_serializer_class
+
+
+class StudentsViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyStudentsSerializer
+    writeonly_serializer_class = WriteOnlyStudentsSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -39,9 +68,9 @@ class StudentsViewSet(ReadOnlyModelViewSet):
         return Student.objects.none()
 
 
-class TeachersViewSet(ReadOnlyModelViewSet):
-    permission = (CanCreate, IsAuthenticated)
-    serializer_class = TeachersSerializer
+class TeachersViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyTeachersSerializer
+    writeonly_serializer_class = WriteOnlyTeachersSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -55,9 +84,9 @@ class TeachersViewSet(ReadOnlyModelViewSet):
                     ).distinct()
 
 
-class UsersViewSet(ReadOnlyModelViewSet):
-    serializer_class = UsersSerializer
-    permission_classes = (CanCreate, IsAuthenticated,)
+class UsersViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyUsersSerializer
+    writeonly_serializer_class = WriteOnlyUsersSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -88,9 +117,9 @@ class UsersViewSet(ReadOnlyModelViewSet):
         return self.request.user.none()
     
     
-class ClassesViewSet(ReadOnlyModelViewSet):
-    serializer_class = ClassesSerializer
-    permission_classes = (IsAuthenticated, CanCreate,)
+class ClassesViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyClassesSerializer
+    writeonly_serializer_class = WriteOnlyClassesSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -105,9 +134,9 @@ class ClassesViewSet(ReadOnlyModelViewSet):
         return self.request.user.none()
 
 
-class ExamsViewSet(ReadOnlyModelViewSet):
-    serializer_class = ExamsSerializer
-    permission_classes = (IsAuthenticated, CanCreate,)
+class ExamsViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyExamsSerializer
+    writeonly_serializer_class = WriteOnlyExamsSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -124,9 +153,9 @@ class ExamsViewSet(ReadOnlyModelViewSet):
         return self.request.user.none()
 
 
-class ArticlesViewSet(ReadOnlyModelViewSet):
-    serializer_class = ArticlesSerializer
-    permission_class = (IsAuthenticated, CanCreate,)
+class ArticlesViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyArticlesSerializer
+    writeonly_serializer_class = WriteOnlyArticlesSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -135,9 +164,8 @@ class ArticlesViewSet(ReadOnlyModelViewSet):
         return Article.objects.none()
     
 
-class AssignmentsViewSet(ReadOnlyModelViewSet):
-    serializer_class = AssignmentsSerializer
-    permission_class = (IsAuthenticated, CanCreate,)
+class AssignmentsViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyAssignmentsSerializer
     
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -153,3 +181,42 @@ class AssignmentsViewSet(ReadOnlyModelViewSet):
                     return Assignment.objects.filter(
                         assignment_class__subjects__teacher__user=self.request.user
                     ).distinct()
+                    
+                    
+class AssignmentsViewSet(_BaseViewSet):
+    serializer_class = ReadOnlyAssignmentsSerializer
+    writeonly_serializer_class = WriteOnlyAssignmentsSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        user_type = user.user_type
+        match user_type:
+            case "SS":
+                return Assignment.objects.filter(
+                    assignment_class__school__support=user)
+            case "S":
+                student = Student.objects.filter(user=user)
+                if student.exists():
+                    student_class = student.first().student_class
+                    return Assignment.objects.filter(assignment_class=student_class)
+                return Assignment.objects.none()
+            case "T":
+                return Assignment.objects.filter(subject__teacher__user=user)
+
+
+class GradesViewSet(_BaseViewSet):
+    """A viewset for listing and creating."""
+    writeonly_serializer_class = WriteOnlyGradesSerializer
+    serializer_class = ReadOnlyGradesSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        user_type = user.user_type
+        match user_type:
+            case "SS":
+                return Grade.objects.filter(
+                    exam__exam_class__school__support=user)
+            case "T":
+                return Grade.objects.filter(exam__teacher__user=user)
+            case "S":
+                return Grade.objects.filter(student__user=user)

@@ -101,9 +101,8 @@ class Subject(models.Model):
 
     class Meta:
         unique_together = ["name", "teacher"]
-        verbose_name = "Courses"
+        verbose_name = "Course"
         verbose_name_plural = "Courses"
-
 
 class Grade(models.Model):
     student = models.ForeignKey(Student,
@@ -192,7 +191,9 @@ class Class(models.Model):
     school = models.ForeignKey(School,
                                related_name="class_school",
                                on_delete=models.CASCADE)
-    subjects = models.ManyToManyField(Subject, related_name="class_subjects")
+    subjects = models.ManyToManyField(Subject, 
+                                      related_name="class_subjects", 
+                                      blank=True)
 
     def __str__(self):
         return self.class_id
@@ -251,6 +252,27 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse("home:article-detail", self.pk)
+    
+    def clean(self, *args, **kwargs):
+        if self.user is not None and self.school is not None:
+            user_type = self.user.user_type
+            match user_type:
+                case "SS":
+                    school = self.user.school
+                    if school is None:
+                        raise ValidationError({"school": "School is not set."})
+                    if school != self.school:
+                        raise ValidationError({"school": "School does not match."})
+                case "T":
+                    teacher_qs = Teacher.objects.filter(user=self.user)
+                    if not teacher_qs.exists():
+                        raise ValidationError({"user": "Corresponding teacher does not exist."})
+                    school = teacher_qs.first().school
+                    if self.school != school:
+                        raise ValidationError({"school": "School does not match."})
+                case _:
+                    raise ValidationError({"user": "User is not a principal or teacher."})
+        return super().clean(*args, **kwargs)
 
     def __str__(self):
         return f"{self.author}: {self.title}"

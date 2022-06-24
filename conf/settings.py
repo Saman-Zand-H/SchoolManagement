@@ -6,6 +6,7 @@ from environs import Env
 
 from django.utils.translation import gettext_lazy as _
 import dj_database_url
+from celery.schedules import crontab
 from rich.logging import RichHandler
 
 
@@ -69,6 +70,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'channels',
     'channels_redis',
+    'django_celery_beat',
     'seleniumlogin',
     'django_filters',
     'rest_framework',
@@ -347,6 +349,9 @@ ALGOLIA = {
 }
 
 # DRF configurations
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'takhteWhiteboard-token'
+JWT_AUTH_REFRESH_COOKIE = 'takhteWhiteboard-refresh-token'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -356,9 +361,7 @@ REST_FRAMEWORK = {
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
 }
-REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'takhteWhiteboard-token'
-JWT_AUTH_REFRESH_COOKIE = 'takhteWhiteboard-refresh-token'
+
 
 # selenium-force-login configurations
 SELENIUM_LOGIN_START_PAGE = "/accounts/login/"
@@ -376,3 +379,4 @@ CELERY_BROKER_URL = env.str("CELERY_BROKER_URL",
 CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", 
                                 "rpc://")
 CELERY_TIMEZONE = "Asia/Tehran"
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

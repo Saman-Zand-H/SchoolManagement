@@ -3,35 +3,19 @@ from django.views.generic import View, DetailView
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.forms import modelformset_factory
-
-from datetime import date
-from dateutil.relativedelta import relativedelta
+from datetime import datetime
 from functools import partial
 from logging import getLogger
-
 from mainapp.models import Class, Exam, Grade, Subject, Student
 from .forms import ExamForm, SetGradeForm, OperationType
 from .filters import ExamFilter
+from .tasks import create_exam_task
+from .utils import get_charts_labels_ready
 from mainapp.mixins import PermissionAndLoginRequiredMixin
 from .models import Teacher
 
 
 logger = getLogger(__name__)
-
-
-def get_charts_labels_ready():
-    eight_months_chart_time = date.today() - relativedelta(months=4)
-    six_months_chart_time = date.today() - relativedelta(months=3)
-    eight_months_chart_months = [
-        eight_months_chart_time + relativedelta(months=i) for i in range(8)]
-    six_months_chart_months = [
-        six_months_chart_time + relativedelta(months=i) for i in range(6)]
-    # The way the names are formatted lets chart.js recognize the values
-    eight_months_chart_month_names = [
-        f'"{month.strftime("%b")}"' for month in eight_months_chart_months]
-    six_months_chart_month_names = [
-        f'"{month.strftime("%b")}"' for month in six_months_chart_months]
-    return [eight_months_chart_month_names, six_months_chart_month_names]
 
 
 class DashboardView(PermissionAndLoginRequiredMixin, View):
@@ -101,18 +85,19 @@ class ExamsListView(PermissionAndLoginRequiredMixin, View):
             subject = form.cleaned_data.get("subject")
             exam_class = form.cleaned_data.get("exam_class")
             full_score = form.cleaned_data.get("full_score")
-            logger.error(full_score)
             timestamp = form.cleaned_data.get("timestamp")
+            if timestamp is not None:
+                timestamp = timestamp.strftime("%Y-%m-%d")
             visible_to_students = form.cleaned_data.get("visible_to_students")
-            chosen_subject_instance = get_object_or_404(Subject, pk=subject)
-            chosen_class_instance = get_object_or_404(Class, pk=exam_class)
+            get_object_or_404(Subject, pk=subject)
+            get_object_or_404(Class, pk=exam_class)
             teacher = get_object_or_404(Teacher, user=self.request.user)
-            Exam.objects.create(subject=chosen_subject_instance,
-                                exam_class=chosen_class_instance,
-                                full_score=full_score or 20.00,
-                                timestamp=timestamp,
-                                visible_to_students=visible_to_students,
-                                teacher=teacher)
+            create_exam_task.delay(subject=subject,
+                                   exam_class=exam_class,
+                                   full_score=full_score or 20.00,
+                                   timestamp=timestamp,
+                                   teacher=teacher.pk,
+                                   visible_to_students=visible_to_students)
             messages.success(self.request, "Exam created successfully.")
             return redirect("teachers:exams")
         else:

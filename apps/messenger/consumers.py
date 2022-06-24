@@ -11,6 +11,7 @@ from uuid import UUID
 
 from messenger.models import ChatGroup, Message, Member
 from users.models import CustomUser
+from .tasks import send_notification_task
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +201,7 @@ class MessengerConsumer(AsyncConsumer):
             messages_qs_ids = list({
                 message.message_id.hex for message in messages_qs
             } | {message_id})
-            logger.info(
+            logger.debug(
                 f"Marking messages as read: {messages_qs_ids} by {self.user}")
             messages_qs.update(seen=True)
             return messages_qs_ids
@@ -264,11 +265,7 @@ class NotificationConsumer(AsyncConsumer):
                     "text": json.dumps(event["message"]),
                 }
             )
-            await sync_to_async(send_user_notification)(
-                user=user,
-                payload=payload,
-                ttl=3,
-            )
+            await sync_to_async(send_notification_task.apply_async)([user.username, payload, 3])
         else:
             self.close(403)
 

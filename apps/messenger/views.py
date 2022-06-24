@@ -225,7 +225,7 @@ class MembersView(LoginRequiredMixin, View):
                 case "delete":
                     member_qs = Member.objects.filter(user=user, 
                                                       chatgroup=chatgroup)
-                    # Merely delete the member instance if the user is not the 
+                    # Merely, delete the member instance if the user is not the 
                     # owner. If the user is the owner, delete the group
                     if member_qs.exists():
                         member_qs.delete()

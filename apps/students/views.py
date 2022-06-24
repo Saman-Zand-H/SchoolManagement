@@ -5,7 +5,7 @@ from apps.mainapp.mixins import PermissionAndLoginRequiredMixin
 
 from mainapp.models import Assignment, Grade
 from mainapp.mixins import PermissionAndLoginRequiredMixin
-from teachers.views import get_charts_labels_ready
+from teachers.utils import get_charts_labels_ready
 
 
 class DashboardView(View, PermissionAndLoginRequiredMixin):

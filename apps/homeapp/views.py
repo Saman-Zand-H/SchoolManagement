@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.conf import settings
-from django.core.mail import mail_admins
 
 import logging
 from typing import Any, Dict
@@ -122,7 +121,6 @@ class AddArticleView(LoginRequiredMixin, View):
         if form.is_valid():
             article = form.save(commit=False)
             article.author = self.request.user
-            article.school = school
             article.save()
             messages.success(self.request,
                              "Article saved successfully.")

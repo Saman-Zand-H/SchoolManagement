@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 USER_TYPE_CHOICES = (
     ("S", "student"),
     ("T", "teacher"),
-    ("SS", "support staff")
+    ("SS", "support staff"),
 )
 
 
@@ -118,7 +118,7 @@ class CustomManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=20, unique=True)
+    username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True, blank=True, null=True)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
@@ -128,7 +128,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null=True,
         upload_to="media",
         validators=[validate_file_size])
-    about = models.TextField(blank=True, default="")
+    about = models.TextField(blank=True, null=True)
     is_superuser = models.BooleanField(default=False, blank=True)
     is_staff = models.BooleanField(default=False, blank=True)
     is_active = models.BooleanField(default=True, blank=True)

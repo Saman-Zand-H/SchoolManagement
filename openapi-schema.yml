@@ -3,29 +3,9 @@ info:
   title: ''
   version: ''
 paths:
-  /api/v1/grades/{id}:
-    get:
-      operationId: retrieveGradesSerializers
-      description: ''
-      parameters:
-      - name: id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Gradess'
-          description: ''
-      tags:
-      - api
   /api/v1/students/:
     get:
-      operationId: listStudents
+      operationId: listReadOnlyStudents
       description: ''
       parameters: []
       responses:
@@ -35,13 +15,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Students'
+                  $ref: '#/components/schemas/ReadOnlyStudents'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyStudents
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyStudents'
           description: ''
       tags:
       - api
   /api/v1/students/{id}/:
     get:
-      operationId: retrieveStudents
+      operationId: retrieveReadOnlyStudents
       description: ''
       parameters:
       - name: id
@@ -55,13 +59,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Students'
+                $ref: '#/components/schemas/ReadOnlyStudents'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyStudents
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyStudents'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyStudents
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyStudents'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyStudents'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyStudents
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
   /api/v1/users/:
     get:
-      operationId: listUsers
+      operationId: listReadOnlyUsers
       description: ''
       parameters: []
       responses:
@@ -71,13 +150,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Users'
+                  $ref: '#/components/schemas/ReadOnlyUsers'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyUsers
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyUsers'
           description: ''
       tags:
       - api
   /api/v1/users/{id}/:
     get:
-      operationId: retrieveUsers
+      operationId: retrieveReadOnlyUsers
       description: ''
       parameters:
       - name: id
@@ -91,13 +194,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Users'
+                $ref: '#/components/schemas/ReadOnlyUsers'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyUsers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyUsers'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyUsers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyUsers'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyUsers'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyUsers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
   /api/v1/classes/:
     get:
-      operationId: listClasses
+      operationId: listReadOnlyClasses
       description: ''
       parameters: []
       responses:
@@ -107,13 +285,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Classes'
+                  $ref: '#/components/schemas/ReadOnlyClasses'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyClasses
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyClasses'
           description: ''
       tags:
       - api
   /api/v1/classes/{id}/:
     get:
-      operationId: retrieveClasses
+      operationId: retrieveReadOnlyClasses
       description: ''
       parameters:
       - name: id
@@ -127,13 +329,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Classes'
+                $ref: '#/components/schemas/ReadOnlyClasses'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyClasses
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyClasses'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyClasses
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyClasses'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyClasses'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyClasses
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
   /api/v1/exams/:
     get:
-      operationId: listExams
+      operationId: listReadOnlyExams
       description: ''
       parameters: []
       responses:
@@ -143,13 +420,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Exams'
+                  $ref: '#/components/schemas/ReadOnlyExams'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyExams
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyExams'
           description: ''
       tags:
       - api
   /api/v1/exams/{id}/:
     get:
-      operationId: retrieveExams
+      operationId: retrieveReadOnlyExams
       description: ''
       parameters:
       - name: id
@@ -163,13 +464,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Exams'
+                $ref: '#/components/schemas/ReadOnlyExams'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyExams
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyExams'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyExams
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyExams'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyExams'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyExams
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
   /api/v1/articles/:
     get:
-      operationId: listArticles
+      operationId: listReadOnlyArticles
       description: ''
       parameters: []
       responses:
@@ -179,13 +555,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Articles'
+                  $ref: '#/components/schemas/ReadOnlyArticles'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyArticles
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyArticles'
           description: ''
       tags:
       - api
   /api/v1/articles/{id}/:
     get:
-      operationId: retrieveArticles
+      operationId: retrieveReadOnlyArticles
       description: ''
       parameters:
       - name: id
@@ -199,13 +599,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Articles'
+                $ref: '#/components/schemas/ReadOnlyArticles'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyArticles
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyArticles'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyArticles
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyArticles'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyArticles'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyArticles
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
   /api/v1/assignments/:
     get:
-      operationId: listAssignments
+      operationId: listReadOnlyAssignments
       description: ''
       parameters: []
       responses:
@@ -215,13 +690,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Assignments'
+                  $ref: '#/components/schemas/ReadOnlyAssignments'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyAssignments
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyAssignments'
           description: ''
       tags:
       - api
   /api/v1/assignments/{id}/:
     get:
-      operationId: retrieveAssignments
+      operationId: retrieveReadOnlyAssignments
       description: ''
       parameters:
       - name: id
@@ -235,7 +734,352 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Assignments'
+                $ref: '#/components/schemas/ReadOnlyAssignments'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyAssignments
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyAssignments'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyAssignments
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyAssignments'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyAssignments'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyAssignments
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+  /api/v1/teachers/:
+    get:
+      operationId: listReadOnlyTeachers
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadOnlyTeachers'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyTeachers
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyTeachers'
+          description: ''
+      tags:
+      - api
+  /api/v1/teachers/{id}/:
+    get:
+      operationId: retrieveReadOnlyTeachers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyTeachers'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyTeachers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyTeachers'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyTeachers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyTeachers'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyTeachers'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyTeachers
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+  /api/v1/grades/:
+    get:
+      operationId: listReadOnlyGrades
+      description: A viewset for listing and creating.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReadOnlyGrades'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createWriteOnlyGrades
+      description: A viewset for listing and creating.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyGrades'
+          description: ''
+      tags:
+      - api
+  /api/v1/grades/{id}/:
+    get:
+      operationId: retrieveReadOnlyGrades
+      description: A viewset for listing and creating.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadOnlyGrades'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateWriteOnlyGrades
+      description: A viewset for listing and creating.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyGrades'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateWriteOnlyGrades
+      description: A viewset for listing and creating.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WriteOnlyGrades'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WriteOnlyGrades'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyWriteOnlyGrades
+      description: A viewset for listing and creating.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
           description: ''
       tags:
       - api
@@ -635,26 +1479,7 @@ paths:
       - api
 components:
   schemas:
-    Gradess:
-      type: object
-      properties:
-        grade:
-          type: string
-          format: decimal
-          multipleOf: 0.01
-          maximum: 10000
-          minimum: -10000
-          nullable: true
-        student:
-          type: string
-          readOnly: true
-        exam:
-          type: string
-          readOnly: true
-        url:
-          type: string
-          readOnly: true
-    Students:
+    ReadOnlyStudents:
       type: object
       properties:
         user:
@@ -677,9 +1502,6 @@ components:
             get_user_type_display:
               type: string
               readOnly: true
-            school:
-              type: object
-              properties: {}
             url:
               type: string
               readOnly: true
@@ -687,7 +1509,6 @@ components:
           - username
           - first_name
           - last_name
-          - school
         student_class:
           type: string
           readOnly: true
@@ -696,7 +1517,7 @@ components:
           readOnly: true
       required:
       - user
-    Users:
+    ReadOnlyUsers:
       type: object
       properties:
         username:
@@ -716,9 +1537,6 @@ components:
         get_user_type_display:
           type: string
           readOnly: true
-        school:
-          type: object
-          properties: {}
         url:
           type: string
           readOnly: true
@@ -726,8 +1544,7 @@ components:
       - username
       - first_name
       - last_name
-      - school
-    Classes:
+    ReadOnlyClasses:
       type: object
       properties:
         url:
@@ -746,7 +1563,7 @@ components:
       required:
       - subjects
       - class_id
-    Exams:
+    ReadOnlyExams:
       type: object
       properties:
         url:
@@ -780,18 +1597,19 @@ components:
                 type: string
                 readOnly: true
               exam:
-                type: string
-                readOnly: true
+                type: integer
               url:
                 type: string
                 readOnly: true
+            required:
+            - exam
         school:
           type: string
           readOnly: true
       required:
       - timestamp
       - grade_exam
-    Articles:
+    ReadOnlyArticles:
       type: object
       properties:
         title:
@@ -820,16 +1638,13 @@ components:
       - title
       - categories
       - text
-    Assignments:
+    ReadOnlyAssignments:
       type: object
       properties:
         url:
           type: string
           readOnly: true
         assignment_class:
-          type: string
-          readOnly: true
-        school:
           type: string
           readOnly: true
         subject:
@@ -847,6 +1662,67 @@ components:
       required:
       - body
       - deadline
+    ReadOnlyTeachers:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            username:
+              type: string
+              maxLength: 20
+            first_name:
+              type: string
+              maxLength: 254
+            last_name:
+              type: string
+              maxLength: 254
+            email:
+              type: string
+              format: email
+              nullable: true
+              maxLength: 254
+            get_user_type_display:
+              type: string
+              readOnly: true
+            url:
+              type: string
+              readOnly: true
+          required:
+          - username
+          - first_name
+          - last_name
+        url:
+          type: string
+          readOnly: true
+        university:
+          type: string
+          maxLength: 100
+        degree:
+          type: string
+          maxLength: 100
+      required:
+      - user
+    ReadOnlyGrades:
+      type: object
+      properties:
+        grade:
+          type: string
+          format: decimal
+          multipleOf: 0.01
+          maximum: 10000
+          minimum: -10000
+          nullable: true
+        student:
+          type: string
+          readOnly: true
+        exam:
+          type: integer
+        url:
+          type: string
+          readOnly: true
+      required:
+      - exam
     UserDetails:
       type: object
       properties:
@@ -871,6 +1747,164 @@ components:
       - username
       - first_name
       - last_name
+    WriteOnlyStudents:
+      type: object
+      properties:
+        user:
+          type: integer
+        student_class:
+          type: integer
+          nullable: true
+      required:
+      - user
+    WriteOnlyUsers:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 20
+        first_name:
+          type: string
+          maxLength: 254
+        last_name:
+          type: string
+          maxLength: 254
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+        user_type:
+          enum:
+          - S
+          - T
+          - SS
+          type: string
+        about:
+          type: string
+      required:
+      - username
+      - first_name
+      - last_name
+      - password
+      - user_type
+    WriteOnlyClasses:
+      type: object
+      properties:
+        class_id:
+          type: string
+          maxLength: 50
+        school:
+          type: integer
+        subjects:
+          type: array
+          items:
+            type: integer
+      required:
+      - class_id
+      - school
+      - subjects
+    WriteOnlyExams:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date
+        full_score:
+          type: string
+          format: decimal
+          multipleOf: 0.01
+          maximum: 10000
+          minimum: -10000
+        visible_to_students:
+          type: boolean
+        subject:
+          type: integer
+        teacher:
+          type: integer
+        exam_class:
+          type: integer
+      required:
+      - timestamp
+      - subject
+      - teacher
+      - exam_class
+    WriteOnlyArticles:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 80
+        categories:
+          type: array
+          items:
+            type: string
+          maxItems: 5
+        text:
+          type: string
+        author:
+          type: integer
+          nullable: true
+        school:
+          type: integer
+          nullable: true
+      required:
+      - title
+      - categories
+      - text
+    WriteOnlyAssignments:
+      type: object
+      properties:
+        body:
+          type: string
+        deadline:
+          type: string
+          format: date
+        assignment_class:
+          type: integer
+        subject:
+          type: integer
+      required:
+      - body
+      - deadline
+      - assignment_class
+      - subject
+    WriteOnlyTeachers:
+      type: object
+      properties:
+        degree:
+          type: string
+          maxLength: 100
+        university:
+          type: string
+          maxLength: 100
+        user:
+          type: integer
+        school:
+          type: integer
+      required:
+      - user
+      - school
+    WriteOnlyGrades:
+      type: object
+      properties:
+        grade:
+          type: string
+          format: decimal
+          multipleOf: 0.01
+          maximum: 10000
+          minimum: -10000
+          nullable: true
+        student:
+          type: integer
+        exam:
+          type: integer
+      required:
+      - student
+      - exam
     PasswordReset:
       type: object
       properties:
@@ -970,3 +2004,4 @@ components:
         email:
           type: string
           format: email
+[0m
