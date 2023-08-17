@@ -459,7 +459,6 @@
 
         socket.onmessage = (e) => {
             var data = JSON.parse(e.data);
-            console.log(data);
             switch(data.type){
                 case "msg":
                     if (data.sender_username === username) {
