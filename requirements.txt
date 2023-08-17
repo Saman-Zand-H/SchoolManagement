@@ -15,7 +15,7 @@ billiard==3.6.4.0
 black==21.9b0
 Brotli==1.0.9
 celery==5.2.6
-certifi==2021.5.30
+certifi==2023.7.22
 cffi==1.14.6
 channels==3.0.4
 channels-redis==3.4.0
